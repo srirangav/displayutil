@@ -1,0 +1,51 @@
+.TH displayutil 1
+.SH NAME
+displayutil - a MacOSX utility for manipulating display related settings.
+.SH SYNOPSIS
+displayutil [mode] [options]
+.SH DESCRIPTION
+displayutil is a utility for retrieving information about the current
+darkmode, grayscale, or nightshift settings on MacOSX systems.  It can
+also display information about the active displays.
+.SH MODES & OPTIONS
+
+.TP
+.B darkmode|dm [enable|disable|on|off]
+
+Displays the current darkmode setting (on/off) if no options are specified.
+
+The 'enable' or 'on' options enable darkmode.
+
+The 'disable' or 'off' options disable darkmode.
+
+Available on MacOS 10.14 (Mojave).
+.TP
+.B grayscale|gs [enable|disable|on|off]
+
+Displays the current grayscale setting (on/off) if no options are specified.
+
+The 'enable' or 'on' options enable grayscale mode.
+
+The 'disable' or 'off' options disable grayscale mode.
+.TP
+.B ls|list [all|main]
+Lists information about all active displays if no options are specified, or
+if the 'all' option is specified.
+.B nightshift|ns [enable|disable|on|off| 0.0 - 1.0]
+
+Displays the current nightshift setting (on/off) and its strength if
+no options are specified.
+
+The 'enable' or 'on' options enable nightshift mode.
+
+The 'disable' or 'off' options disable nightshift mode.
+
+If a value between 0.0 and 1.0 is specified, the nightshift strength
+is set to that value and enabled.
+.TP
+.B \-h|help
+Displays a help message
+.SH PLATFORMS
+displayutil has been tested on MacOS X 10.14 (Mojave)
+.SH HISTORY
+The displayutil command was written by Sriranga Veeraraghavan <ranga@calalum.org>.
