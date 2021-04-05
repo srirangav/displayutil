@@ -1,6 +1,8 @@
-# Xcode
-Makefile
 .DS_Store
+*.o
+displayutil
+displayutil.1.txt
+# Xcode
 build/
 *.pbxuser
 !default.pbxuser
@@ -17,3 +19,4 @@ profile
 *.moved-aside
 DerivedData
 .idea/
+
