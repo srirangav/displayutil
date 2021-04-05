@@ -15,16 +15,18 @@ Usage:
     displayutil [list|ls [all|main]]
     displayutil [nightshift|ns] [[on|enable|off|disable] | 0.0 - 1.0]
 
-Accessing the current nightshift setting and/or enabling/disabling
-nightshift is available on 10.12.4 and newer.
+Notes:
 
-Accessing the current darkmode setting and/or enabling/disabling
-darkmode is available on 10.14 and newer.
+    Accessing the current nightshift setting and/or enabling/disabling
+    nightshift is available on 10.12.4 and newer.
+
+    Accessing the current darkmode setting and/or enabling/disabling
+    darkmode is available on 10.14 and newer.
 
 History:
 
-v0.1.0 - initial release
+    v0.1.0 - initial release
 
 License:
 
-See LICENSE.txt
+    See LICENSE.txt
