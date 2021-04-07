@@ -1,9 +1,9 @@
 /*
-    displayutil - displayutil_darkmode.m
+    displayutil - displayutil_argutils.h
 
     History:
 
-    v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.0.0 (04/06/2021) - Initial version
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -26,50 +26,29 @@
     DEALINGS IN THE SOFTWARE.
  */
 
-#import <stdio.h>
+#ifndef displayutil_argutils_h
+#define displayutil_argutils_h
 
-#import "displayutil_argutils.h"
-#import "displayutil_darkmode.h"
+#import <ApplicationServices/ApplicationServices.h>
 
-/*
-    Private APIs for setting dark mode:
-    https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
- */
+/* program name */
 
-extern BOOL SLSGetAppearanceThemeLegacy(void);
-extern BOOL SLSSetAppearanceThemeNotifying(BOOL mode, BOOL notifyListeners);
+extern const char *gPgmName;
 
-/* strings to select darkmode */
+/* option strings */
 
-const char *gStrModeDarkModeLong  = "darkmode";
-const char *gStrModeDarkModeShort = "dm";
+extern const char *gStrEnable;
+extern const char *gStrOn;
+extern const char *gStrDisable;
+extern const char *gStrOff;
+extern const char *gStrStatus;
 
-/* printDarkModeUsage - print usage message for darkmode */
+/* prototypes */
 
-void printDarkModeUsage(void)
-{
-    fprintf(stderr,
-            "%s [%s|%s] [%s|%s|%s|%s]\n",
-            gPgmName,
-            gStrModeDarkModeLong,
-            gStrModeDarkModeShort,
-            gStrOn,
-            gStrEnable,
-            gStrOff,
-            gStrDisable);
-}
+bool isArg(const char *arg,
+           const char *longMode,
+           const char *shortMode);
+bool isArgEnable(const char *arg);
+bool isArgDisable(const char *arg);
 
-bool isDarkModeEnabled(void)
-{
-    return SLSGetAppearanceThemeLegacy();
-}
-
-bool darkModeEnable(void)
-{
-    return SLSSetAppearanceThemeNotifying(true, true);
-}
-
-bool darkModeDisable(void)
-{
-    return SLSSetAppearanceThemeNotifying(false, true);
-}
+#endif /* displayutil_argutils_h */

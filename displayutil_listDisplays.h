@@ -31,7 +31,7 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 
-/* strings to select list mode */
+/* mode and option strings for list mode */
 
 extern const char *gStrModeListDisplaysLong;
 extern const char *gStrModeListDisplaysShort;
@@ -52,6 +52,7 @@ typedef struct
 
 /* prototypes */
 
+void printListDisplaysUsage(void);
 bool listAllDisplays(void);
 bool listMainDisplay(void);
 

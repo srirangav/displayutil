@@ -37,12 +37,16 @@ if the 'all' option is specified.
 Displays the current nightshift setting (on/off) and its strength if
 no options are specified.
 
-The 'enable' or 'on' options enable nightshift mode.
+The 'enable' or 'on' options enable nightshift mode.  If nightshift's
+strength is set to 0, these options will set nightshift's strength to 1.0
+(full strength).
 
-The 'disable' or 'off' options disable nightshift mode.
+The 'off' option turns off nightshift mode.
 
-If a value between 0.0 and 1.0 is specified, the nightshift strength
-is set to that value and enabled.
+The 'disable' option turns nightshift mode off and sets its strength to 0.0.
+
+If a value between 0.0 and 1.0 is specified instead of one of the above
+options, the nightshift strength is set to that value and enabled.
 .TP
 .B \-h|help
 Displays a help message

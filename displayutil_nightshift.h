@@ -1,5 +1,5 @@
 /*
-    displayutil - displayutil_darkmode.m
+    displayutil - displayutil_nightshift.h
 
     History:
 
@@ -26,50 +26,23 @@
     DEALINGS IN THE SOFTWARE.
  */
 
-#import <stdio.h>
+#ifndef displayutil_nightshift_h
+#define displayutil_nightshift_h
 
-#import "displayutil_argutils.h"
-#import "displayutil_darkmode.h"
+#import <ApplicationServices/ApplicationServices.h>
 
-/*
-    Private APIs for setting dark mode:
-    https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
- */
+/* strings to select nightshift mode */
 
-extern BOOL SLSGetAppearanceThemeLegacy(void);
-extern BOOL SLSSetAppearanceThemeNotifying(BOOL mode, BOOL notifyListeners);
+extern const char *gStrModeNightShiftLong;
+extern const char *gStrModeNightShiftShort;
 
-/* strings to select darkmode */
+/* prototypes */
 
-const char *gStrModeDarkModeLong  = "darkmode";
-const char *gStrModeDarkModeShort = "dm";
+void  printNightShiftUsage(void);
+bool  printNightShiftStatus(void);
+bool  nightShiftEnable(void);
+bool  nightShiftDisable(void);
+bool  setNightShiftStrength(float strength);
+float getNightShiftStrength(float strength);
 
-/* printDarkModeUsage - print usage message for darkmode */
-
-void printDarkModeUsage(void)
-{
-    fprintf(stderr,
-            "%s [%s|%s] [%s|%s|%s|%s]\n",
-            gPgmName,
-            gStrModeDarkModeLong,
-            gStrModeDarkModeShort,
-            gStrOn,
-            gStrEnable,
-            gStrOff,
-            gStrDisable);
-}
-
-bool isDarkModeEnabled(void)
-{
-    return SLSGetAppearanceThemeLegacy();
-}
-
-bool darkModeEnable(void)
-{
-    return SLSSetAppearanceThemeNotifying(true, true);
-}
-
-bool darkModeDisable(void)
-{
-    return SLSSetAppearanceThemeNotifying(false, true);
-}
+#endif /* displayutil_nightshift_h */

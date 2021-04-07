@@ -31,13 +31,14 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 
-/* strings to select list mode */
+/* strings to select darkmode */
 
 extern const char *gStrModeDarkModeLong;
 extern const char *gStrModeDarkModeShort;
 
 /* prototypes */
 
+void printDarkModeUsage(void);
 bool isDarkModeEnabled(void);
 bool darkModeEnable(void);
 bool darkModeDisable(void);

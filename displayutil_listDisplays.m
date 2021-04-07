@@ -32,13 +32,10 @@
     DEALINGS IN THE SOFTWARE.
  */
 
+#import <stdio.h>
 #import <IOKit/graphics/IOGraphicsLib.h>
+#import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
-
-/* prototypes */
-
-static bool getDisplayProperties(CGDirectDisplayID displayId,
-                                 displayProperties_t *props);
 
 /* strings to select list mode */
 
@@ -56,6 +53,15 @@ static const UInt32 gMaxDisplays = 8;
 static const char *gStrDisplayMain     = "main";
 static const char *gStrDisplayInactive = "inactive";
 static const char *gStrDisplayBuiltin  = "builtin";
+
+/* error messages */
+
+static const char *gStrErrListDisplays = "cannot get display information";
+
+/* prototypes */
+
+static bool getDisplayProperties(CGDirectDisplayID displayId,
+                                 displayProperties_t *props);
 
 /* getDisplayProperties - get the properties for the specified display */
 
@@ -85,6 +91,20 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
     return true;
 }
 
+/* printListDisplaysUsage - print usage message list mode */
+
+void printListDisplaysUsage(void)
+{
+    fprintf(stderr,
+            "%s [%s|%s [%s|%s]]\n",
+            gPgmName,
+            gStrModeListDisplaysLong,
+            gStrModeListDisplaysShort,
+            gStrModeListDisplaysAll,
+            gStrModeListDisplaysMain);
+
+}
+
 /* listMainDisplay - list information about the main display */
 
 bool listMainDisplay(void)
@@ -97,6 +117,10 @@ bool listMainDisplay(void)
 
     if (getDisplayProperties(mainDisplay, &displayProps) != true)
     {
+        fprintf(stderr,
+                "error: %s: %s\n",
+                gStrModeListDisplaysLong,
+                gStrErrListDisplays);
         return false;
     }
 
@@ -164,11 +188,17 @@ bool listAllDisplays(void)
                                  &onlineDisplayCnt);
     if (err != kCGErrorSuccess)
     {
+        fprintf(stderr,
+                "error: %s: %s\n",
+                gStrModeListDisplaysLong,
+                gStrErrListDisplays);
         return false;
     }
 
     for (i = 0; i < onlineDisplayCnt; i++)
     {
+
+        /* skip displays we can't get display properties for */
 
         if (getDisplayProperties(displays[i], &displayProps) != true)
         {

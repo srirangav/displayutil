@@ -26,47 +26,23 @@
     DEALINGS IN THE SOFTWARE.
  */
 
-/*
-    cc -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
-       -Wmissing-prototypes -Werror=format-security \
-       -Werror=implicit-function-declaration \
-       -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS \
-       -fasynchronous-unwind-tables -fexceptions -fpic \
-       -fstack-protector-all -fstack-protector-strong -fwrapv \
-       -F /System/Library/PrivateFrameworks \
-       -framework UniversalAccess \
-       -framework SkyLight \
-       -framework ApplicationServices \
-       -framework CoreBrightness \
-       -o displayutil \
-       displayutil_listDisplays.m \
-       displayutil_grayscale.m \
-       displayutil_darkmode.m \
-       displayutil.m
-*/
-
 #import <stdio.h>
 #import <string.h>
 #import <strings.h>
 
 #import <ApplicationServices/ApplicationServices.h>
-
-#ifndef NO_NS
-#import <stdlib.h>
-#import "CBBlueLightClient.h"
-#endif /* NO_NS */
-
+#import <Foundation/Foundation.h>
 #import <objc/objc.h>
 
+#import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
 #import "displayutil_grayscale.h"
+#ifndef NO_NS
+#import "displayutil_nightshift.h"
+#endif /* NO_NS */
 #ifndef NO_DM
 #import "displayutil_darkmode.h"
 #endif /* NO_DM */
-
-/* program name */
-
-static const char *gPgmName = "displayutil";
 
 enum
 {
@@ -78,117 +54,35 @@ enum
 
 static const char *gStrModeHelpShort         = "-h";
 static const char *gStrModeHelpLong          = "-help";
-#ifndef NO_NS
-static const char *gStrModeNightShiftLong    = "nightshift";
-static const char *gStrModeNightShiftShort   = "ns";
-#endif /* NO_NS */
-
-/* commands */
-
-static const char *gStrEnable  = "enable";
-static const char *gStrOn      = "on";
-
-static const char *gStrDisable = "disable";
-static const char *gStrOff     = "off";
-
-/* nightshift related constants */
-
-#ifndef NO_NS
-static const float gNightShiftDisable   = 0.0;
-static const char *gStrNightShiftRange  = "0.0 - 1.0";
-#endif /* NO_NS */
-
-/* error messages */
-
-static const char *gStrErrListDisplays = "cannot list displays";
-#ifndef NO_NS
-static const char *gStrErrNoNS          = "nightshift not supported";
-static const char *gStrErrNoNSClient    = "cannot create a nightshift client";
-static const char *gStrErrNSStatus      = "cannot get nightshift status";
-static const char *gStrErrNSStrength    = "cannot get nightshift strength";
-#endif /* NO_NS */
 
 /* prototypes */
 
-static bool isArg(const char *arg,
-                  const char *longMode,
-                  const char *shortMode);
-static bool isArgEnable(const char *arg);
-static bool isArgDisable(const char *arg);
+static void printUsage(void);
 
-/* isArg - check if the arg is the requested mode */
+/* printUsage - print out the usage message */
 
-static bool isArg(const char *arg,
-                  const char *longMode,
-                  const char *shortMode)
+static void printUsage(void)
 {
-    if (arg == NULL || arg[0] == '\0')
-    {
-        return false;
-    }
+#ifndef NO_DM
+    printDarkModeUsage();
+#endif /* NO_DM */
 
-    if (longMode != NULL &&
-        strncasecmp(arg, longMode, strlen(longMode)) == 0)
-    {
-        return true;
-    }
+    printGrayScaleUsage();
 
-    if (shortMode != NULL &&
-        strncasecmp(arg, shortMode, strlen(shortMode)) == 0)
-    {
-        return true;
-    }
+    printListDisplaysUsage();
 
-    return false;
-}
-
-/* isArg - check if the arg is enable mode */
-
-static bool isArgEnable(const char *arg)
-{
-    if (arg == NULL)
-    {
-        return false;
-    }
-
-    if (strncasecmp(arg, gStrOn, strlen(gStrOn)) == 0 ||
-        strncasecmp(arg, gStrEnable, strlen(gStrEnable)) == 0)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-/* isArg - check if the arg is disable mode */
-
-static bool isArgDisable(const char *arg)
-{
-    if (arg == NULL)
-    {
-        return false;
-    }
-
-    if (strncasecmp(arg, gStrOff, strlen(gStrOff)) == 0 ||
-        strncasecmp(arg, gStrDisable, strlen(gStrDisable)) == 0)
-    {
-        return true;
-    }
-
-    return false;
+#ifndef NO_NS
+    printNightShiftUsage();
+#endif /* NO_NS */
 }
 
 /* main */
 
 int main (int argc, char** argv)
 {
-
     bool listMainDisplayOnly = false;
-
 #ifndef NO_NS
-    CBBlueLightClient *blueLightClient = nil;
-    CBBlueLightClient_StatusData_t blueLightStatus;
-    float nightShiftStrength = gNightShiftDisable;
+    float nightShiftStrength = 0;
     char *endptr = NULL;
 #endif /* NO_NS */
 
@@ -197,61 +91,11 @@ int main (int argc, char** argv)
         specified
     */
 
-    if (argc < 2 || argv[1] == NULL ||
+    if (argc < 2 ||
+        argv[1] == NULL ||
         isArg(argv[1], gStrModeHelpLong, gStrModeHelpShort) == true)
     {
-
-        /* darkmode usage */
-
-#ifndef NO_DM
-        fprintf(stderr,
-                "%s [%s|%s] [%s|%s|%s|%s]\n",
-                gPgmName,
-                gStrModeDarkModeLong,
-                gStrModeDarkModeShort,
-                gStrOn,
-                gStrEnable,
-                gStrOff,
-                gStrDisable);
-#endif /* NO_DM */
-
-        /* grayscale usage */
-
-        fprintf(stderr,
-                "%s [%s|%s] [%s|%s|%s|%s]\n",
-                gPgmName,
-                gStrModeGrayscaleLong,
-                gStrModeGrayscaleShort,
-                gStrOn,
-                gStrEnable,
-                gStrOff,
-                gStrDisable);
-
-        /* list displays usage */
-
-        fprintf(stderr,
-                "%s [%s|%s [%s|%s]]\n",
-                gPgmName,
-                gStrModeListDisplaysLong,
-                gStrModeListDisplaysShort,
-                gStrModeListDisplaysAll,
-                gStrModeListDisplaysMain);
-
-        /* nightshift usage */
-
-#ifndef NO_NS
-        fprintf(stderr,
-                "%s [%s|%s] [[%s|%s|%s|%s] | %s]\n",
-                gPgmName,
-                gStrModeNightShiftLong,
-                gStrModeNightShiftShort,
-                gStrOn,
-                gStrEnable,
-                gStrOff,
-                gStrDisable,
-                gStrNightShiftRange);
-#endif /* NO_NS */
-
+        printUsage();
         return gDisplayUtilECOkay;
     }
 
@@ -275,7 +119,7 @@ int main (int argc, char** argv)
 
         /* enable darkmode */
 
-        if (isArgEnable(argv[2]))
+        if (isArgEnable(argv[2]) == true)
         {
             return (darkModeEnable() ?
                 gDisplayUtilECOkay : gDisplayUtilECErr);
@@ -283,7 +127,7 @@ int main (int argc, char** argv)
 
         /* disable darkmode */
 
-        if (isArgDisable(argv[2]))
+        if (isArgDisable(argv[2]) == true)
         {
             return (darkModeDisable() ?
                 gDisplayUtilECOkay : gDisplayUtilECErr);
@@ -296,6 +140,8 @@ int main (int argc, char** argv)
                  gPgmName,
                  gStrModeDarkModeLong,
                  argv[2]);
+
+        printDarkModeUsage();
 
         return gDisplayUtilECErr;
     }
@@ -341,6 +187,9 @@ int main (int argc, char** argv)
                  gPgmName,
                  gStrModeGrayscaleLong,
                  argv[2]);
+
+        printGrayScaleUsage();
+
         return gDisplayUtilECErr;
     }
 
@@ -367,35 +216,18 @@ int main (int argc, char** argv)
                      gPgmName,
                      gStrModeListDisplaysLong,
                      argv[2]);
+            printListDisplaysUsage();
             return gDisplayUtilECErr;
         }
 
         if (listMainDisplayOnly == true)
         {
-            if (listMainDisplay() != true)
-            {
-                fprintf(stderr,
-                        "%s: error: %s: %s\n",
-                        gPgmName,
-                        gStrModeListDisplaysLong,
-                        gStrErrListDisplays);
-                return gDisplayUtilECErr;
-            }
-        }
-        else
-        {
-            if (listAllDisplays() != true)
-            {
-                fprintf(stderr,
-                        "%s: error: %s: %s\n",
-                        gPgmName,
-                        gStrModeListDisplaysLong,
-                        gStrErrListDisplays);
-                return gDisplayUtilECErr;
-            }
+            return (listMainDisplay() == true ?
+                        gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
-        return gDisplayUtilECOkay;
+        return (listAllDisplays() == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
     }
 
     /* nightshift */
@@ -403,92 +235,38 @@ int main (int argc, char** argv)
 #ifndef NO_NS
     if (isArg(argv[1], gStrModeNightShiftLong, gStrModeNightShiftShort))
     {
-        /* check if nightshift is support */
-
-        if ([CBBlueLightClient supportsBlueLightReduction] != true)
-        {
-            fprintf(stderr,
-                    "%s: error: %s: %s\n",
-                    gPgmName,
-                    gStrModeNightShiftLong,
-                    gStrErrNoNS);
-            return gDisplayUtilECErr;
-        }
-
-        /* create a blue light client */
-
-        blueLightClient = [[CBBlueLightClient alloc] init];
-        if (blueLightClient == nil)
-        {
-            fprintf(stderr,
-                    "%s: error: %s: %s\n",
-                    gPgmName,
-                    gStrModeNightShiftLong,
-                    gStrErrNoNSClient);
-            return gDisplayUtilECErr;
-        }
 
         /* if no arguments, just display the current nightshift setting */
 
-        if (argc < 3 ||
-            argv[2] == NULL || argv[2][0] == '\0')
+        if (argc < 3)
         {
-
-            /* get the current nightshift status */
-
-            if ([blueLightClient getBlueLightStatus: &blueLightStatus] != true)
-            {
-                fprintf(stderr,
-                        "%s: error: %s: %s\n",
-                        gPgmName,
-                        gStrModeNightShiftLong,
-                        gStrErrNSStatus);
-                [blueLightClient release];
-                return gDisplayUtilECErr;
-            }
-
-            /* get the strength of the blue light setting */
-
-            if ([blueLightClient getStrength: &nightShiftStrength] != true)
-            {
-                fprintf(stderr,
-                        "%s: error: %s: %s\n",
-                        gPgmName,
-                        gStrModeNightShiftLong,
-                        gStrErrNSStrength);
-                [blueLightClient release];
-                return gDisplayUtilECErr;
-            }
-
-            /* print out the current blue light status and strength */
-
-            fprintf(stdout,
-                    "%s: %s (strength = %f)\n",
-                    gStrModeNightShiftLong,
-                    (blueLightStatus.enabled == 1 ? gStrOn : gStrOff),
-                    nightShiftStrength);
-            [blueLightClient release];
-            return gDisplayUtilECOkay;
+            return (printNightShiftStatus() == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
+            return gDisplayUtilECErr;
         }
-
-        /* TODO - check for failures */
 
         /* enable nightshift */
 
-        if (isArgEnable(argv[2]))
+        if (isArgEnable(argv[2]) == true)
         {
-            [blueLightClient setEnabled: TRUE];
-            [blueLightClient release];
-            return gDisplayUtilECOkay;
+            return (nightShiftEnable() == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+
+        /* turn off nightshift */
+
+        if (isArg(argv[2], gStrOff, NULL) == true)
+        {
+            return (nightShiftDisable() == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         /* disable nightshift */
 
-        if (isArgDisable(argv[2]))
+        if (isArg(argv[2], gStrDisable, NULL) == true)
         {
-            [blueLightClient setEnabled: FALSE];
-            [blueLightClient release];
-            return gDisplayUtilECOkay;
+            return (setNightShiftStrength(0.0) == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         /* see if a valid setting was specified */
@@ -498,11 +276,8 @@ int main (int argc, char** argv)
              nightShiftStrength <= 1.0) &&
              (endptr == NULL || endptr[0] == '\0'))
         {
-            [blueLightClient setStrength: nightShiftStrength commit: TRUE];
-            [blueLightClient setEnabled:
-                (nightShiftStrength == 0.0 ? FALSE : TRUE)];
-            [blueLightClient release];
-            return gDisplayUtilECOkay;
+            return (setNightShiftStrength(nightShiftStrength) == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         /* unknown or unsupported option for nightshift */
@@ -512,7 +287,7 @@ int main (int argc, char** argv)
                  gPgmName,
                  gStrModeNightShiftLong,
                  argv[2]);
-        [blueLightClient release];
+        printNightShiftUsage();
         return gDisplayUtilECErr;
     }
 #endif /* NO_NS */
@@ -523,5 +298,6 @@ int main (int argc, char** argv)
             "%s: error: invalid argument: '%s'\n",
             gPgmName,
             argv[1]);
+    printUsage();
     return gDisplayUtilECErr;
 }

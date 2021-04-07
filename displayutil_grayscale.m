@@ -26,12 +26,42 @@
     DEALINGS IN THE SOFTWARE.
  */
 
+#import "displayutil_argutils.h"
 #import "displayutil_grayscale.h"
+
+/*
+    Private APIs for setting grayscale mode:
+    https://gist.github.com/danielpunkass/df0d72be11b8956f2ef4f4d52cce7a41
+    https://apple.stackexchange.com/questions/240446/how-to-enable-disable-grayscale-mode-in-accessibility-via-terminal-app
+ */
+
+#ifdef USE_UA
+extern void UAGrayscaleSetEnabled(int enabled);
+extern int  UAGrayscaleIsEnabled();
+#else
+CG_EXTERN bool CGDisplayUsesForceToGray(void);
+CG_EXTERN void CGDisplayForceToGray(bool forceToGray);
+#endif /* USE_UA */
 
 /* strings to select grayscale mode */
 
 const char *gStrModeGrayscaleLong  = "grayscale";
 const char *gStrModeGrayscaleShort = "gs";
+
+/* printGrayScaleUsage - print usage message for grayscale mode */
+
+void printGrayScaleUsage(void)
+{
+    fprintf(stderr,
+            "%s [%s|%s] [%s|%s|%s|%s]\n",
+            gPgmName,
+            gStrModeGrayscaleLong,
+            gStrModeGrayscaleShort,
+            gStrOn,
+            gStrEnable,
+            gStrOff,
+            gStrDisable);
+}
 
 /* isGrayScaleEnabled - return true if grayscale mode is on */
 

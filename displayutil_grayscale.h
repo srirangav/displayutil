@@ -32,25 +32,14 @@
 #import <IOKit/graphics/IOGraphicsLib.h>
 #import <ApplicationServices/ApplicationServices.h>
 
+/* strings to select grayscale mode */
+
 extern const char *gStrModeGrayscaleLong;
 extern const char *gStrModeGrayscaleShort;
 
-/*
-    Private APIs for setting grayscale mode:
-    https://gist.github.com/danielpunkass/df0d72be11b8956f2ef4f4d52cce7a41
-    https://apple.stackexchange.com/questions/240446/how-to-enable-disable-grayscale-mode-in-accessibility-via-terminal-app
- */
-
-#ifdef USE_UA
-extern void UAGrayscaleSetEnabled(int enabled);
-extern int  UAGrayscaleIsEnabled();
-#else
-CG_EXTERN bool CGDisplayUsesForceToGray(void);
-CG_EXTERN void CGDisplayForceToGray(bool forceToGray);
-#endif /* USE_UA */
-
 /* prototypes */
 
+void printGrayScaleUsage(void);
 bool isGrayScaleEnabled(void);
 void grayScaleEnable(void);
 void grayScaleDisable(void);

@@ -2,8 +2,10 @@
 
 PGM_SRCS      = displayutil_listDisplays.m \
                 displayutil_grayscale.m \
+                displayutil_argutils.m \
                 displayutil.m
-PGM_SRCS_1014 = displayutil_darkmode.m
+PGM_SRCS_1013 = displayutil_nightshift.m
+PGM_SRCS_1014 = $(PGM_SRCS_1013) displayutil_darkmode.m
 PGM_SRCS_M1   = $(PGM_SRCS_1014)
 PGM           = displayutil
 PGM_REL       = 0.1.0
@@ -19,7 +21,7 @@ CFLAGS      = -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
               -Wmissing-prototypes -Werror=format-security \
               -Werror=implicit-function-declaration \
               -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS \
-              -fasynchronous-unwind-tables -fexceptions -fpic \
+              -fasynchronous-unwind-tables  -fpic \
               -fstack-protector-all -fstack-protector-strong -fwrapv \
               -fcf-protection
 CFLAGS_1011 = -DNO_DM -DNO_NS
@@ -28,6 +30,7 @@ CFLAGS_1014 =
 CFLAGS_M1   =  -DUSE_UA
 LDFLAGS     =  -F /System/Library/PrivateFrameworks \
                -framework ApplicationServices \
+               -framework Foundation \
                -framework CoreBrightness
 LDFLAGS_M1   = -framework UniversalAccess
 LDFLAGS_1011 =
@@ -48,7 +51,7 @@ all:
 	      $(LDFLAGS) $(LDFLAGS_1011)
 
 10.13:
-	$(CC) $(CFLAGS) $(CFLAGS_1013) -o $(PGM) $(PGM_SRCS) \
+	$(CC) $(CFLAGS) $(CFLAGS_1013) -o $(PGM) $(PGM_SRCS) $(PGM_SRCS_1013) \
 	      $(LDFLAGS) $(LDFLAGS_1013)
 
 10.14: $(PGM_OBJS_WITH_DM)
