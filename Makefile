@@ -24,18 +24,26 @@ CFLAGS      = -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
               -fasynchronous-unwind-tables  -fpic \
               -fstack-protector-all -fstack-protector-strong -fwrapv \
               -fcf-protection
+# for 10.12.3 or earlier, disable darkmode and nightshift
 CFLAGS_1011 = -DNO_DM -DNO_NS
+# for 10.12.4 and 10.13.x, disable darkmode
 CFLAGS_1013 = -DNO_DM
 CFLAGS_1014 =
+# for M1, use UniversalAccess for grayscale
 CFLAGS_M1   =  -DUSE_UA
 LDFLAGS     =  -F /System/Library/PrivateFrameworks \
-               -framework ApplicationServices \
-               -framework Foundation \
-               -framework CoreBrightness
+               -framework ApplicationServices
+# for M1, link with UniversalAccess for grayscale
 LDFLAGS_M1   = -framework UniversalAccess
 LDFLAGS_1011 =
-LDFLAGS_1013 =
-LDFLAGS_1014 = -framework SkyLight
+# for 10.12.4 and 10.13.x, link with Foundation and CoreBrightness
+# for nightshift
+# see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
+LDFLAGS_1013 = -framework Foundation \
+               -framework CoreBrightness
+# for 10.14 or later, link with Skylight for darkmode
+# see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
+LDFLAGS_1014 = $(LDFLAGS_1013) -framework SkyLight
 
 all:
 	@echo "To build, use one of the following:"

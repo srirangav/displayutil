@@ -30,3 +30,8 @@ History:
 License:
 
     See LICENSE.txt
+
+Known Bugs:
+
+    Sometimes there is a delay in turning darkmode on or off or
+    it takes a few tries.
