@@ -26,6 +26,7 @@
     DEALINGS IN THE SOFTWARE.
  */
 
+#import <strings.h>
 #import "displayutil_argutils.h"
 
 /* program name */

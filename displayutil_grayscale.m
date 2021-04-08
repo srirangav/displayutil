@@ -26,6 +26,7 @@
     DEALINGS IN THE SOFTWARE.
  */
 
+#import <stdio.h>
 #import "displayutil_argutils.h"
 #import "displayutil_grayscale.h"
 

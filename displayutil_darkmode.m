@@ -27,7 +27,6 @@
  */
 
 #import <stdio.h>
-
 #import "displayutil_argutils.h"
 #import "displayutil_darkmode.h"
 

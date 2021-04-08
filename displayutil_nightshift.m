@@ -55,6 +55,8 @@ static const char *gStrErrInvalidNSStrength
 static bool isNightShiftAvailable(void);
 static bool setNightShiftEnabled(bool status);
 
+/* private functions */
+
 /* isNightShiftAvailable - check to see if nightshift is available */
 
 static bool isNightShiftAvailable(void)
@@ -103,6 +105,8 @@ static bool setNightShiftEnabled(bool status)
     return true;
 }
 
+/* public functions */
+
 /* printNightShiftUsage - print usage message for nightshift mode */
 
 void printNightShiftUsage(void)
@@ -119,7 +123,7 @@ void printNightShiftUsage(void)
             gStrNightShiftRange);
 }
 
-/* isNightShiftEnabled - check whether nightshift is enabled */
+/* printNightShiftStatus - print the current status of nightshift */
 
 bool printNightShiftStatus(void)
 {
