@@ -38,18 +38,6 @@ extern const char *gStrModeListDisplaysShort;
 extern const char *gStrModeListDisplaysMain;
 extern const char *gStrModeListDisplaysAll;
 
-/* struct to hold a display's properties */
-
-typedef struct
-{
-    int height;
-    int width;
-    double angle;
-    bool active;
-    bool builtin;
-    bool main;
-} displayProperties_t;
-
 /* prototypes */
 
 void printListDisplaysUsage(void);

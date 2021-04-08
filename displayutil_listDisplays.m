@@ -37,6 +37,27 @@
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
 
+/* struct to hold a display's properties */
+
+typedef struct
+{
+    UInt32 id;
+    size_t heightInPts;
+    size_t widthInPts;
+    size_t heightInPixels;
+    size_t widthInPixels;
+    float heightInMM;
+    float widthInMM;
+    double angle;
+    double refresh;
+    bool active;
+    bool builtin;
+    bool main;
+    bool mirrored;
+    bool accelerated;
+    bool uiCapable;
+} displayProperties_t;
+
 /* strings to select list mode */
 
 const char *gStrModeListDisplaysLong  = "list";
@@ -46,13 +67,16 @@ const char *gStrModeListDisplaysMain  = "main";
 
 /* maximum number of supported displays */
 
-static const UInt32 gMaxDisplays = 8;
+static const UInt32 gMaxDisplays = 16;
 
 /* constants for listing displays */
 
-static const char *gStrDisplayMain     = "main";
-static const char *gStrDisplayInactive = "inactive";
-static const char *gStrDisplayBuiltin  = "builtin";
+static const char *gStrDisplayMain        = "main";
+static const char *gStrDisplayInactive    = "inactive";
+static const char *gStrDisplayBuiltin     = "builtin";
+static const char *gStrDisplayAccelerated = "opengl";
+static const char *gStrDisplayUICapable   = "ui";
+static const char *gStrDisplayMirrored    = "mirrored";
 
 /* error messages */
 
@@ -62,20 +86,38 @@ static const char *gStrErrListDisplays = "cannot get display information";
 
 static bool getDisplayProperties(CGDirectDisplayID displayId,
                                  displayProperties_t *props);
+static bool printDisplayProps(CGDirectDisplayID display);
 
 /* getDisplayProperties - get the properties for the specified display */
 
 static bool getDisplayProperties(CGDirectDisplayID displayId,
                                  displayProperties_t *props)
 {
+    CGDisplayModeRef mode;
+    CGSize size;
+
     if (props == NULL)
     {
         return false;
     }
 
-    props->height = CGDisplayPixelsHigh(displayId);
-    props->width = CGDisplayPixelsWide(displayId);
+    props->id = CGDisplayUnitNumber(displayId);
+    props->heightInPts = CGDisplayPixelsHigh(displayId);
+    props->widthInPts = CGDisplayPixelsWide(displayId);
     props->angle = CGDisplayRotation(displayId);
+    props->accelerated = CGDisplayUsesOpenGLAcceleration(displayId);
+
+    size = CGDisplayScreenSize(displayId);
+    if (size.width > 0 && size.height > 0)
+    {
+        props->heightInMM = size.height;
+        props->widthInMM = size.width;
+    }
+    else
+    {
+        props->heightInMM = 0.0;
+        props->widthInMM = 0.0;
+    }
 
     props->active = false;
     if (CGDisplayIsActive(displayId) == true &&
@@ -87,6 +129,24 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
 
     props->builtin = CGDisplayIsBuiltin(displayId);
     props->main = CGDisplayIsMain(displayId);
+    props->mirrored = CGDisplayIsInMirrorSet(displayId);
+
+    mode = CGDisplayCopyDisplayMode(displayId);
+    if (mode != NULL)
+    {
+        props->heightInPixels = CGDisplayModeGetPixelWidth(mode);
+        props->widthInPixels = CGDisplayModeGetPixelHeight(mode);
+        props->refresh = CGDisplayModeGetRefreshRate(mode);
+        props->uiCapable = CGDisplayModeIsUsableForDesktopGUI(mode);
+        CGDisplayModeRelease(mode);
+    }
+    else
+    {
+        props->heightInPixels = 0;
+        props->widthInPixels = 0;
+        props->refresh = 0;
+        props->uiCapable = false;
+    }
 
     return true;
 }
@@ -105,17 +165,14 @@ void printListDisplaysUsage(void)
 
 }
 
-/* listMainDisplay - list information about the main display */
+/* printDisplayProps - print out a display's properties */
 
-bool listMainDisplay(void)
+static bool printDisplayProps(CGDirectDisplayID display)
 {
-    CGDirectDisplayID mainDisplay;
     displayProperties_t displayProps;
     bool haveOpenBracket = false;
 
-    mainDisplay = CGMainDisplayID();
-
-    if (getDisplayProperties(mainDisplay, &displayProps) != true)
+    if (getDisplayProperties(display, &displayProps) != true)
     {
         fprintf(stderr,
                 "error: %s: %s\n",
@@ -127,24 +184,70 @@ bool listMainDisplay(void)
     /* print out the dimensions of the display */
 
     fprintf(stdout,
-            "0x%-8X: %-4dx%-4d",
-            mainDisplay,
-            displayProps.width,
-            displayProps.height);
+            "0x%-8X: %-4lux%-4lu pts",
+            display,
+            displayProps.widthInPts,
+            displayProps.heightInPts);
+
+    if (displayProps.heightInPixels > 0 &&
+        displayProps.widthInPixels > 0)
+    {
+        fprintf(stdout,
+                " (%-4lux%-4lu px)",
+                displayProps.heightInPixels,
+                displayProps.widthInPixels);
+    }
 
     /* if the display is rotated, print out the rotation angle */
 
     if (displayProps.angle != 0)
     {
-        fprintf(stdout, " (%f deg)", displayProps.angle);
+        fprintf(stdout, " (%3.1f deg)", displayProps.angle);
     }
 
-    /* print out whether the display inactive */
+    /* print out the display's refresh rate */
+
+    if (displayProps.refresh > 0)
+    {
+        fprintf(stdout, " (%3.1f Hz)", displayProps.refresh);
+    }
+
+    /* print out whether the display is the main display */
+
+    if (displayProps.main == true)
+    {
+        fprintf(stdout, " [%s", gStrDisplayMain);
+        haveOpenBracket = true;
+    }
+
+    /* print out whether the display is inactive */
 
     if (displayProps.active == false)
     {
-        fprintf(stdout, " [%s", gStrDisplayInactive);
-        haveOpenBracket = true;
+        if (haveOpenBracket == true)
+        {
+            fprintf(stdout, ", %s", gStrDisplayInactive);
+        }
+        else
+        {
+            fprintf(stdout, " [%s", gStrDisplayInactive);
+            haveOpenBracket = true;
+        }
+    }
+
+    /* print out whether the display is mirrored */
+
+    if (displayProps.mirrored == true)
+    {
+        if (haveOpenBracket == true)
+        {
+            fprintf(stdout, ", %s", gStrDisplayMirrored);
+        }
+        else
+        {
+            fprintf(stdout, " [%s", gStrDisplayMirrored);
+            haveOpenBracket = true;
+        }
     }
 
     /* print out whether the display is builtin */
@@ -162,6 +265,36 @@ bool listMainDisplay(void)
         }
     }
 
+    /* print out whether the display is ui capable */
+
+    if (displayProps.uiCapable == true)
+    {
+        if (haveOpenBracket == true)
+        {
+            fprintf(stdout, ", %s", gStrDisplayUICapable);
+        }
+        else
+        {
+            fprintf(stdout, " [%s", gStrDisplayUICapable);
+            haveOpenBracket = true;
+        }
+    }
+
+    /* print out whether the display is accelerated */
+
+    if (displayProps.accelerated == true)
+    {
+        if (haveOpenBracket == true)
+        {
+            fprintf(stdout, ", %s", gStrDisplayAccelerated);
+        }
+        else
+        {
+            fprintf(stdout, " [%s", gStrDisplayAccelerated);
+            haveOpenBracket = true;
+        }
+    }
+
     if (haveOpenBracket)
     {
         fprintf(stdout,"]");
@@ -173,6 +306,13 @@ bool listMainDisplay(void)
     return true;
 }
 
+/* listMainDisplay - list information about the main display */
+
+bool listMainDisplay(void)
+{
+    return printDisplayProps(CGMainDisplayID());
+}
+
 /* listAllDisplays - list information about all display */
 
 bool listAllDisplays(void)
@@ -180,8 +320,6 @@ bool listAllDisplays(void)
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
     CGDirectDisplayID displays[gMaxDisplays];
-    displayProperties_t displayProps;
-    bool haveOpenBracket = false;
 
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
@@ -197,74 +335,7 @@ bool listAllDisplays(void)
 
     for (i = 0; i < onlineDisplayCnt; i++)
     {
-
-        /* skip displays we can't get display properties for */
-
-        if (getDisplayProperties(displays[i], &displayProps) != true)
-        {
-            continue;
-        }
-
-        /* print out the dimensions of the display */
-
-        fprintf(stdout,
-                "0x%-8X: %-4dx%-4d",
-                displays[i],
-                displayProps.width,
-                displayProps.height);
-
-        /* if the display is rotated, print out the rotation angle */
-
-        if (displayProps.angle != 0)
-        {
-            fprintf(stdout, " (%f deg)", displayProps.angle);
-        }
-
-        /* print out whether the display inactive */
-
-        if (displayProps.active == false)
-        {
-            fprintf(stdout, " [%s", gStrDisplayInactive);
-            haveOpenBracket = true;
-        }
-
-        /* print out whether the display is builtin */
-
-        if (displayProps.builtin == true)
-        {
-            if (haveOpenBracket == true)
-            {
-                fprintf(stdout, ", %s", gStrDisplayBuiltin);
-            }
-            else
-            {
-                fprintf(stdout, " [%s", gStrDisplayBuiltin);
-                haveOpenBracket = true;
-            }
-        }
-
-        /* print out whether the display is the main display */
-
-        if (displayProps.main == true)
-        {
-            if (haveOpenBracket == true)
-            {
-                fprintf(stdout, ", %s", gStrDisplayMain);
-            }
-            else
-            {
-                fprintf(stdout, " [%s", gStrDisplayMain);
-                haveOpenBracket = true;
-            }
-        }
-
-        if (haveOpenBracket)
-        {
-            fprintf(stdout,"]");
-            haveOpenBracket = false;
-        }
-
-        fprintf(stdout,"\n");
+        printDisplayProps(displays[i]);
     }
 
     return true;
