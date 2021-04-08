@@ -6,10 +6,13 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.0.1 (04/08/2021) - Add support for additional information available
+                            through CGDisplayModeRef
 
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
-              https://developer.apple.com/documentation/coregraphics/quartz_display_services#1655882
+              https://developer.apple.com/documentation/coregraphics/quartz_display_services
               https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/DisplayInfo.html
+              https://github.com/nriley/brightness/blob/master/brightness.c
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -56,6 +59,7 @@ typedef struct
     bool mirrored;
     bool accelerated;
     bool uiCapable;
+    bool stereo;
 } displayProperties_t;
 
 /* strings to select list mode */
@@ -77,6 +81,7 @@ static const char *gStrDisplayBuiltin     = "builtin";
 static const char *gStrDisplayAccelerated = "opengl";
 static const char *gStrDisplayUICapable   = "ui";
 static const char *gStrDisplayMirrored    = "mirrored";
+static const char *gStrDisplayStereo      = "stereo";
 
 /* error messages */
 
@@ -87,6 +92,8 @@ static const char *gStrErrListDisplays = "cannot get display information";
 static bool getDisplayProperties(CGDirectDisplayID displayId,
                                  displayProperties_t *props);
 static bool printDisplayProps(CGDirectDisplayID display);
+
+/* private functions */
 
 /* getDisplayProperties - get the properties for the specified display */
 
@@ -106,6 +113,10 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
     props->widthInPts = CGDisplayPixelsWide(displayId);
     props->angle = CGDisplayRotation(displayId);
     props->accelerated = CGDisplayUsesOpenGLAcceleration(displayId);
+    props->stereo = CGDisplayIsStereo(displayId);
+    props->builtin = CGDisplayIsBuiltin(displayId);
+    props->main = CGDisplayIsMain(displayId);
+    props->mirrored = CGDisplayIsInMirrorSet(displayId);
 
     size = CGDisplayScreenSize(displayId);
     if (size.width > 0 && size.height > 0)
@@ -119,17 +130,16 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
         props->widthInMM = 0.0;
     }
 
-    props->active = false;
     if (CGDisplayIsActive(displayId) == true &&
         CGDisplayIsOnline(displayId) == true &&
         CGDisplayIsAsleep(displayId) != true)
     {
         props->active = true;
     }
-
-    props->builtin = CGDisplayIsBuiltin(displayId);
-    props->main = CGDisplayIsMain(displayId);
-    props->mirrored = CGDisplayIsInMirrorSet(displayId);
+    else
+    {
+        props->active = false;
+    }
 
     mode = CGDisplayCopyDisplayMode(displayId);
     if (mode != NULL)
@@ -149,20 +159,6 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
     }
 
     return true;
-}
-
-/* printListDisplaysUsage - print usage message list mode */
-
-void printListDisplaysUsage(void)
-{
-    fprintf(stderr,
-            "%s [%s|%s [%s|%s]]\n",
-            gPgmName,
-            gStrModeListDisplaysLong,
-            gStrModeListDisplaysShort,
-            gStrModeListDisplaysAll,
-            gStrModeListDisplaysMain);
-
 }
 
 /* printDisplayProps - print out a display's properties */
@@ -295,6 +291,21 @@ static bool printDisplayProps(CGDirectDisplayID display)
         }
     }
 
+    /* print out whether the display is in stereo mode */
+
+    if (displayProps.stereo == true)
+    {
+        if (haveOpenBracket == true)
+        {
+            fprintf(stdout, ", %s", gStrDisplayStereo);
+        }
+        else
+        {
+            fprintf(stdout, " [%s", gStrDisplayStereo);
+            haveOpenBracket = true;
+        }
+    }
+
     if (haveOpenBracket)
     {
         fprintf(stdout,"]");
@@ -304,6 +315,22 @@ static bool printDisplayProps(CGDirectDisplayID display)
     fprintf(stdout,"\n");
 
     return true;
+}
+
+/* public functions */
+
+/* printListDisplaysUsage - print usage message list mode */
+
+void printListDisplaysUsage(void)
+{
+    fprintf(stderr,
+            "%s [%s|%s [%s|%s]]\n",
+            gPgmName,
+            gStrModeListDisplaysLong,
+            gStrModeListDisplaysShort,
+            gStrModeListDisplaysAll,
+            gStrModeListDisplaysMain);
+
 }
 
 /* listMainDisplay - list information about the main display */
