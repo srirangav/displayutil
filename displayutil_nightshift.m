@@ -50,6 +50,8 @@ static const char *gStrErrNSStrength = "cannot get nightshift strength";
 static const char *gStrErrInvalidNSStrength
                                      = "nightshift strength must be 0.0-1.0";
 
+static const char *gStrScheduleSunset = "sunset to sunrise";
+
 /* prototypes */
 
 static bool isNightShiftAvailable(void);
@@ -172,10 +174,36 @@ bool printNightShiftStatus(void)
     }
 
     fprintf(stdout,
-            "%s: %s (%0.4f)\n",
+            "%s: %s",
             gStrModeNightShiftLong,
-            (blueLightStatus.enabled == true ? gStrOn : gStrOff),
-            nightShiftStrength);
+            (blueLightStatus.enabled == true ? gStrOn : gStrOff));
+
+    /*
+        check the nightshift mode and print out the nightshift schedule:
+
+        mode == 0: disabled
+        mode == 1: sunset to sunrise
+        mode == 2: custom schedule
+    */
+
+    if (blueLightStatus.mode != 0) {
+        if (blueLightStatus.sunsetToSunrise == true &&
+            blueLightStatus.mode == 1)
+        {
+            fprintf(stdout, ", schedule: %s", gStrScheduleSunset);
+        }
+        else
+        {
+            fprintf(stdout,
+                    ", schedule: %2d:%02d to %2d:%02d",
+                    blueLightStatus.schedule.from.hour,
+                    blueLightStatus.schedule.from.minute,
+                    blueLightStatus.schedule.to.hour,
+                    blueLightStatus.schedule.to.minute);
+        }
+    }
+
+    fprintf(stdout, ", strength = %0.2f\n", nightShiftStrength);
 
     [blueLightClient release];
 

@@ -11,6 +11,7 @@
     https://github.com/jenghis/nshift/blob/master/nshift/CBBlueLightClient.h
     https://github.com/elanini/NightShifter/blob/master/CBBlueLightClient.h
     https://github.com/Skittyblock/LightsOut/blob/master/Tweak.xm
+    https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
 */
 
 #ifndef CBBlueLightClient_h
@@ -33,7 +34,7 @@ typedef struct
 typedef struct {
     BOOL active;
     BOOL enabled;
-    BOOL sunSchedulePermitted;
+    BOOL sunsetToSunrise;
     int mode;
     CBBlueLightClient_Schedule_t schedule;
     unsigned long long disableFlags;
