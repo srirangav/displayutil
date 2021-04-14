@@ -25,10 +25,10 @@ Building:
 Notes:
 
     Accessing the current nightshift setting and/or enabling/disabling
-    nightshift is available on 10.12.4 and newer.
+    nightshift is available on MacOS X 10.12.4 and newer.
 
     Accessing the current darkmode setting and/or enabling/disabling
-    darkmode is available on 10.14 and newer.
+    darkmode is available on MacOS X 10.14 and newer.
 
 Known Bugs and Issues:
 

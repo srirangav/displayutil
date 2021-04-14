@@ -16,12 +16,17 @@ CC = cc
 
 # complier flags, based on:
 # https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/
+# https://caiorss.github.io/C-Cpp-Notes/compiler-flags-options.html
+# https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 
-CFLAGS      = -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
-              -Wmissing-prototypes -Werror=format-security \
-              -Werror=implicit-function-declaration \
+CFLAGS      = -O2 -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
+              -Wmissing-prototypes -Wconversion -Wcast-align -Wunused \
+              -Wshadow -Wold-style-cast -Wpointer-arith -Wno-missing-braces \
+              -Wformat-nonliteral -Wformat-security -Wformat-y2k \
+              -Werror -Werror=implicit-function-declaration \
+              -pedantic -pedantic-errors \
               -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS \
-              -fasynchronous-unwind-tables  -fpic \
+              -fasynchronous-unwind-tables -fpic \
               -fstack-protector-all -fstack-protector-strong -fwrapv
 CFLAGS_x64  = -fcf-protection              
 # for 10.12.3 or earlier, disable darkmode and nightshift

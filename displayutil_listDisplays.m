@@ -49,8 +49,8 @@ typedef struct
     size_t widthInPts;
     size_t heightInPixels;
     size_t widthInPixels;
-    float heightInMM;
-    float widthInMM;
+    double heightInMM;
+    double widthInMM;
     double angle;
     double refresh;
     bool active;
@@ -71,7 +71,10 @@ const char *gStrModeListDisplaysMain  = "main";
 
 /* maximum number of supported displays */
 
-static const UInt32 gMaxDisplays = 16;
+#ifndef MAXDISPLAYS
+#define MAXDISPLAYS 16
+#endif /* MAXDISPLAYS */
+static const UInt32 gMaxDisplays = MAXDISPLAYS;
 
 /* constants for listing displays */
 
@@ -177,21 +180,26 @@ static bool printDisplayProps(CGDirectDisplayID display)
         return false;
     }
 
+    /* print out the display id */
+    
+    fprintf(stdout, "0x%08X: ", display);
+    
     /* print out the dimensions of the display */
-
-    fprintf(stdout,
-            "0x%-8X: %-4lux%-4lu pts",
-            display,
-            displayProps.widthInPts,
-            displayProps.heightInPts);
 
     if (displayProps.heightInPixels > 0 &&
         displayProps.widthInPixels > 0)
     {
         fprintf(stdout,
-                " (%-4lux%-4lu px)",
+                "%-4lux%-4lu",
                 displayProps.heightInPixels,
                 displayProps.widthInPixels);
+    }
+    else
+    {
+        fprintf(stdout,
+                "%-4lux%-4lu",
+                displayProps.widthInPts,
+                displayProps.heightInPts);
     }
 
     /* if the display is rotated, print out the rotation angle */
@@ -346,7 +354,7 @@ bool listAllDisplays(void)
 {
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
-    CGDirectDisplayID displays[gMaxDisplays];
+    CGDirectDisplayID displays[MAXDISPLAYS];
 
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
