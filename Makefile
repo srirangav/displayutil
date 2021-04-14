@@ -6,7 +6,7 @@ PGM_SRCS      = displayutil_listDisplays.m \
                 displayutil.m
 PGM_SRCS_1013 = displayutil_nightshift.m
 PGM_SRCS_1014 = $(PGM_SRCS_1013) displayutil_darkmode.m
-PGM_SRCS_M1   = $(PGM_SRCS_1014)
+PGM_SRCS_11M1 = $(PGM_SRCS_1014)
 PGM           = displayutil
 PGM_REL       = 0.1.0
 PGM_FILES     = $(PGM_SRCS) $(PGM_SRCs_1014) \
@@ -22,19 +22,18 @@ CFLAGS      = -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
               -Werror=implicit-function-declaration \
               -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS \
               -fasynchronous-unwind-tables  -fpic \
-              -fstack-protector-all -fstack-protector-strong -fwrapv \
-              -fcf-protection
+              -fstack-protector-all -fstack-protector-strong -fwrapv
+CFLAGS_x64  = -fcf-protection              
 # for 10.12.3 or earlier, disable darkmode and nightshift
-CFLAGS_1011 = -DNO_DM -DNO_NS
+CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -DNO_NS
 # for 10.12.4 and 10.13.x, disable darkmode
-CFLAGS_1013 = -DNO_DM
-CFLAGS_1014 =
+CFLAGS_1013 = $(CFLAGS_x64) -DNO_DM
+CFLAGS_1014 = $(CFLAGS_x64)
 # for M1, use UniversalAccess for grayscale
-CFLAGS_M1   =  -DUSE_UA
+CFLAGS_11M1 =  -DUSE_UA
 LDFLAGS     =  -F /System/Library/PrivateFrameworks \
                -framework ApplicationServices
 # for M1, link with UniversalAccess for grayscale
-LDFLAGS_M1   = -framework UniversalAccess
 LDFLAGS_1011 =
 # for 10.12.4 and 10.13.x, link with Foundation and CoreBrightness
 # for nightshift
@@ -44,6 +43,7 @@ LDFLAGS_1013 = -framework Foundation \
 # for 10.14 or later, link with Skylight for darkmode
 # see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
 LDFLAGS_1014 = $(LDFLAGS_1013) -framework SkyLight
+LDFLAGS_11M1 = $(LDFLAGS_1014) -framework UniversalAccess
 
 all:
 	@echo "To build, use one of the following:"
@@ -51,7 +51,7 @@ all:
 	@echo "For Intel Macs on 10.12.3 or earlier: make 10.11"
 	@echo "For Intel Macs on 10.12.4 or 10.13.x: make 10.13"
 	@echo "For Intel Macs on 10.14 or later:     make 10.14"
-	@echo "For M1 Macs:                          make m1"
+	@echo "For M1 Macs:                          make 11.m1"
 	@echo
 
 10.11:
@@ -66,9 +66,9 @@ all:
 	$(CC) $(CFLAGS) $(CFLAGS_1014) -o $(PGM) $(PGM_SRCS) $(PGM_SRCS_1014) \
 	      $(LDFLAGS) $(LDFLAGS_1014)
 
-m1:
-	$(CC) $(CFLAGS) $(CFLAGS_M1) -o $(PGM) $(PGM_SRCS) $(PGM_SRCS_M1) \
-	      $(LDFLAGS) $(LDFLAGS_M1)
+11.m1:
+	$(CC) $(CFLAGS) $(CFLAGS_11M1) -o $(PGM) $(PGM_SRCS) $(PGM_SRCS_11M1) \
+	      $(LDFLAGS) $(LDFLAGS_11M1)
 
 clean:
 	/bin/rm -f *.o *~ core .DS_Store $(PGM) $(PGM).1.txt *.tgz
