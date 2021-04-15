@@ -4,7 +4,8 @@
     History:
 
     v. 1.0.0 (04/06/2021) - Initial version
-
+    v. 1.0.1 (04/15/2021) - Restrict args to exact matches
+    
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -47,58 +48,44 @@ bool isArg(const char *arg,
            const char *longMode,
            const char *shortMode)
 {
+    size_t modeStrLen = 0;
+    
     if (arg == NULL || arg[0] == '\0')
     {
         return false;
     }
 
-    if (longMode != NULL &&
-        strncasecmp(arg, longMode, strlen(longMode)) == 0)
+    if (longMode != NULL) 
     {
-        return true;
+        modeStrLen = strlen(longMode);
+        if (strncasecmp(arg, longMode, modeStrLen) == 0)
+        {
+            return (strlen(arg) == modeStrLen ? true : false);
+        }
     }
 
-    if (shortMode != NULL &&
-        strncasecmp(arg, shortMode, strlen(shortMode)) == 0)
+    if (shortMode != NULL)
     {
-        return true;
+        modeStrLen = strlen(shortMode);
+        if (strncasecmp(arg, shortMode, modeStrLen) == 0)
+        {
+            return (strlen(arg) == modeStrLen ? true : false);
+        }
     }
 
     return false;
 }
 
-/* isArg - check if the arg is enable mode */
+/* isArgEnable - check if the arg is enable mode */
 
 bool isArgEnable(const char *arg)
 {
-    if (arg == NULL)
-    {
-        return false;
-    }
-
-    if (strncasecmp(arg, gStrOn, strlen(gStrOn)) == 0 ||
-        strncasecmp(arg, gStrEnable, strlen(gStrEnable)) == 0)
-    {
-        return true;
-    }
-
-    return false;
+    return isArg(arg, gStrEnable, gStrOn);
 }
 
-/* isArg - check if the arg is disable mode */
+/* isArgDisable - check if the arg is disable mode */
 
 bool isArgDisable(const char *arg)
 {
-    if (arg == NULL)
-    {
-        return false;
-    }
-
-    if (strncasecmp(arg, gStrOff, strlen(gStrOff)) == 0 ||
-        strncasecmp(arg, gStrDisable, strlen(gStrDisable)) == 0)
-    {
-        return true;
-    }
-
-    return false;
+    return isArg(arg, gStrDisable, gStrOff);
 }
