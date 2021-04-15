@@ -13,14 +13,16 @@ Usage:
     displayutil [darkmode|dm] [on|enable|off|disable]
     displayutil [grayscale|gs] [on|enable|off|disable]
     displayutil [list|ls [all|main]]
-    displayutil [nightshift|ns] [[on|enable|off|disable] | 0.0 - 1.0]
+    displayutil [nightshift|ns] [ [on|enable|off|disable] | 
+                                  [schedule [sunset|disable]] | 
+                                  0.0 - 1.0 ]
 
 Building:
 
     For Intel Macs running 10.12.3 or earlier:  make 10.11
     For Intel Macs running 10.12.4 or 10.13.x:  make 10.13
     For Intel Macs running 10.14 or later:      make 10.14
-    For M1 Macs:                                make m1
+    For M1 Macs running 11.0 or later:          make 11.m1
 
 Notes:
 
@@ -34,6 +36,9 @@ Known Bugs and Issues:
 
     Sometimes there is a delay in turning darkmode on or off and/or
     it takes a few tries.
+    
+    Enabling nightshift's sunset to sunrise mode may require location
+    services to be enabled.
 
 History:
 

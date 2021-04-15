@@ -4,7 +4,8 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
-
+    v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
+    
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -242,7 +243,6 @@ int main (int argc, char** argv)
         {
             return (printNightShiftStatus(nightShiftStatusAll) == true ?
                        gDisplayUtilECOkay : gDisplayUtilECErr);
-            return gDisplayUtilECErr;
         }
 
         /* enable nightshift */
@@ -275,8 +275,8 @@ int main (int argc, char** argv)
         {
             if (argc < 4)
             {
-                printNightShiftUsage();
-                return gDisplayUtilECErr;
+                return (printNightShiftStatus(nightShiftStatusScheduleOnly) == true ?
+                           gDisplayUtilECOkay : gDisplayUtilECErr);
             }
 
             /* disable the nightshift schedule */

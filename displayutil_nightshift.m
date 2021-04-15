@@ -4,6 +4,7 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -38,6 +39,7 @@ const char *gStrModeNightShiftLong           = "nightshift";
 const char *gStrModeNightShiftShort          = "ns";
 const char *gStrModeNightShiftSchedule       = "schedule";
 const char *gStrModeNightShiftScheduleSunset = "sunset";
+const char *gStrModeNightShiftScheduleNone   = "none";
 
 /* nightshift constants */
 
@@ -207,24 +209,61 @@ bool printNightShiftStatus(nightShiftStatus_t status)
             if (blueLightStatus.sunsetToSunrise == true &&
                 blueLightStatus.mode == 1)
             {
-                fprintf(stdout, ", schedule: %s", gStrScheduleSunset);
+                if (status == nightShiftStatusAll)
+                {
+                    fprintf(stdout, 
+                            ", %s: %s", 
+                            gStrModeNightShiftSchedule,
+                            gStrScheduleSunset);
+                }
+                else
+                {
+                    fprintf(stdout, 
+                            "%s: %s: %s\n", 
+                            gStrModeNightShiftSchedule,
+                            gStrModeNightShiftLong,
+                            gStrScheduleSunset);
+                }
             }
             else
             {
-                fprintf(stdout,
-                        ", schedule: %2d:%02d to %2d:%02d",
-                        blueLightStatus.schedule.from.hour,
-                        blueLightStatus.schedule.from.minute,
-                        blueLightStatus.schedule.to.hour,
-                        blueLightStatus.schedule.to.minute);
+                if (status == nightShiftStatusAll)
+                {
+                    fprintf(stdout,
+                            ", %s: %2d:%02d to %2d:%02d",
+                            gStrModeNightShiftSchedule,
+                            blueLightStatus.schedule.from.hour,
+                            blueLightStatus.schedule.from.minute,
+                            blueLightStatus.schedule.to.hour,
+                            blueLightStatus.schedule.to.minute);
+                }
+                else 
+                {
+                    fprintf(stdout,
+                            "%s: %s: %2d:%02d to %2d:%02d\n",
+                            gStrModeNightShiftLong,
+                            gStrModeNightShiftSchedule,
+                            blueLightStatus.schedule.from.hour,
+                            blueLightStatus.schedule.from.minute,
+                            blueLightStatus.schedule.to.hour,
+                            blueLightStatus.schedule.to.minute);
+                }
             }
+        }
+        else if (status == nightShiftStatusScheduleOnly)
+        {
+            fprintf(stdout, 
+            "%s: %s: %s\n", 
+            gStrModeNightShiftLong,
+            gStrModeNightShiftSchedule, 
+            gStrModeNightShiftScheduleNone);        
         }
     }
 
     if (status == nightShiftStatusAll ||
         status == nightShiftStatusStrengthOnly)
     {
-        fprintf(stdout, ", strength = %0.2f\n", nightShiftStrength);
+        fprintf(stdout, ", strength: %0.2f\n", nightShiftStrength);
     }
 
     [blueLightClient release];

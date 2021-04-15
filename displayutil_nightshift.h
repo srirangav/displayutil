@@ -4,6 +4,7 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -30,6 +31,8 @@
 #define displayutil_nightshift_h
 
 #import <ApplicationServices/ApplicationServices.h>
+
+/* modes for printing out nightshift information */
 
 typedef enum
 {
