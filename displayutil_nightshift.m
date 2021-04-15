@@ -34,12 +34,15 @@
 
 /* strings to select nightshift mode */
 
-const char *gStrModeNightShiftLong  = "nightshift";
-const char *gStrModeNightShiftShort = "ns";
+const char *gStrModeNightShiftLong           = "nightshift";
+const char *gStrModeNightShiftShort          = "ns";
+const char *gStrModeNightShiftSchedule       = "schedule";
+const char *gStrModeNightShiftScheduleSunset = "sunset";
 
 /* nightshift constants */
 
 static const char *gStrNightShiftRange = "0.0 - 1.0";
+static const char *gStrScheduleSunset  = "sunset to sunrise";
 
 /* error messages */
 
@@ -49,8 +52,10 @@ static const char *gStrErrNSStatus   = "cannot get nightshift status";
 static const char *gStrErrNSStrength = "cannot get nightshift strength";
 static const char *gStrErrInvalidNSStrength
                                      = "nightshift strength must be 0.0-1.0";
-
-static const char *gStrScheduleSunset = "sunset to sunrise";
+static const char *gStrErrNSSetStrength
+                                     = "cannot change nightshift strength";
+static const char *gStrErrNSSetState = "cannot update nightshift state";
+static const char *gStrErrNSMode     = "cannot change nightshift schedule";
 
 /* prototypes */
 
@@ -114,7 +119,7 @@ static bool setNightShiftEnabled(bool status)
 void printNightShiftUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s] [[%s|%s|%s|%s] | %s]\n",
+            "%s [%s|%s] [[%s|%s|%s|%s] | [%s [%s|%s]] | %s]\n",
             gPgmName,
             gStrModeNightShiftLong,
             gStrModeNightShiftShort,
@@ -122,12 +127,15 @@ void printNightShiftUsage(void)
             gStrEnable,
             gStrOff,
             gStrDisable,
+            gStrModeNightShiftSchedule,
+            gStrModeNightShiftScheduleSunset,
+            gStrDisable,
             gStrNightShiftRange);
 }
 
 /* printNightShiftStatus - print the current status of nightshift */
 
-bool printNightShiftStatus(void)
+bool printNightShiftStatus(nightShiftStatus_t status)
 {
     CBBlueLightClient *blueLightClient = nil;
     CBBlueLightClient_StatusData_t blueLightStatus;
@@ -152,7 +160,6 @@ bool printNightShiftStatus(void)
         return false;
     }
 
-
     if ([blueLightClient getBlueLightStatus: &blueLightStatus] != true)
     {
         fprintf(stderr,
@@ -163,47 +170,62 @@ bool printNightShiftStatus(void)
         return false;
     }
 
-    if ([blueLightClient getStrength: &nightShiftStrength] != true)
+    if (status == nightShiftStatusAll ||
+        status == nightShiftStatusStrengthOnly)
     {
-        fprintf(stderr,
-                "%s: error: %s\n",
-                gStrModeNightShiftLong,
-                gStrErrNSStrength);
-        [blueLightClient release];
-        return false;
+        if ([blueLightClient getStrength: &nightShiftStrength] != true)
+        {
+            fprintf(stderr,
+                    "%s: error: %s\n",
+                    gStrModeNightShiftLong,
+                    gStrErrNSStrength);
+            [blueLightClient release];
+            return false;
+        }
     }
 
-    fprintf(stdout,
-            "%s: %s",
-            gStrModeNightShiftLong,
-            (blueLightStatus.enabled == true ? gStrOn : gStrOff));
+    if (status == nightShiftStatusAll)
+    {
+        fprintf(stdout,
+                "%s: %s",
+                gStrModeNightShiftLong,
+                (blueLightStatus.enabled == true ? gStrOn : gStrOff));
+    }
 
     /*
         check the nightshift mode and print out the nightshift schedule:
 
-        mode == 0: disabled
+        mode == 0: no schedule
         mode == 1: sunset to sunrise
         mode == 2: custom schedule
     */
 
-    if (blueLightStatus.mode != 0) {
-        if (blueLightStatus.sunsetToSunrise == true &&
-            blueLightStatus.mode == 1)
-        {
-            fprintf(stdout, ", schedule: %s", gStrScheduleSunset);
-        }
-        else
-        {
-            fprintf(stdout,
-                    ", schedule: %2d:%02d to %2d:%02d",
-                    blueLightStatus.schedule.from.hour,
-                    blueLightStatus.schedule.from.minute,
-                    blueLightStatus.schedule.to.hour,
-                    blueLightStatus.schedule.to.minute);
+    if (status == nightShiftStatusAll ||
+        status == nightShiftStatusScheduleOnly)
+    {
+        if (blueLightStatus.mode != 0) {
+            if (blueLightStatus.sunsetToSunrise == true &&
+                blueLightStatus.mode == 1)
+            {
+                fprintf(stdout, ", schedule: %s", gStrScheduleSunset);
+            }
+            else
+            {
+                fprintf(stdout,
+                        ", schedule: %2d:%02d to %2d:%02d",
+                        blueLightStatus.schedule.from.hour,
+                        blueLightStatus.schedule.from.minute,
+                        blueLightStatus.schedule.to.hour,
+                        blueLightStatus.schedule.to.minute);
+            }
         }
     }
 
-    fprintf(stdout, ", strength = %0.2f\n", nightShiftStrength);
+    if (status == nightShiftStatusAll ||
+        status == nightShiftStatusStrengthOnly)
+    {
+        fprintf(stdout, ", strength = %0.2f\n", nightShiftStrength);
+    }
 
     [blueLightClient release];
 
@@ -229,29 +251,106 @@ bool nightShiftDisable(void)
 bool setNightShiftStrength(float strength)
 {
     CBBlueLightClient *blueLightClient = nil;
+    bool retcode = false;
 
     if (strength < 0.0 || strength > 1.0)
     {
         fprintf(stderr, "error: %s\n", gStrErrInvalidNSStrength);
-        return false;
+        return retcode;
     }
 
     if (isNightShiftAvailable() != true)
     {
         fprintf(stderr, "error: %s\n", gStrErrNoNS);
-        return false;
+        return retcode;
     }
 
     blueLightClient = [[CBBlueLightClient alloc] init];
     if (blueLightClient == nil)
     {
         fprintf(stderr, "error: %s\n", gStrErrNoNSClient);
-        return false;
+        return retcode;
     }
 
-    [blueLightClient setStrength: strength commit: TRUE];
-    [blueLightClient setEnabled: (strength == 0.0 ? FALSE : TRUE)];
+    if ([blueLightClient setStrength: strength commit: TRUE] != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNSSetStrength);
+        [blueLightClient release];
+        return retcode;
+    }
+
+    retcode = [blueLightClient setEnabled: (strength == 0.0 ? FALSE : TRUE)];
     [blueLightClient release];
 
-    return true;
+    if (retcode != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNSSetState);
+    }
+
+    return retcode;
+}
+
+/* nightShiftScheduleDisable - disable the nightshift schedule */
+
+bool nightShiftScheduleDisable(void)
+{
+    CBBlueLightClient *blueLightClient = nil;
+    bool retcode = false;
+
+    if (isNightShiftAvailable() != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNoNS);
+        return retcode;
+    }
+
+    blueLightClient = [[CBBlueLightClient alloc] init];
+    if (blueLightClient == nil)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNoNSClient);
+        return retcode;
+    }
+
+    retcode = [blueLightClient setMode: CBBlueLightClientModeNoSchedule];
+    [blueLightClient release];
+
+    if (retcode != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNSMode);
+    }
+
+    return retcode;
+}
+
+/*
+    nightShiftScheduleSunsetSunrise - set the nightshift schedule to be
+                                      sunset to sunrise
+*/
+
+bool nightShiftScheduleSunsetSunrise(void)
+{
+    CBBlueLightClient *blueLightClient = nil;
+    bool retcode = false;
+
+    if (isNightShiftAvailable() != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNoNS);
+        return retcode;
+    }
+
+    blueLightClient = [[CBBlueLightClient alloc] init];
+    if (blueLightClient == nil)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNoNSClient);
+        return retcode;
+    }
+
+    retcode = [blueLightClient setMode: CBBlueLightClientModeSunsetSunrise];
+    [blueLightClient release];
+
+    if (retcode != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNSMode);
+    }
+
+    return retcode;
 }

@@ -240,7 +240,7 @@ int main (int argc, char** argv)
 
         if (argc < 3)
         {
-            return (printNightShiftStatus() == true ?
+            return (printNightShiftStatus(nightShiftStatusAll) == true ?
                        gDisplayUtilECOkay : gDisplayUtilECErr);
             return gDisplayUtilECErr;
         }
@@ -269,7 +269,45 @@ int main (int argc, char** argv)
                        gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
-        /* see if a valid setting was specified */
+        /* update the nightshift schedule */
+
+        if (isArg(argv[2], gStrModeNightShiftSchedule, NULL) == true)
+        {
+            if (argc < 4)
+            {
+                printNightShiftUsage();
+                return gDisplayUtilECErr;
+            }
+
+            /* disable the nightshift schedule */
+
+            if (isArg(argv[3], gStrDisable, NULL) == true)
+            {
+                return (nightShiftScheduleDisable() == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
+            }
+
+            /* set the nightshift schedule to sunset to sunrise */
+
+            if (isArg(argv[3],
+                      gStrModeNightShiftScheduleSunset,
+                      NULL) == true)
+            {
+                return (nightShiftScheduleSunsetSunrise() == true ?
+                       gDisplayUtilECOkay : gDisplayUtilECErr);
+            }
+
+            fprintf(stderr,
+                    "%s: error: %s: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeNightShiftLong,
+                     gStrModeNightShiftSchedule,
+                     argv[3]);
+            printNightShiftUsage();
+            return gDisplayUtilECErr;
+        }
+
+        /* see if a valid strength setting was specified */
 
         nightShiftStrength = strtof(argv[2], &endptr);
         if ((nightShiftStrength >= 0.0 &&

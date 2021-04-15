@@ -31,17 +31,28 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 
+typedef enum
+{
+    nightShiftStatusAll          = 1,
+    nightShiftStatusScheduleOnly = 2,
+    nightShiftStatusStrengthOnly = 3,
+} nightShiftStatus_t;
+
 /* strings to select nightshift mode */
 
 extern const char *gStrModeNightShiftLong;
 extern const char *gStrModeNightShiftShort;
+extern const char *gStrModeNightShiftSchedule;
+extern const char *gStrModeNightShiftScheduleSunset;
 
 /* prototypes */
 
 void  printNightShiftUsage(void);
-bool  printNightShiftStatus(void);
+bool  printNightShiftStatus(nightShiftStatus_t status);
 bool  nightShiftEnable(void);
 bool  nightShiftDisable(void);
+bool  nightShiftScheduleDisable(void);
+bool  nightShiftScheduleSunsetSunrise(void);
 bool  setNightShiftStrength(float strength);
 float getNightShiftStrength(float strength);
 

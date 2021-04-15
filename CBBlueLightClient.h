@@ -12,12 +12,20 @@
     https://github.com/elanini/NightShifter/blob/master/CBBlueLightClient.h
     https://github.com/Skittyblock/LightsOut/blob/master/Tweak.xm
     https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
+    https://github.com/nst/iOS-Runtime-Headers/blob/master/PrivateFrameworks/CoreBrightness.framework/CBBlueLightClient.h
 */
 
 #ifndef CBBlueLightClient_h
 #define CBBlueLightClient_h
 
 #import <Foundation/Foundation.h>
+
+enum
+{
+    CBBlueLightClientModeNoSchedule     = 0,
+    CBBlueLightClientModeSunsetSunrise  = 1,
+    CBBlueLightClientModeCustomSchedule = 2,
+};
 
 typedef struct
 {
@@ -49,6 +57,10 @@ typedef struct {
     - (BOOL)getStrength: (float *)strength;
 
     - (BOOL)setEnabled: (BOOL)enabled;
+
+    - (BOOL)setMode: (int)mode;
+
+    - (BOOL)setSchedule: (CBBlueLightClient_Schedule_t *)schedule;
 
     + (BOOL)supportsBlueLightReduction;
 
