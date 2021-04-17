@@ -29,6 +29,7 @@
 
 #import <stdio.h>
 #import <stdlib.h>
+#import <Foundation/Foundation.h>
 #import "CBBlueLightClient.h"
 #import "displayutil_argutils.h"
 #import "displayutil_nightshift.h"
@@ -39,12 +40,13 @@ const char *gStrModeNightShiftLong           = "nightshift";
 const char *gStrModeNightShiftShort          = "ns";
 const char *gStrModeNightShiftSchedule       = "schedule";
 const char *gStrModeNightShiftScheduleSunset = "sunset";
-const char *gStrModeNightShiftScheduleNone   = "none";
 
 /* nightshift constants */
 
-static const char *gStrNightShiftRange = "0.0 - 1.0";
-static const char *gStrScheduleSunset  = "sunset to sunrise";
+static const char *gStrNightShiftRange         = "0.0 - 1.0";
+static const char *gStrNightSiftScheduleSunset = "sunset to sunrise";
+static const char *gStrNightShiftScheduleNone  = "none";
+static const char *gStrNightShiftScheduleRange = "[h]h:mm [h]h:mm";
 
 /* error messages */
 
@@ -58,11 +60,14 @@ static const char *gStrErrNSSetStrength
                                      = "cannot change nightshift strength";
 static const char *gStrErrNSSetState = "cannot update nightshift state";
 static const char *gStrErrNSMode     = "cannot change nightshift schedule";
+static const char *gStrErrNSBadSched = "invalid schedule";
 
 /* prototypes */
 
 static bool isNightShiftAvailable(void);
 static bool setNightShiftEnabled(bool status);
+static bool isValidHourForNightShift(int hr);
+static bool isValidMinForNightShift(int min);
 
 /* private functions */
 
@@ -114,25 +119,58 @@ static bool setNightShiftEnabled(bool status)
     return true;
 }
 
+/* isValidHour - check if the specified number is a valid hour */
+
+static bool isValidHourForNightShift(int hr)
+{
+    return (hr >= 0 && hr <= 23);
+}
+
+/* isValidMin - check if the specified number is a valid minute */
+
+static bool isValidMinForNightShift(int min)
+{
+    return (min >= 0 && min <= 59);
+}
+
 /* public functions */
 
 /* printNightShiftUsage - print usage message for nightshift mode */
 
 void printNightShiftUsage(void)
 {
+    /* basic usage */
+    
     fprintf(stderr,
-            "%s [%s|%s] [[%s|%s|%s|%s] | [%s [%s|%s]] | %s]\n",
+            "%s [%s|%s] [%s|%s|%s|%s]\n",
             gPgmName,
             gStrModeNightShiftLong,
             gStrModeNightShiftShort,
             gStrOn,
             gStrEnable,
             gStrOff,
-            gStrDisable,
-            gStrModeNightShiftSchedule,
-            gStrModeNightShiftScheduleSunset,
-            gStrDisable,
+            gStrDisable);
+
+    /* set strength */
+    
+    fprintf(stderr,
+            "%s [%s|%s] [%s]\n",
+            gPgmName,
+            gStrModeNightShiftLong,
+            gStrModeNightShiftShort,
             gStrNightShiftRange);
+
+    /* schedule */
+    
+    fprintf(stderr,
+            "%s [%s|%s] [%s [%s|%s|%s]]\n",
+            gPgmName,
+            gStrModeNightShiftLong,
+            gStrModeNightShiftShort,
+            gStrModeNightShiftSchedule,
+            gStrDisable,
+            gStrModeNightShiftScheduleSunset,
+            gStrNightShiftScheduleRange);
 }
 
 /* printNightShiftStatus - print the current status of nightshift */
@@ -211,10 +249,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
             {
                 if (status == nightShiftStatusAll)
                 {
-                    fprintf(stdout, 
-                            ", %s: %s", 
-                            gStrModeNightShiftSchedule,
-                            gStrScheduleSunset);
+                    fprintf(stdout, " (from %s)", gStrNightSiftScheduleSunset);
                 }
                 else
                 {
@@ -222,7 +257,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
                             "%s: %s: %s\n", 
                             gStrModeNightShiftSchedule,
                             gStrModeNightShiftLong,
-                            gStrScheduleSunset);
+                            gStrNightSiftScheduleSunset);
                 }
             }
             else
@@ -230,8 +265,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
                 if (status == nightShiftStatusAll)
                 {
                     fprintf(stdout,
-                            ", %s: %2d:%02d to %2d:%02d",
-                            gStrModeNightShiftSchedule,
+                            " (from %d:%02d to %d:%02d)",
                             blueLightStatus.schedule.from.hour,
                             blueLightStatus.schedule.from.minute,
                             blueLightStatus.schedule.to.hour,
@@ -240,7 +274,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
                 else 
                 {
                     fprintf(stdout,
-                            "%s: %s: %2d:%02d to %2d:%02d\n",
+                            "%s: %s: %d:%02d to %d:%02d\n",
                             gStrModeNightShiftLong,
                             gStrModeNightShiftSchedule,
                             blueLightStatus.schedule.from.hour,
@@ -256,7 +290,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
             "%s: %s: %s\n", 
             gStrModeNightShiftLong,
             gStrModeNightShiftSchedule, 
-            gStrModeNightShiftScheduleNone);        
+            gStrNightShiftScheduleNone);        
         }
     }
 
@@ -392,4 +426,134 @@ bool nightShiftScheduleSunsetSunrise(void)
     }
 
     return retcode;
+}
+
+/* nightShiftSchedule - set the nightshift schedule */
+
+bool nightShiftSchedule(int startHr, int startMin, int endHr, int endMin)
+{
+    CBBlueLightClient_Schedule_t schedule;
+    CBBlueLightClient *blueLightClient = nil;
+    bool retcode = false;
+
+    if (isNightShiftAvailable() != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNoNS);
+        return retcode;
+    }
+
+    if (isValidHourForNightShift(startHr) != true ||
+        isValidMinForNightShift(startMin) != true ||
+        isValidHourForNightShift(endHr) != true ||
+        isValidMinForNightShift(endMin) != true)
+    {
+        fprintf(stderr, 
+                "error: %s: '%02d:%02d' to %02d:%02d'\n", 
+                gStrErrNSBadSched,
+                startHr,
+                startMin,
+                endHr,
+                endMin);
+        return retcode;
+    }
+    
+    schedule.from.hour = startHr;
+    schedule.from.minute = startMin;
+    schedule.to.hour = endHr;
+    schedule.to.minute = endMin;
+    
+    blueLightClient = [[CBBlueLightClient alloc] init];
+    if (blueLightClient == nil)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNoNSClient);
+        return retcode;
+    }
+    
+    if ([blueLightClient setSchedule: &schedule] != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNSMode);
+        [blueLightClient release];
+        return retcode;
+    }
+    
+    retcode = [blueLightClient setMode: CBBlueLightClientModeCustomSchedule];
+    [blueLightClient release];
+
+    if (retcode != true)
+    {
+        fprintf(stderr, "error: %s\n", gStrErrNSMode);
+    }
+
+    return retcode;
+}
+
+/* 
+    strToTimeComponents - if an argument is a valid time ([h]h:[m]m), 
+                          split it into its hour and minute components
+*/
+
+bool strToTimeComponents(const char *arg, int *hour, int *min)
+{
+    NSString *argStr = nil;
+    NSArray *argComponents = nil;
+    int hourRaw = 0, minRaw = 0;
+    
+    if (arg == NULL || hour == NULL || min == NULL)
+    {
+        return false;
+    }
+
+    argStr = [[NSString alloc] initWithUTF8String: arg];
+    if (argStr == nil)
+    {
+        return false;
+    }
+
+    /* 
+        if the argument is a valid time it should be in the form [h]h:mm, 
+        so the array created by splitting the argument should only have
+        2 components. 
+    */
+        
+    argComponents = [argStr componentsSeparatedByString:@":"];
+    if (argComponents == nil || [argComponents count] != 2)
+    {
+        [argStr release];
+        return false;
+    }
+    
+    if ([[argComponents objectAtIndex:0] 
+            isKindOfClass:[NSString class]] != true ||
+        [[argComponents objectAtIndex:1] 
+            isKindOfClass:[NSString class]] != true)
+    {
+        [argComponents release];
+        [argStr release];
+        return false;
+    }
+
+    hourRaw = [[argComponents objectAtIndex:0] intValue];
+    minRaw = [[argComponents objectAtIndex:1] intValue];
+
+    [argComponents release];
+    [argStr release];
+
+    /* check if the hour is between 0 and 23 */
+    
+    if (isValidHourForNightShift(hourRaw) != true)
+    {
+        return false;
+    }   
+    
+    /* check if the min is between 0 and 59 */
+    
+    if (isValidMinForNightShift(minRaw) != true)
+    {
+        return false;
+    }
+    
+    *hour = hourRaw;
+    *min = minRaw;
+    
+    return true;
 }

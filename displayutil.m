@@ -85,6 +85,7 @@ int main (int argc, char** argv)
 #ifndef NO_NS
     float nightShiftStrength = 0;
     char *endptr = NULL;
+    int startHr = 0, startMin = 0, endHr = 0, endMin = 0;
 #endif /* NO_NS */
 
     /*
@@ -297,6 +298,42 @@ int main (int argc, char** argv)
                        gDisplayUtilECOkay : gDisplayUtilECErr);
             }
 
+            /* see if a valid time interval was specified */
+            
+            if (argc >= 5)
+            {
+                if (strToTimeComponents(argv[3], &startHr, &startMin) != true)
+                {
+                    fprintf(stderr,
+                            "%s: error: %s: %s: invalid argument: '%s'\n",
+                             gPgmName,
+                             gStrModeNightShiftLong,
+                             gStrModeNightShiftSchedule,
+                             argv[3]);
+                    printNightShiftUsage();
+                    return gDisplayUtilECErr;
+                }
+                
+                if (strToTimeComponents(argv[4], &endHr, &endMin) != true)
+                {
+                    fprintf(stderr,
+                            "%s: error: %s: %s: invalid argument: '%s'\n",
+                             gPgmName,
+                             gStrModeNightShiftLong,
+                             gStrModeNightShiftSchedule,
+                             argv[4]);
+                    printNightShiftUsage();
+                    return gDisplayUtilECErr;
+                }
+                                    
+                return (nightShiftSchedule(startHr, 
+                                           startMin, 
+                                           endHr, 
+                                           endMin) == true ?
+                        gDisplayUtilECOkay : gDisplayUtilECErr);
+
+            }
+            
             fprintf(stderr,
                     "%s: error: %s: %s: invalid argument: '%s'\n",
                      gPgmName,

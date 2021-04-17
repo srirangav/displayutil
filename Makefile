@@ -28,7 +28,7 @@ CFLAGS      = -O2 -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
               -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS \
               -fasynchronous-unwind-tables -fpic \
               -fstack-protector-all -fstack-protector-strong -fwrapv
-CFLAGS_x64  = -fcf-protection              
+CFLAGS_x64  = -fcf-protection
 # for 10.12.3 or earlier, disable darkmode and nightshift
 CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -DNO_NS
 # for 10.12.4 and 10.13.x, disable darkmode

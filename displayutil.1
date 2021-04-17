@@ -4,39 +4,38 @@ displayutil - a MacOSX utility for manipulating display related settings.
 .SH SYNOPSIS
 displayutil [mode] [options]
 .SH DESCRIPTION
-displayutil is a utility for retrieving information about the current
-darkmode, grayscale, or nightshift settings on MacOSX systems.  It can
-also display information about the active displays.
+displayutil is a utility for retrieving information about or changing 
+the darkmode, grayscale, or nightshift settings on MacOSX systems.  
+It can also list information about the active displays.
 .SH MODES & OPTIONS
 
 .TP
 .B darkmode|dm [enable|disable|on|off]
 
-Displays the current darkmode setting (on/off) if no options are specified.
+Prints the current darkmode setting (on/off) if no options are specified.
 
 The 'enable' or 'on' options enable darkmode.
 
 The 'disable' or 'off' options disable darkmode.
-
-Available on MacOS 10.14 (Mojave).
 .TP
 .B grayscale|gs [enable|disable|on|off]
 
-Displays the current grayscale setting (on/off) if no options are specified.
+Prints the current grayscale setting (on/off) if no options are specified.
 
 The 'enable' or 'on' options enable grayscale mode.
 
 The 'disable' or 'off' options disable grayscale mode.
 .TP
 .B ls|list [all|main]
+
 Lists information about all active displays if no options are specified, or
 if the 'all' option is specified.
 .TP
 .B nightshift|ns [enable|disable|on|off]
-       [schedule [sunset|disable]]
+       [schedule [disable|sunset|[h]h:mm [h]h:mm]]
        [0.0 - 1.0]
                  
-Displays the current nightshift setting (on/off) and its strength if
+Prints the current nightshift setting (on/off), its schedule and strength if
 no options are specified.
 
 The 'enable' or 'on' options enable nightshift mode.  If nightshift's
@@ -47,13 +46,25 @@ The 'off' option turns off nightshift mode.
 
 The 'disable' option turns nightshift mode off and sets its strength to 0.0.
 
-If the 'schedule' option is specified, 'sunset' enables nightshift from sunet
-to sunrise, while 'disable' disables any nightshift schedule.
+If the 'schedule' option is specified without any additional arguments, the
+current nightshift schedule (if any) is displayed.
+
+If the 'schedule' option is specified with the 'disable' argument, the 
+nightshift schedule (if any) is disabled.
+
+If the 'schedule' option is specified with the 'sunset' argument, nightshift
+is enabled from sunet to sunrise.
+
+If the 'schedule' option is specified with two arguments of the form 
+"[hour]:[min]", nightshift is enabled from the time specified by first argument
+to the time specified by the second argument.  
 
 If a value between 0.0 and 1.0 is specified instead of one of the above
-options, the nightshift strength is set to that value and enabled.
+options, the nightshift strength is set to that value and, if nightshift was
+disabled, nightshift is enabled.
 .TP
 .B \-h|help
+
 Displays a help message
 .SH PLATFORMS
 displayutil has been tested on MacOS X 10.14 (Mojave) and MacOS X 11 (Big Sur).

@@ -13,9 +13,9 @@ Usage:
     displayutil [darkmode|dm] [on|enable|off|disable]
     displayutil [grayscale|gs] [on|enable|off|disable]
     displayutil [list|ls [all|main]]
-    displayutil [nightshift|ns] [ [on|enable|off|disable] | 
-                                  [schedule [sunset|disable]] | 
-                                  0.0 - 1.0 ]
+    displayutil [nightshift|ns] [on|enable|off|disable] 
+                                [schedule [disable|sunset|[h]h:mm [h]h:mm]]] 
+                                [0.0 - 1.0]
 
 Building:
 
