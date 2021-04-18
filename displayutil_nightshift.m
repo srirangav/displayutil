@@ -487,14 +487,15 @@ bool nightShiftSchedule(int startHr, int startMin, int endHr, int endMin)
 }
 
 /* 
-    strToTimeComponents - if an argument is a valid time ([h]h:[m]m), 
+    strToTimeComponents - if an argument is a valid time ([h]h:mm), 
                           split it into its hour and minute components
 */
 
 bool strToTimeComponents(const char *arg, int *hour, int *min)
 {
-    NSString *argStr = nil;
+    NSString *argStr = nil, *hrStr = nil, *minStr = nil;
     NSArray *argComponents = nil;
+    NSCharacterSet *notDigits = nil;
     int hourRaw = 0, minRaw = 0;
     
     if (arg == NULL || hour == NULL || min == NULL)
@@ -515,15 +516,18 @@ bool strToTimeComponents(const char *arg, int *hour, int *min)
     */
         
     argComponents = [argStr componentsSeparatedByString:@":"];
-    if (argComponents == nil || [argComponents count] != 2)
+    if (argComponents == nil)
     {
         [argStr release];
         return false;
     }
+
+    /* invalid time if there are more than 2 substrings */
     
-    if ([[argComponents objectAtIndex:0] 
+    if ([argComponents count] != 2 ||
+        [[argComponents objectAtIndex: 0] 
             isKindOfClass:[NSString class]] != true ||
-        [[argComponents objectAtIndex:1] 
+        [[argComponents objectAtIndex: 1] 
             isKindOfClass:[NSString class]] != true)
     {
         [argComponents release];
@@ -531,26 +535,46 @@ bool strToTimeComponents(const char *arg, int *hour, int *min)
         return false;
     }
 
-    hourRaw = [[argComponents objectAtIndex:0] intValue];
-    minRaw = [[argComponents objectAtIndex:1] intValue];
+    hrStr = [argComponents objectAtIndex: 0];
+    minStr = [argComponents objectAtIndex: 1];
 
-    [argComponents release];
-    [argStr release];
-
-    /* check if the hour is between 0 and 23 */
+    /* 
+        valid hour and min should contain only digits, the hour string should 
+        be no longer than 2 numbers, and the min string should contains exactly 
+        two numbers
+        based on: https://samplecodebank.blogspot.com/2013/06/NSCharacterSet-decimalDigitCharacterSet-example.html
+    */
     
-    if (isValidHourForNightShift(hourRaw) != true)
+    notDigits = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
+    
+    if ([hrStr isEqualToString: @""] ||
+        [hrStr length] > 2 ||
+        [hrStr rangeOfCharacterFromSet: notDigits].location != NSNotFound ||
+        [minStr isEqualToString: @""] ||
+        [minStr length] != 2 ||
+        [minStr rangeOfCharacterFromSet: notDigits].location != NSNotFound)
     {
-        return false;
-    }   
-    
-    /* check if the min is between 0 and 59 */
-    
-    if (isValidMinForNightShift(minRaw) != true)
-    {
+        [notDigits release];
+        [argComponents release];
+        [argStr release];
         return false;
     }
     
+    hourRaw = [hrStr intValue];
+    minRaw = [minStr intValue];
+
+    [notDigits release];
+    [argComponents release];
+    [argStr release];
+
+    /* check if the hour and min are valid */
+    
+    if (isValidHourForNightShift(hourRaw) != true || 
+        isValidMinForNightShift(minRaw) != true)
+    {
+        return false;
+    }   
+        
     *hour = hourRaw;
     *min = minRaw;
     
