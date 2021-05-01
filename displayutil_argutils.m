@@ -41,6 +41,7 @@ const char *gStrOn      = "on";
 const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
 const char *gStrStatus  = "status";
+const char *gStrUnavail = "unavailable";
 
 /* isArg - check if the arg is the requested mode */
 

@@ -1,9 +1,9 @@
 /*
-    displayutil - displayutil_argutils.h
+    displayutil - displayutil_truetone.h
 
     History:
 
-    v. 1.0.0 (04/06/2021) - Initial version
+    v. 1.0.0 (04/29/2021) - Initial version
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -26,30 +26,28 @@
     DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef displayutil_argutils_h
-#define displayutil_argutils_h
+#ifndef displayutil_truetone_h
+#define displayutil_truetone_h
 
 #import <ApplicationServices/ApplicationServices.h>
 
-/* program name */
+typedef enum
+{
+    trueToneDisabled     = 0,
+    trueToneEnabled      = 1,
+    trueToneNotSupported = 2,
+} trueToneStatus_t;
 
-extern const char *gPgmName;
+/* strings to select truetone mode */
 
-/* option strings */
-
-extern const char *gStrEnable;
-extern const char *gStrOn;
-extern const char *gStrDisable;
-extern const char *gStrOff;
-extern const char *gStrStatus;
-extern const char *gStrUnavail;
+extern const char *gStrModeTrueToneLong;
+extern const char *gStrModeTrueToneShort;
 
 /* prototypes */
 
-bool isArg(const char *arg,
-           const char *longMode,
-           const char *shortMode);
-bool isArgEnable(const char *arg);
-bool isArgDisable(const char *arg);
+void printTrueToneUsage(void);
+trueToneStatus_t isTrueToneEnabled(void);
+bool trueToneEnable(void);
+bool trueToneDisable(void);
 
-#endif /* displayutil_argutils_h */
+#endif /* displayutil_truetone_h */

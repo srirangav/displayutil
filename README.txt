@@ -1,12 +1,12 @@
 README
 ------
 
-displayutil v0.1.0
+displayutil v0.2.0
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 displayutil is a command line utility for retrieving information about,
-enabling, or disabling darkmode, grayscale, and night shift on MacOS X
-systems.  It can also list some information about active displays.
+enabling, or disabling darkmode, grayscale, nightshift, and truetone on 
+MacOS X systems.  It can also list some information about active displays.
 
 Usage:
 
@@ -16,6 +16,7 @@ Usage:
     displayutil [nightshift|ns] [on|enable|off|disable] 
                                 [schedule [disable|sunset|[h]h:mm [h]h:mm]]] 
                                 [0.0 - 1.0]
+    displayutil [truetone|tt] [on|enable|off|disable]
 
 Building:
 
@@ -32,6 +33,9 @@ Notes:
     Accessing the current darkmode setting and/or enabling/disabling
     darkmode is available on MacOS X 10.14 and newer.
 
+    Accessing the current truetone setting and/or enabling/disabling
+    truetone is available on MacOS X 11.x and newer (M1).
+
 Known Bugs and Issues:
 
     Sometimes there is a delay in turning darkmode on or off and/or
@@ -43,6 +47,7 @@ Known Bugs and Issues:
 History:
 
     v0.1.0 - initial release
+    v0.2.0 - add support for truetone
 
 License:
 

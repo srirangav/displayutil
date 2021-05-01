@@ -5,6 +5,7 @@
 
     v. 1.0.0 (04/01/2021) - Initial version
     v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
+    v. 1.0.2 (04/30/2021) - Add support for truetone
     
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -38,12 +39,15 @@
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
 #import "displayutil_grayscale.h"
-#ifndef NO_NS
-#import "displayutil_nightshift.h"
-#endif /* NO_NS */
 #ifndef NO_DM
 #import "displayutil_darkmode.h"
 #endif /* NO_DM */
+#ifndef NO_NS
+#import "displayutil_nightshift.h"
+#endif /* NO_NS */
+#ifndef NO_TT
+#import "displayutil_truetone.h"
+#endif /* NO_TT */
 
 enum
 {
@@ -75,6 +79,11 @@ static void printUsage(void)
 #ifndef NO_NS
     printNightShiftUsage();
 #endif /* NO_NS */
+
+#ifndef NO_TT
+    printTrueToneUsage();
+#endif /* NO_TT */
+
 }
 
 /* main */
@@ -87,6 +96,9 @@ int main (int argc, char** argv)
     char *endptr = NULL;
     int startHr = 0, startMin = 0, endHr = 0, endMin = 0;
 #endif /* NO_NS */
+#ifndef NO_TT
+    trueToneStatus_t ttStatus;
+#endif /* NO_TT */
 
     /*
         print a usage message if help mode was specified or if no mode was
@@ -366,6 +378,64 @@ int main (int argc, char** argv)
         return gDisplayUtilECErr;
     }
 #endif /* NO_NS */
+
+#ifndef NO_TT
+    if (isArg(argv[1], gStrModeTrueToneLong, gStrModeTrueToneShort) == true)
+    {
+
+        /* if no arguments, just display the current truetone setting */
+
+        if (argc < 3 ||
+            argv[2] == NULL || argv[2][0] == '\0')
+        {
+            ttStatus = isTrueToneEnabled();
+            
+            fprintf(stdout, "%s: ", gStrModeTrueToneLong);
+            
+            switch(ttStatus)
+            {
+                case trueToneDisabled:
+                    fprintf(stdout, "%s\n", gStrOff);
+                    break;
+                case trueToneEnabled:
+                    fprintf(stdout, "%s\n", gStrOn);
+                    break;
+                default:
+                    fprintf(stdout, "%s\n", gStrUnavail);
+                    break;                
+            }
+            return gDisplayUtilECOkay;
+        }
+
+        /* enable truetone */
+
+        if (isArgEnable(argv[2]) == true)
+        {
+            return (trueToneEnable() ?
+                gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+
+        /* disable truetone */
+
+        if (isArgDisable(argv[2]) == true)
+        {
+            return (trueToneDisable() ?
+                gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+
+        /* unknown or unsupported option for truetone */
+
+        fprintf(stderr,
+                "%s: error: %s: invalid argument: '%s'\n",
+                 gPgmName,
+                 gStrModeTrueToneLong,
+                 argv[2]);
+
+        printTrueToneUsage();
+
+        return gDisplayUtilECErr;
+    }
+#endif /* NO_TT */
 
     /* unsupported or unknown mode */
 

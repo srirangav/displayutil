@@ -6,10 +6,17 @@ PGM_SRCS      = displayutil_listDisplays.m \
                 displayutil.m
 PGM_SRCS_1013 = displayutil_nightshift.m
 PGM_SRCS_1014 = $(PGM_SRCS_1013) displayutil_darkmode.m
-PGM_SRCS_11M1 = $(PGM_SRCS_1014)
+PGM_SRCS_11M1 = $(PGM_SRCS_1014) displayutil_truetone.m
+PGM_HEADERS   = CBBlueLightClient.h \
+                CBTrueToneClient.h \
+                displayutil_argutils.h \
+                displayutil_darkmode.h \
+                displayutil_grayscale.h \
+                displayutil_listDisplays.h \
+                displayutil_nightshift.h
 PGM           = displayutil
-PGM_REL       = 0.1.0
-PGM_FILES     = $(PGM_SRCS) $(PGM_SRCs_1014) \
+PGM_REL       = 0.2.0
+PGM_FILES     = $(PGM_SRCS) $(PGM_SRCs_1014) $(PGM_HEADERS) \
                 $(PGM).1 Makefile README.txt LICENSE.txt
 
 CC = cc
@@ -97,3 +104,4 @@ install:
 	@echo "cp $(PGM).1 ~/man/man1"
 	@echo
 	@echo "Add ~/bin to PATH and ~/man to MANPATH"
+

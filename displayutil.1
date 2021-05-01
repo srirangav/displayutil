@@ -63,17 +63,29 @@ If a value between 0.0 and 1.0 is specified instead of one of the above
 options, the nightshift strength is set to that value and, if nightshift was
 disabled, nightshift is enabled.
 .TP
+.B truetone|tt [enable|disable|on|off]
+
+Prints the current truetone setting (on/off) if no options are specified.
+
+The 'enable' or 'on' options enable truetone.
+
+The 'disable' or 'off' options disable truetone.
+.TP
 .B \-h|help
 
 Displays a help message
 .SH PLATFORMS
 displayutil has been tested on MacOS X 10.14 (Mojave) and MacOS X 11 (Big Sur).
 
+Accessing the current darkmode setting and/or enabling/disabling
+darkmode is available on 10.14 and newer.
+
 Accessing the current nightshift setting and/or enabling/disabling
 nightshift is available on 10.12.4 and newer.
 
-Accessing the current darkmode setting and/or enabling/disabling
-darkmode is available on 10.14 and newer.
+Accessing the current truetone setting and/or enabling/disabling
+truetone has only been tested on MacOS X 11 (M1).
+
 .SH KNOWN ISSUES AND BUGS
 Sometimes there is a delay in turning darkmode on or off and/or it takes 
 a few tries.
