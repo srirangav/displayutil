@@ -38,10 +38,10 @@ CFLAGS      = -O2 -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
               -fasynchronous-unwind-tables -fpic \
               -fstack-protector-all -fstack-protector-strong -fwrapv
 CFLAGS_x64  = -fcf-protection
-# for 10.12.3 or earlier, disable darkmode and nightshift
+# for 10.12.3 or earlier, disable darkmode, nightshift, and truetone
 CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -DNO_NS
-# for 10.12.4 and 10.13.x, disable darkmode
-CFLAGS_1013 = $(CFLAGS_x64) -DNO_DM
+# for 10.12.4 and 10.13.x, disable darkmode and truetone
+CFLAGS_1013 = $(CFLAGS_x64) -DNO_DM -NO_TT
 CFLAGS_1014 = $(CFLAGS_x64)
 # for M1, use UniversalAccess for grayscale
 CFLAGS_11M1 =  -DUSE_UA
@@ -50,13 +50,14 @@ LDFLAGS     =  -F /System/Library/PrivateFrameworks \
 # for M1, link with UniversalAccess for grayscale
 LDFLAGS_1011 =
 # for 10.12.4 and 10.13.x, link with Foundation and CoreBrightness
-# for nightshift
+# for nightshift (and truetone for 10.14)
 # see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
 LDFLAGS_1013 = -framework Foundation \
                -framework CoreBrightness
 # for 10.14 or later, link with Skylight for darkmode
 # see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
 LDFLAGS_1014 = $(LDFLAGS_1013) -framework SkyLight
+# for M1, link with UniversalAccess for grayscale
 LDFLAGS_11M1 = $(LDFLAGS_1014) -framework UniversalAccess
 
 all:

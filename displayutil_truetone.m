@@ -39,7 +39,7 @@ const char *gStrModeTrueToneShort = "tt";
 /* error messages */
 
 static const char *gStrErrNoTTClient = "cannot create a truetone client";
-
+static const char *gStrErrTTNotAvail = "truetone not available/supported";
 /* prototypes */
 
 static bool setTrueToneEnabled(bool status);
@@ -61,8 +61,19 @@ static bool setTrueToneEnabled(bool status)
         return retVal;
     }
     
-    retVal = [trueToneClient setEnabled: status];
-
+    if ([trueToneClient supported] == true &&
+        [trueToneClient available] == true)
+    {
+        retVal = [trueToneClient setEnabled: status];
+    }
+    else
+    {
+        fprintf(stderr,
+                "%s: error: %s\n",
+                gStrModeTrueToneLong,
+                gStrErrTTNotAvail);
+    }
+    
     [trueToneClient release];
     
     return retVal;
@@ -100,7 +111,8 @@ trueToneStatus_t isTrueToneEnabled(void)
         return retVal;
     }
     
-    if ([trueToneClient supported] == true)
+    if ([trueToneClient supported] == true &&
+        [trueToneClient available] == true)
     {
         retVal = ([trueToneClient enabled] == true 
                     ? trueToneEnabled : trueToneDisabled);
