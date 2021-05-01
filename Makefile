@@ -5,8 +5,10 @@ PGM_SRCS      = displayutil_listDisplays.m \
                 displayutil_argutils.m \
                 displayutil.m
 PGM_SRCS_1013 = displayutil_nightshift.m
-PGM_SRCS_1014 = $(PGM_SRCS_1013) displayutil_darkmode.m
-PGM_SRCS_11M1 = $(PGM_SRCS_1014) displayutil_truetone.m
+PGM_SRCS_1014 = $(PGM_SRCS_1013) \
+                displayutil_darkmode.m \
+                displayutil_truetone.m
+PGM_SRCS_11M1 = $(PGM_SRCS_1014)
 PGM_HEADERS   = CBBlueLightClient.h \
                 CBTrueToneClient.h \
                 displayutil_argutils.h \
