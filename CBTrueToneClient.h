@@ -1,3 +1,12 @@
+/*
+    CBTrueToneClient.h - partial header for private true tone client framework
+
+    Based on:
+
+    $ strings /System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness
+    $ nm /System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness
+*/
+
 #ifndef CBTrueToneClient_h
 #define CBTrueToneClient_h
 

@@ -5,6 +5,7 @@
     Based on:
 
     $ strings /System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness
+    $ nm /System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness
 
     See also:
 
