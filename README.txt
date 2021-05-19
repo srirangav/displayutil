@@ -10,13 +10,34 @@ MacOS X systems.  It can also list some information about active displays.
 
 Usage:
 
-    displayutil [darkmode|dm] [on|enable|off|disable]
-    displayutil [grayscale|gs] [on|enable|off|disable]
-    displayutil [list|ls [all|main]]
-    displayutil [nightshift|ns] [on|enable|off|disable] 
-                                [schedule [disable|sunset|[h]h:mm [h]h:mm]]] 
-                                [0.0 - 1.0]
-    displayutil [truetone|tt] [on|enable|off|disable]
+    Darkmode:  
+    
+        displayutil [darkmode|dm] [on|enable|off|disable]
+
+    Grayscale: 
+
+        displayutil [grayscale|gs] [on|enable|off|disable]
+
+    List Displays: 
+    
+        displayutil [list|ls [all|main]]
+
+    Nightshift:
+    
+        displayutil [nightshift|ns] [on|enable|off|disable] 
+        
+    Nightshift schedule:
+    
+        displayutil [nightshift|ns] 
+                    [schedule [disable|sunset|[h]h:mm [h]h:mm]]] 
+
+    Nightshift strength:
+
+        displayutil [nightshift|ns] [0.0 - 1.0]
+
+    Truetone:
+    
+        displayutil [truetone|tt] [on|enable|off|disable]
 
 Building:
 
