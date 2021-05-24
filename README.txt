@@ -26,12 +26,12 @@ Usage:
     
         displayutil [nightshift|ns] [on|enable|off|disable] 
         
-    Nightshift schedule:
+        Schedule:
     
         displayutil [nightshift|ns] 
                     [schedule [disable|sunset|[h]h:mm [h]h:mm]]] 
 
-    Nightshift strength:
+        Strength:
 
         displayutil [nightshift|ns] [0.0 - 1.0]
 
