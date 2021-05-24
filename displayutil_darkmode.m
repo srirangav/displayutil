@@ -36,7 +36,11 @@
  */
 
 extern BOOL SLSGetAppearanceThemeLegacy(void);
+#ifdef USE_SLSNOTIFYING
 extern BOOL SLSSetAppearanceThemeNotifying(BOOL mode, BOOL notifyListeners);
+#else
+extern BOOL SLSSetAppearanceThemeLegacy(BOOL mode);
+#endif /* USE_SLSNOTIFYING */
 
 /* strings to select darkmode */
 
@@ -65,10 +69,18 @@ bool isDarkModeEnabled(void)
 
 bool darkModeEnable(void)
 {
+#ifdef USE_SLSNOTIFYING
     return SLSSetAppearanceThemeNotifying(true, true);
+#else
+    return SLSSetAppearanceThemeLegacy(true);
+#endif /* USE_SLSNOTIFYING */
 }
 
 bool darkModeDisable(void)
 {
+#ifdef USE_SLSNOTIFYING
     return SLSSetAppearanceThemeNotifying(false, true);
+#else
+    return SLSSetAppearanceThemeLegacy(false);
+#endif /* USE_SLSNOTIFYING */
 }
