@@ -35,8 +35,6 @@
 
 extern const char *gStrModeListDisplaysLong;
 extern const char *gStrModeListDisplaysShort;
-extern const char *gStrModeListDisplaysMain;
-extern const char *gStrModeListDisplaysAll;
 
 /* prototypes */
 

@@ -1,7 +1,7 @@
 /*
     displayutil - displayutil_listDisplays.m
 
-    lists online display
+    lists online displays
 
     History:
 
@@ -66,15 +66,6 @@ typedef struct
 
 const char *gStrModeListDisplaysLong  = "list";
 const char *gStrModeListDisplaysShort = "ls";
-const char *gStrModeListDisplaysAll   = "all";
-const char *gStrModeListDisplaysMain  = "main";
-
-/* maximum number of supported displays */
-
-#ifndef MAXDISPLAYS
-#define MAXDISPLAYS 16
-#endif /* MAXDISPLAYS */
-static const UInt32 gMaxDisplays = MAXDISPLAYS;
 
 /* constants for listing displays */
 
@@ -85,10 +76,6 @@ static const char *gStrDisplayAccelerated = "opengl";
 static const char *gStrDisplayUICapable   = "ui";
 static const char *gStrDisplayMirrored    = "mirrored";
 static const char *gStrDisplayStereo      = "stereo";
-
-/* error messages */
-
-static const char *gStrErrListDisplays = "cannot get display information";
 
 /* prototypes */
 
@@ -176,7 +163,7 @@ static bool printDisplayProps(CGDirectDisplayID display)
         fprintf(stderr,
                 "error: %s: %s\n",
                 gStrModeListDisplaysLong,
-                gStrErrListDisplays);
+                gStrErrGetDisplays);
         return false;
     }
 
@@ -336,9 +323,8 @@ void printListDisplaysUsage(void)
             gPgmName,
             gStrModeListDisplaysLong,
             gStrModeListDisplaysShort,
-            gStrModeListDisplaysAll,
-            gStrModeListDisplaysMain);
-
+            gStrAll,
+            gStrMain);
 }
 
 /* listMainDisplay - list information about the main display */
@@ -364,7 +350,7 @@ bool listAllDisplays(void)
         fprintf(stderr,
                 "error: %s: %s\n",
                 gStrModeListDisplaysLong,
-                gStrErrListDisplays);
+                gStrErrGetDisplays);
         return false;
     }
 

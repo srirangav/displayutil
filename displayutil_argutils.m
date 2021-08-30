@@ -42,6 +42,16 @@ const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
 const char *gStrStatus  = "status";
 const char *gStrUnavail = "unavailable";
+const char *gStrMain    = "main";
+const char *gStrAll     = "all";
+
+/* maximum number of supported displays */
+
+const UInt32 gMaxDisplays = MAXDISPLAYS;
+
+/* error messages */
+
+const char *gStrErrGetDisplays = "cannot get display information";
 
 /* isArg - check if the arg is the requested mode */
 

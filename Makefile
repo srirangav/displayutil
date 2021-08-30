@@ -17,7 +17,7 @@ PGM_HEADERS   = CBBlueLightClient.h \
                 displayutil_listDisplays.h \
                 displayutil_nightshift.h
 PGM           = displayutil
-PGM_REL       = 0.2.0
+PGM_REL       = 0.3.0
 PGM_FILES     = $(PGM_SRCS) $(PGM_SRCs_1014) $(PGM_HEADERS) \
                 $(PGM).1 Makefile README.txt LICENSE.txt
 
@@ -44,7 +44,7 @@ CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -DNO_NS
 CFLAGS_1013 = $(CFLAGS_x64) -DNO_DM -NO_TT
 CFLAGS_1014 = $(CFLAGS_x64)
 # for M1, use UniversalAccess for grayscale
-CFLAGS_11M1 =  -DUSE_UA
+CFLAGS_11M1 =  -DUSE_UA -DUSE_DS
 LDFLAGS     =  -F /System/Library/PrivateFrameworks \
                -framework ApplicationServices
 # for M1, link with UniversalAccess for grayscale

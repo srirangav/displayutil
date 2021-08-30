@@ -215,11 +215,11 @@ int main (int argc, char** argv)
         {
             listMainDisplayOnly = false;
         }
-        else if (isArg(argv[2], gStrModeListDisplaysAll, NULL) == true)
+        else if (isArg(argv[2], gStrAll, NULL) == true)
         {
             listMainDisplayOnly = false;
         }
-        else if (isArg(argv[2], gStrModeListDisplaysMain, NULL) == true)
+        else if (isArg(argv[2], gStrMain, NULL) == true)
         {
             listMainDisplayOnly = true;
         }

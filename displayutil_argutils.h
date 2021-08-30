@@ -43,6 +43,19 @@ extern const char *gStrDisable;
 extern const char *gStrOff;
 extern const char *gStrStatus;
 extern const char *gStrUnavail;
+extern const char *gStrMain;
+extern const char *gStrAll;
+
+/* maximum number of supported displays */
+
+#ifndef MAXDISPLAYS
+#define MAXDISPLAYS 16
+#endif /* MAXDISPLAYS */
+extern const UInt32 gMaxDisplays;
+
+/* error messages */
+
+extern const char *gStrErrGetDisplays;
 
 /* prototypes */
 
