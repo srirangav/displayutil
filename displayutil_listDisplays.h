@@ -41,6 +41,7 @@ extern const char *gStrModeListDisplaysShort;
 void printListDisplaysUsage(void);
 bool listAllDisplays(void);
 bool listMainDisplay(void);
+bool listDisplay(unsigned long display);
 
 #endif /* displayutil_listDisplays_h */
 

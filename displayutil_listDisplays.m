@@ -361,3 +361,45 @@ bool listAllDisplays(void)
 
     return true;
 }
+
+/* listDisplay - list information about the specified display */
+
+bool listDisplay(unsigned long display)
+{
+    CGDisplayErr err;
+    CGDisplayCount onlineDisplayCnt, i;
+    CGDirectDisplayID displays[MAXDISPLAYS];
+    bool ret = false;
+    
+    err = CGGetOnlineDisplayList(gMaxDisplays,
+                                 displays,
+                                 &onlineDisplayCnt);
+    if (err != kCGErrorSuccess)
+    {
+        fprintf(stderr,
+                "error: %s: %s\n",
+                gStrModeListDisplaysLong,
+                gStrErrGetDisplays);
+        return ret;
+    }
+
+    for (i = 0; i < onlineDisplayCnt; i++)
+    {
+        if (displays[i] == display) 
+        {
+            printDisplayProps(displays[i]);
+            ret = true;
+        }
+    }
+
+    if (ret == false)
+    {
+        fprintf(stderr,
+                "error: %s: %s: '%lu'\n",
+                gStrModeListDisplaysLong,
+                gStrErrNoSuchDisplay,
+                display);
+    }
+    
+    return ret;
+}

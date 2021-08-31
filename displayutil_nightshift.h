@@ -58,7 +58,6 @@ bool  nightShiftScheduleDisable(void);
 bool  nightShiftScheduleSunsetSunrise(void);
 bool  nightShiftSchedule(int startHr, int startMin, int endHr, int endMin);
 bool  setNightShiftStrength(float strength);
-float getNightShiftStrength(float strength);
 bool  strToTimeComponents(const char *arg, int *hour, int *min);
 
 #endif /* displayutil_nightshift_h */

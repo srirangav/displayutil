@@ -91,9 +91,10 @@ static void printUsage(void)
 int main (int argc, char** argv)
 {
     bool listMainDisplayOnly = false;
+    unsigned long displayId = 0;
+    char *endptr = NULL;
 #ifndef NO_NS
     float nightShiftStrength = 0;
-    char *endptr = NULL;
     int startHr = 0, startMin = 0, endHr = 0, endMin = 0;
 #endif /* NO_NS */
 #ifndef NO_TT
@@ -225,13 +226,23 @@ int main (int argc, char** argv)
         }
         else
         {
-            fprintf(stderr,
-                    "%s: error: %s: invalid argument: '%s'\n",
-                     gPgmName,
-                     gStrModeListDisplaysLong,
-                     argv[2]);
-            printListDisplaysUsage();
-            return gDisplayUtilECErr;
+            /* see if there is display id to list */
+            
+            displayId = strtoul(argv[2], &endptr, 0);
+
+            if (endptr != NULL && endptr[0] != '\0')
+            {
+                fprintf(stderr,
+                        "%s: error: %s: invalid argument: '%s'\n",
+                         gPgmName,
+                         gStrModeListDisplaysLong,
+                         argv[2]);
+                printListDisplaysUsage();
+                return gDisplayUtilECErr;
+            }
+            
+            return (listDisplay(displayId) == true ?
+                        gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         if (listMainDisplayOnly == true)

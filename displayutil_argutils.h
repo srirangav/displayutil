@@ -56,6 +56,7 @@ extern const UInt32 gMaxDisplays;
 /* error messages */
 
 extern const char *gStrErrGetDisplays;
+extern const char *gStrErrNoSuchDisplay;
 
 /* prototypes */
 

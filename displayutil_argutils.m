@@ -51,7 +51,9 @@ const UInt32 gMaxDisplays = MAXDISPLAYS;
 
 /* error messages */
 
-const char *gStrErrGetDisplays = "cannot get display information";
+const char *gStrErrGetDisplays   = "cannot get display information";
+const char *gStrErrNoSuchDisplay = "display not found";
+
 
 /* isArg - check if the arg is the requested mode */
 
