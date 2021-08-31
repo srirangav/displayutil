@@ -18,7 +18,7 @@ PGM_HEADERS   = CBBlueLightClient.h \
                 displayutil_nightshift.h
 PGM           = displayutil
 PGM_REL       = 0.3.0
-PGM_FILES     = $(PGM_SRCS) $(PGM_SRCs_1014) $(PGM_HEADERS) \
+PGM_FILES     = $(PGM_SRCS) $(PGM_SRCS_1014) $(PGM_HEADERS) \
                 $(PGM).1 Makefile README.txt LICENSE.txt
 
 CC = cc
@@ -45,9 +45,11 @@ CFLAGS_1013 = $(CFLAGS_x64) -DNO_DM -NO_TT
 CFLAGS_1014 = $(CFLAGS_x64)
 # for M1, use UniversalAccess for grayscale
 CFLAGS_11M1 =  -DUSE_UA -DUSE_DS
+
+# linker flags
+
 LDFLAGS     =  -F /System/Library/PrivateFrameworks \
                -framework ApplicationServices
-# for M1, link with UniversalAccess for grayscale
 LDFLAGS_1011 =
 # for 10.12.4 and 10.13.x, link with Foundation and CoreBrightness
 # for nightshift (and truetone for 10.14)
@@ -59,6 +61,8 @@ LDFLAGS_1013 = -framework Foundation \
 LDFLAGS_1014 = $(LDFLAGS_1013) -framework SkyLight
 # for M1, link with UniversalAccess for grayscale
 LDFLAGS_11M1 = $(LDFLAGS_1014) -framework UniversalAccess
+
+# rules
 
 all:
 	@echo "To build, use one of the following:"
