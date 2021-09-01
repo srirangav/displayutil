@@ -36,6 +36,7 @@
  */
 
 #import <stdio.h>
+#import <math.h>
 #import <IOKit/graphics/IOGraphicsLib.h>
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
@@ -191,7 +192,7 @@ static bool printDisplayProps(CGDirectDisplayID display)
 
     /* if the display is rotated, print out the rotation angle */
 
-    if (displayProps.angle != 0)
+    if (fpclassify(displayProps.angle) != FP_ZERO)
     {
         fprintf(stdout, " (%3.1f deg)", displayProps.angle);
     }

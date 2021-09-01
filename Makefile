@@ -27,17 +27,30 @@ CC = cc
 # https://developers.redhat.com/blog/2018/03/21/compiler-and-linker-flags-gcc/
 # https://caiorss.github.io/C-Cpp-Notes/compiler-flags-options.html
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+# https://airbus-seclab.github.io/c-compiler-security/clang_compilation.html
 
-CFLAGS      = -O2 -W -Wall -Wextra -Wshadow -Wcast-qual -Wmissing-declarations \
-              -Wmissing-prototypes -Wconversion -Wcast-align -Wunused \
-              -Wshadow -Wold-style-cast -Wpointer-arith -Wno-missing-braces \
-              -Wformat-nonliteral -Wformat-security -Wformat-y2k \
-              -Werror -Werror=implicit-function-declaration \
+CFLAGS      = -O2 -W -Wall -Wextra -Wpedantic -Werror -Walloca \
+              -Wcast-qual -Wconversion -Wformat=2 -Wformat-security \
+              -Wnull-dereference -Wstack-protector -Wstrict-overflow=3 \
+              -Wvla -Warray-bounds-pointer-arithmetic \
+              -Wimplicit-fallthrough -Wconditional-uninitialized \
+              -Wloop-analysis -Wshift-sign-overflow -Wswitch-enum \
+              -Wtautological-constant-in-range-compare \
+              -Wassign-enum -Wbad-function-cast -Wfloat-equal \
+              -Wformat-type-confusion -Wpointer-arith \
+              -Widiomatic-parentheses -Wunreachable-code-aggressive \
+              -Wmissing-declarations \
+              -Wshadow -Wmissing-prototypes -Wcast-align -Wunused \
+              -Wold-style-cast -Wpointer-arith -Wno-missing-braces \
+              -Wformat-nonliteral -Wformat-y2k \
+              -Werror=implicit-function-declaration \
               -pedantic -pedantic-errors \
               -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS \
-              -fasynchronous-unwind-tables -fpic \
-              -fstack-protector-all -fstack-protector-strong -fwrapv
-CFLAGS_x64  = -fcf-protection
+              -fasynchronous-unwind-tables -fpic -fPIE \
+              -fstack-protector-all -fstack-protector-strong \
+              -fstack-clash-protection -fno-sanitize-recover -fwrapv
+CFLAGS_x64  = -fcf-protection=full -fsanitize=memory -fsanitize=cfi \
+              -fsanitize=safe-stack
 # for 10.12.3 or earlier, disable darkmode, nightshift, and truetone
 CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -DNO_NS
 # for 10.12.4 and 10.13.x, disable darkmode and truetone
@@ -48,7 +61,7 @@ CFLAGS_11M1 =  -DUSE_UA -DUSE_DS
 
 # linker flags
 
-LDFLAGS     =  -F /System/Library/PrivateFrameworks \
+LDFLAGS     =  -lm -F /System/Library/PrivateFrameworks \
                -framework ApplicationServices
 LDFLAGS_1011 =
 # for 10.12.4 and 10.13.x, link with Foundation and CoreBrightness

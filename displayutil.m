@@ -411,6 +411,8 @@ int main (int argc, char** argv)
                 case trueToneEnabled:
                     fprintf(stdout, "%s\n", gStrOn);
                     break;
+                case trueToneNotSupported:
+                    /* intentionally fall through */
                 default:
                     fprintf(stdout, "%s\n", gStrUnavail);
                     break;                
