@@ -320,12 +320,13 @@ static bool printDisplayProps(CGDirectDisplayID display)
 void printListDisplaysUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s [%s|%s]]\n",
+            "%s [%s|%s] [%s|%s|%s]\n",
             gPgmName,
             gStrModeListDisplaysLong,
             gStrModeListDisplaysShort,
             gStrAll,
-            gStrMain);
+            gStrMain,
+            gStrDisp);
 }
 
 /* listMainDisplay - list information about the main display */
@@ -388,8 +389,8 @@ bool listDisplay(unsigned long display)
     {
         if (displays[i] == display) 
         {
-            printDisplayProps(displays[i]);
-            ret = true;
+            ret = printDisplayProps(displays[i]);
+            break;
         }
     }
 

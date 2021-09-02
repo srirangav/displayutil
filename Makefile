@@ -2,6 +2,7 @@
 
 PGM_SRCS      = displayutil_listDisplays.m \
                 displayutil_grayscale.m \
+                displayutil_brightness.m \
                 displayutil_argutils.m \
                 displayutil.m
 PGM_SRCS_1013 = displayutil_nightshift.m
@@ -15,7 +16,8 @@ PGM_HEADERS   = CBBlueLightClient.h \
                 displayutil_darkmode.h \
                 displayutil_grayscale.h \
                 displayutil_listDisplays.h \
-                displayutil_nightshift.h
+                displayutil_nightshift.h \
+                displayutil_brightness.h
 PGM           = displayutil
 PGM_REL       = 0.3.0
 PGM_FILES     = $(PGM_SRCS) $(PGM_SRCS_1014) $(PGM_HEADERS) \
@@ -71,9 +73,12 @@ LDFLAGS_1013 = -framework Foundation \
                -framework CoreBrightness
 # for 10.14 or later, link with Skylight for darkmode
 # see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
-LDFLAGS_1014 = $(LDFLAGS_1013) -framework SkyLight
+LDFLAGS_1014 = $(LDFLAGS_1013) \
+               -framework SkyLight
 # for M1, link with UniversalAccess for grayscale
-LDFLAGS_11M1 = $(LDFLAGS_1014) -framework UniversalAccess
+LDFLAGS_11M1 = $(LDFLAGS_1014) \
+               -framework UniversalAccess \
+               -framework DisplayServices
 
 # rules
 

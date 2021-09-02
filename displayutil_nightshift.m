@@ -248,7 +248,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
             {
                 if (status == nightShiftStatusAll)
                 {
-                    fprintf(stdout, " (from %s)", gStrNightSiftScheduleSunset);
+                    fprintf(stdout, ", schedule is from %s", gStrNightSiftScheduleSunset);
                 }
                 else
                 {
@@ -264,7 +264,7 @@ bool printNightShiftStatus(nightShiftStatus_t status)
                 if (status == nightShiftStatusAll)
                 {
                     fprintf(stdout,
-                            " (from %d:%02d to %d:%02d)",
+                            ", schedule is from %d:%02d to %d:%02d",
                             blueLightStatus.schedule.from.hour,
                             blueLightStatus.schedule.from.minute,
                             blueLightStatus.schedule.to.hour,

@@ -91,8 +91,8 @@ void grayScaleEnable(void)
 void grayScaleDisable(void)
 {
 #ifdef USE_UA
-            UAGrayscaleSetEnabled(0);
+    UAGrayscaleSetEnabled(0);
 #else
-            CGDisplayForceToGray(false);
+    CGDisplayForceToGray(false);
 #endif /* USE_UA */
 }

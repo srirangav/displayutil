@@ -44,6 +44,7 @@ const char *gStrStatus  = "status";
 const char *gStrUnavail = "unavailable";
 const char *gStrMain    = "main";
 const char *gStrAll     = "all";
+const char *gStrDisp    = "display id";
 
 /* maximum number of supported displays */
 

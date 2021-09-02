@@ -39,6 +39,7 @@
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
 #import "displayutil_grayscale.h"
+#import "displayutil_brightness.h"
 #ifndef NO_DM
 #import "displayutil_darkmode.h"
 #endif /* NO_DM */
@@ -68,6 +69,8 @@ static void printUsage(void);
 
 static void printUsage(void)
 {
+    printBrightnessUsage();
+
 #ifndef NO_DM
     printDarkModeUsage();
 #endif /* NO_DM */
@@ -75,7 +78,7 @@ static void printUsage(void)
     printGrayScaleUsage();
 
     printListDisplaysUsage();
-
+    
 #ifndef NO_NS
     printNightShiftUsage();
 #endif /* NO_NS */
@@ -254,6 +257,57 @@ int main (int argc, char** argv)
         return (listAllDisplays() == true ?
                     gDisplayUtilECOkay : gDisplayUtilECErr);
     }
+
+    /* brightness */
+
+    if (isArg(argv[1], gStrModeBrightnessLong, gStrModeBrightnessShort))
+    {
+
+        if (argc < 3)
+        {
+                printBrightnessUsage();
+                return gDisplayUtilECErr;
+        }
+        else if (isArg(argv[2], gStrAll, NULL) == true)
+        {
+            listMainDisplayOnly = false;
+        }
+        else if (isArg(argv[2], gStrMain, NULL) == true)
+        {
+            listMainDisplayOnly = true;
+        }
+        else
+        {
+            /* see if a display id is specified */
+            
+            displayId = strtoul(argv[2], &endptr, 0);
+
+            if (endptr != NULL && endptr[0] != '\0')
+            {
+                fprintf(stderr,
+                        "%s: error: %s: invalid argument: '%s'\n",
+                         gPgmName,
+                         gStrModeBrightnessLong,
+                         argv[2]);
+                printBrightnessUsage();
+                return gDisplayUtilECErr;
+            }
+
+            return (printBrightnessForDisplay(displayId) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+        
+        if (listMainDisplayOnly == true)
+        {
+            return (printBrightnessForMainDisplay() == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+
+        return (printBrightnessForAllDisplays() == true ?
+                gDisplayUtilECOkay : gDisplayUtilECErr);
+
+    }
+
 
     /* nightshift */
 

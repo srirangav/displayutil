@@ -1,9 +1,9 @@
 /*
-    displayutil - displayutil_argutils.h
+    displayutil - displayutil_brightness.h
 
     History:
 
-    v. 1.0.0 (04/06/2021) - Initial version
+    v. 1.0.0 (04/01/2021) - Initial version
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -26,45 +26,23 @@
     DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef displayutil_argutils_h
-#define displayutil_argutils_h
+#ifndef displayutil_brightness_h
+#define displayutil_brightness_h
 
 #import <ApplicationServices/ApplicationServices.h>
 
-/* program name */
+/* mode and option strings for list mode */
 
-extern const char *gPgmName;
-
-/* option strings */
-
-extern const char *gStrEnable;
-extern const char *gStrOn;
-extern const char *gStrDisable;
-extern const char *gStrOff;
-extern const char *gStrStatus;
-extern const char *gStrUnavail;
-extern const char *gStrMain;
-extern const char *gStrAll;
-extern const char *gStrDisp;
-
-/* maximum number of supported displays */
-
-#ifndef MAXDISPLAYS
-#define MAXDISPLAYS 16
-#endif /* MAXDISPLAYS */
-extern const UInt32 gMaxDisplays;
-
-/* error messages */
-
-extern const char *gStrErrGetDisplays;
-extern const char *gStrErrNoSuchDisplay;
+extern const char *gStrModeBrightnessLong;
+extern const char *gStrModeBrightnessShort;
 
 /* prototypes */
 
-bool isArg(const char *arg,
-           const char *longMode,
-           const char *shortMode);
-bool isArgEnable(const char *arg);
-bool isArgDisable(const char *arg);
+void printBrightnessUsage(void);
+bool setBrightnessForDisplay(unsigned long display, float brightness);
+bool setBrightnessForMainDisplay(float brightness);
+bool printBrightnessForDisplay(unsigned long display);
+bool printBrightnessForMainDisplay(void);
+bool printBrightnessForAllDisplays(void);
 
-#endif /* displayutil_argutils_h */
+#endif /* displayutil_brightness_h */
