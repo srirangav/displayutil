@@ -62,10 +62,14 @@ void printDarkModeUsage(void)
             gStrDisable);
 }
 
+/* isDarkModeEnabled - returns true if darkmode is enabled */
+
 bool isDarkModeEnabled(void)
 {
     return SLSGetAppearanceThemeLegacy();
 }
+
+/* darkModeEnable - turn on darkmode */
 
 bool darkModeEnable(void)
 {
@@ -75,6 +79,8 @@ bool darkModeEnable(void)
     return SLSSetAppearanceThemeLegacy(true);
 #endif /* USE_SLSNOTIFYING */
 }
+
+/* darkModeDisable - turn off darkmode */
 
 bool darkModeDisable(void)
 {

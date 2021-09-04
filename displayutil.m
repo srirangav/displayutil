@@ -337,7 +337,6 @@ int main (int argc, char** argv)
 
     }
 
-
     /* nightshift */
 
 #ifndef NO_NS
@@ -437,7 +436,6 @@ int main (int argc, char** argv)
                                            endHr, 
                                            endMin) == true ?
                         gDisplayUtilECOkay : gDisplayUtilECErr);
-
             }
             
             fprintf(stderr,

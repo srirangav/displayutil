@@ -130,7 +130,7 @@ bool trueToneEnable(void)
     return setTrueToneEnabled(true);
 }
 
-/* grayScaleDisable - turn off grayscale mode */
+/* trueToneDisable - turn off truetone mode */
 
 bool trueToneDisable(void)
 {

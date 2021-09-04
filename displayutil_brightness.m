@@ -192,6 +192,8 @@ void printBrightnessUsage(void)
             gStrModeBrightnessRange);
 }
 
+/* setBrightnessForDisplay - sets the brightness for the specified display */
+
 bool setBrightnessForDisplay(unsigned long display, float brightness)
 {
     CGDisplayErr err;
@@ -259,10 +261,14 @@ bool setBrightnessForDisplay(unsigned long display, float brightness)
     return ret;
 }
 
+/* printBrightnessForDisplay - print the brightness for the main display */
+
 bool printBrightnessForMainDisplay(void)
 {
     return printBrightnessForDisplay(CGMainDisplayID());
 }
+
+/* printBrightnessForDisplay - print the brightness for all displays */
 
 bool printBrightnessForAllDisplays(void)
 {
@@ -312,7 +318,7 @@ bool printBrightnessForAllDisplays(void)
     return (!failed);
 }
 
-/* printBrightnessForDisplay - get the brightness for the specified display */
+/* printBrightnessForDisplay - print the brightness for the specified display */
 
 bool printBrightnessForDisplay(unsigned long display)
 {
