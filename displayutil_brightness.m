@@ -35,11 +35,17 @@
 #import "displayutil_argutils.h"
 #import "displayutil_brightness.h"
 
-/* strings to select list mode */
+/* strings to select the brightness mode */
 
-const char *gStrModeBrightnessLong  = "brightness";
-const char *gStrModeBrightnessShort = "br";
-static const char *gStrModeBrightnessRange     = "0.0 - 1.0";
+const char *gStrModeBrightnessLong              = "brightness";
+const char *gStrModeBrightnessShort             = "br";
+
+/* informational / error messages */
+
+static const char *gStrModeBrightnessRange      = "0.0 - 1.0";
+static const char *gStrErrBrightnessUnsupported = "changing brightness unsupported";
+static const char *gStrErrBrightnessSetFailed   = "changing brightness failed";
+static const char *gStrErrBrightnessGetFailed   = "cannot get brightness setting";
 
 /* prototypes */
 
@@ -186,56 +192,19 @@ void printBrightnessUsage(void)
             gStrAll);
 }
 
-bool printBrightnessForMainDisplay(void)
-{
-    return printBrightnessForDisplay(CGMainDisplayID());
-}
-
-bool printBrightnessForAllDisplays(void)
+bool setBrightnessForDisplay(unsigned long display, float brightness)
 {
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
     CGDirectDisplayID displays[MAXDISPLAYS];
-    float currentBrightness = 0.0;
-    
-    err = CGGetOnlineDisplayList(gMaxDisplays,
-                                 displays,
-                                 &onlineDisplayCnt);
-    if (err != kCGErrorSuccess)
-    {
-        fprintf(stderr,
-                "error: %s: %s\n",
-                gStrModeBrightnessLong,
-                gStrErrGetDisplays);
-        return false;
-    }
-
-    for (i = 0; i < onlineDisplayCnt; i++)
-    {
-        if (!DisplayServicesGetBrightness((CGDirectDisplayID)displays[i],
-                                          &currentBrightness))
-        {
-            /* print out the brightness for this display */
-            fprintf(stdout, 
-                    "0x%08X: %0.2f\n", 
-                    (CGDirectDisplayID)displays[i], 
-                    currentBrightness);
-        }
-    }
-
-    return true;
-
-}
-
-/* printBrightnessForDisplay - get the brightness for the specified display */
-
-bool printBrightnessForDisplay(unsigned long display)
-{
-    CGDisplayErr err;
-    CGDisplayCount onlineDisplayCnt, i;
-    CGDirectDisplayID displays[MAXDISPLAYS];
-    float currentBrightness = 0.0;
     bool ret = false;
+
+    /* confirm that the requested brightness level is between 0 and 1 */
+        
+    if (brightness < 0.0 || brightness > 1.0)
+    {
+        return ret;
+    }
     
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
@@ -251,23 +220,153 @@ bool printBrightnessForDisplay(unsigned long display)
 
     for (i = 0; i < onlineDisplayCnt; i++)
     {
-        if (displays[i] == display)
+        if (displays[i] != display)
         {
-            if (!DisplayServicesGetBrightness((CGDirectDisplayID)display,
-                                              &currentBrightness))
-            {
-                /* print out the brightness for this display */
-                fprintf(stdout, 
-                        "0x%08X: %0.2f\n", 
-                        (CGDirectDisplayID)display, 
-                        currentBrightness);
-                ret = true;
-            }
+            continue;
+        }    
+        
+        if (!DisplayServicesCanChangeBrightness((CGDirectDisplayID)display))
+        {
+            fprintf(stderr,
+                    "error: %s: %s on %lu\n",
+                    gStrModeBrightnessLong,
+                    gStrErrBrightnessUnsupported,
+                    display);
             break;
         }
+        
+#ifdef USE_DS
+        if (DisplayServicesSetBrightness((CGDirectDisplayID)display, 
+                                         brightness))
+        {
+            fprintf(stderr,
+                    "error: %s: %s\n",
+                    gStrModeBrightnessLong,
+                    gStrErrBrightnessSetFailed);
+            break;
+        }
+#else
+        CoreDisplay_Display_SetUserBrightness((CGDirectDisplayID)display, 
+                                              (double)brightness);
+#endif /* USE_DS */
+
+        DisplayServicesBrightnessChanged((CGDirectDisplayID)display, 
+                                         (double)brightness);
+        ret = true;
+        break;
+    }
+    
+    return ret;
+}
+
+bool printBrightnessForMainDisplay(void)
+{
+    return printBrightnessForDisplay(CGMainDisplayID());
+}
+
+bool printBrightnessForAllDisplays(void)
+{
+    CGDisplayErr err;
+    CGDisplayCount onlineDisplayCnt, i;
+    CGDirectDisplayID displays[MAXDISPLAYS];
+    float currentBrightness = 0.0;
+    bool failed = false;
+    
+    err = CGGetOnlineDisplayList(gMaxDisplays,
+                                 displays,
+                                 &onlineDisplayCnt);
+    if (err != kCGErrorSuccess)
+    {
+        fprintf(stderr,
+                "error: %s: %s\n",
+                gStrModeBrightnessLong,
+                gStrErrGetDisplays);
+        return false;
     }
 
-    if (ret == false)
+    for (i = 0; i < onlineDisplayCnt; i++)
+    {
+#ifdef USE_DS
+        if (DisplayServicesGetBrightness((CGDirectDisplayID)displays[i],
+                                         &currentBrightness))
+        {
+            fprintf(stderr,
+                    "error: %s: %s\n",
+                    gStrModeBrightnessLong,
+                    gStrErrBrightnessGetFailed);
+            failed = true;
+            continue;
+        }
+#else
+        currentBrightness = 
+            (float)CoreDisplay_Display_GetUserBrightness((CGDirectDisplayID)displays[i]);
+#endif /* USE_DS */
+
+        /* print out the brightness for this display */
+        fprintf(stdout, 
+                "0x%08X: %0.2f\n", 
+                (CGDirectDisplayID)displays[i], 
+                currentBrightness);
+    }
+
+    return (!failed);
+}
+
+/* printBrightnessForDisplay - get the brightness for the specified display */
+
+bool printBrightnessForDisplay(unsigned long display)
+{
+    CGDisplayErr err;
+    CGDisplayCount onlineDisplayCnt, i;
+    CGDirectDisplayID displays[MAXDISPLAYS];
+    float currentBrightness = 0.0;
+    bool ret = false, failed = false;
+    
+    err = CGGetOnlineDisplayList(gMaxDisplays,
+                                 displays,
+                                 &onlineDisplayCnt);
+    if (err != kCGErrorSuccess)
+    {
+        fprintf(stderr,
+                "error: %s: %s\n",
+                gStrModeBrightnessLong,
+                gStrErrGetDisplays);
+        return ret;
+    }
+
+    for (i = 0; i < onlineDisplayCnt; i++)
+    {
+        if (displays[i] != display)
+        {
+            continue;
+        }
+        
+#ifdef USE_DS
+        if (DisplayServicesGetBrightness((CGDirectDisplayID)displays[i],
+                                         &currentBrightness))
+        {
+            fprintf(stderr,
+                    "error: %s: %s\n",
+                    gStrModeBrightnessLong,
+                    gStrErrBrightnessGetFailed);
+            failed = true;
+            break;
+        }
+#else
+        currentBrightness = 
+            (float)CoreDisplay_Display_GetUserBrightness((CGDirectDisplayID)displays[i]);
+#endif /* USE_DS */
+
+        /* print out the brightness for this display */
+        fprintf(stdout, 
+                "0x%08X: %0.2f\n", 
+                (CGDirectDisplayID)display, 
+                currentBrightness);
+        ret = true;
+        break;
+    }
+
+    if (ret == false && failed == false)
     {
         fprintf(stderr,
                 "error: %s: %s: '%lu'\n",

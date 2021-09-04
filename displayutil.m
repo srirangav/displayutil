@@ -96,8 +96,9 @@ int main (int argc, char** argv)
     bool listMainDisplayOnly = false;
     unsigned long displayId = 0;
     char *endptr = NULL;
+    float brightness = 0.0;
 #ifndef NO_NS
-    float nightShiftStrength = 0;
+    float nightShiftStrength = 0.0;
     int startHr = 0, startMin = 0, endHr = 0, endMin = 0;
 #endif /* NO_NS */
 #ifndef NO_TT
@@ -293,10 +294,37 @@ int main (int argc, char** argv)
                 return gDisplayUtilECErr;
             }
 
+            /* 
+                if a brightness level is specified for the display,
+                try to set the display's brightness to that level
+            */
+            
+            if (argc >= 4 && argv[3] != NULL)
+            {
+                brightness = strtof(argv[3], &endptr);
+                if ((brightness >= 0.0 &&
+                     brightness <= 1.0) &&
+                    (endptr == NULL || endptr[0] == '\0'))
+                {
+                    return (setBrightnessForDisplay(displayId, brightness) == true ?
+                                gDisplayUtilECOkay : gDisplayUtilECErr);
+                }
+                else
+                {
+                    fprintf(stderr,
+                            "%s: error: %s: invalid argument: '%s'\n",
+                             gPgmName,
+                             gStrModeBrightnessLong,
+                             argv[3]);
+                    printBrightnessUsage();
+                    return gDisplayUtilECErr;
+                }
+            }
+
             return (printBrightnessForDisplay(displayId) == true ?
                     gDisplayUtilECOkay : gDisplayUtilECErr);
         }
-        
+                
         if (listMainDisplayOnly == true)
         {
             return (printBrightnessForMainDisplay() == true ?

@@ -40,7 +40,6 @@ extern const char *gStrModeBrightnessShort;
 
 void printBrightnessUsage(void);
 bool setBrightnessForDisplay(unsigned long display, float brightness);
-bool setBrightnessForMainDisplay(float brightness);
 bool printBrightnessForDisplay(unsigned long display);
 bool printBrightnessForMainDisplay(void);
 bool printBrightnessForAllDisplays(void);
