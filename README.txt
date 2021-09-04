@@ -4,10 +4,17 @@ README
 displayutil v0.3.0
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
-displayutil is a command line utility for retrieving information about,
-enabling, or disabling darkmode, grayscale, nightshift, and truetone on 
-MacOS X systems.  It can also retrieve and set the brightness level for
-some active displays along with listing information about active displays.
+Homepage:
+
+    https://github.com/srirangav/displayutil
+
+About:
+
+    displayutil is a command line utility for retrieving information
+    about, enabling, or disabling, darkmode, grayscale, nightshift, 
+    and truetone on MacOS X systems.  It can also retrieve and set 
+    the brightness level for some active displays along with listing 
+    information about active displays.
 
 Usage:
 
