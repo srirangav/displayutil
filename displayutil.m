@@ -6,6 +6,7 @@
     v. 1.0.0 (04/01/2021) - Initial version
     v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
     v. 1.0.2 (04/30/2021) - Add support for truetone
+    v. 1.0.3 (09/03/2021) - Add support for brightness
     
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 

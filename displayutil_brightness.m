@@ -1,12 +1,12 @@
 /*
     displayutil - displayutil_brightness.m
 
-    lists online displays
+    get/set the brightness for a display
 
     History:
 
-    v. 1.0.0 (05/25/2021) - Initial version
-
+    v. 1.0.0 (09/03/2021) - Initial working version
+    
     Based on: https://github.com/nriley/brightness/blob/master/brightness.c
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
@@ -182,14 +182,14 @@ static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display)
 void printBrightnessUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s [[[%s] [%s]] | [%s|%s]]]\n",
+            "%s [%s|%s [%s|%s|%s [%s]]]\n",
             gPgmName,
             gStrModeBrightnessLong,
             gStrModeBrightnessShort,
-            gStrDisp,
-            gStrModeBrightnessRange,
+            gStrAll,
             gStrMain,
-            gStrAll);
+            gStrDisp,
+            gStrModeBrightnessRange);
 }
 
 bool setBrightnessForDisplay(unsigned long display, float brightness)

@@ -8,6 +8,8 @@
     v. 1.0.0 (04/01/2021) - Initial version
     v. 1.0.1 (04/08/2021) - Add support for additional information available
                             through CGDisplayModeRef
+    v. 1.0.2 (09/03/2021) - Add support for display information about a specific
+                            display
 
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
               https://developer.apple.com/documentation/coregraphics/quartz_display_services

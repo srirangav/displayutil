@@ -20,8 +20,7 @@ Usage:
 
     Brightness:
     
-        displayutil [brightness|br [display id] [0.0 - 1.0]]
-        displayutil [brightness|br [main|all]]
+        displayutil [brightness|br [all|main|display id [0.0 - 1.0]]]
 
     Darkmode:  
     
@@ -62,27 +61,27 @@ Building:
 Notes:
 
     Accessing the current nightshift setting and/or enabling/disabling
-    nightshift is only available on MacOS X 10.12.4 and newer.
+    nightshift is only available on MacOSX 10.12.4 and newer.
 
     Accessing the current darkmode setting and/or enabling/disabling
-    darkmode is only available on MacOS X 10.14 and newer.
+    darkmode is only available on MacOSX 10.14 and newer.
 
     Accessing the current truetone setting and/or enabling/disabling
-    truetone has only been tested on MacOS X 11.x and newer (M1).
+    truetone has only been tested on MacOSX 11.x and newer (M1).
 
     Accessing / setting the current brightness setting has only been 
-    tested on MacOS X 11.x and newer (M1).
+    tested on MacOSX 11.x and newer (M1).
 
 Known Bugs and Issues:
 
     Sometimes there is a delay in turning darkmode on or off and/or
     it takes a few tries.
-
-    Sometimes on M1 macs the Accessibility System Preference needs to 
-    be opened before the grayscale setting can be applied.
     
     Enabling nightshift's sunset to sunrise mode may require location
     services to be enabled.
+
+    Sometimes on M1 macs the Accessibility System Preference needs to 
+    be opened before the grayscale setting can be applied.
 
 History:
 
