@@ -182,7 +182,7 @@ static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display)
 void printBrightnessUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s [%s|%s|%s [%s]]]\n",
+            "%s [%s|%s] [%s|%s|%s [%s]]\n",
             gPgmName,
             gStrModeBrightnessLong,
             gStrModeBrightnessShort,

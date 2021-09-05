@@ -5,7 +5,8 @@
 
     v. 1.0.0 (04/06/2021) - Initial version
     v. 1.0.1 (04/15/2021) - Restrict args to exact matches
-    
+    v. 1.0.2 (09/05/2021) - add help mode
+  
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -45,6 +46,8 @@ const char *gStrUnavail = "unavailable";
 const char *gStrMain    = "main";
 const char *gStrAll     = "all";
 const char *gStrDisp    = "display id";
+const char *gStrModeHelpShort = "-h";
+const char *gStrModeHelpLong  = "-help";
 
 /* maximum number of supported displays */
 
@@ -102,4 +105,11 @@ bool isArgEnable(const char *arg)
 bool isArgDisable(const char *arg)
 {
     return isArg(arg, gStrDisable, gStrOff);
+}
+
+/* isArgHelp - check if the arg is help mode */
+
+bool isArgHelp(const char *arg)
+{
+    return isArg(arg, gStrModeHelpLong, gStrModeHelpShort);
 }

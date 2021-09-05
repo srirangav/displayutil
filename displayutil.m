@@ -7,6 +7,7 @@
     v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
     v. 1.0.2 (04/30/2021) - Add support for truetone
     v. 1.0.3 (09/03/2021) - Add support for brightness
+    v. 1.0.4 (09/05/2021) - Add support for help mode for each sub mode
     
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -57,11 +58,6 @@ enum
     gDisplayUtilECErr  = 1,
 };
 
-/* modes */
-
-static const char *gStrModeHelpShort         = "-h";
-static const char *gStrModeHelpLong          = "-help";
-
 /* prototypes */
 
 static void printUsage(void);
@@ -98,6 +94,7 @@ int main (int argc, char** argv)
     unsigned long displayId = 0;
     char *endptr = NULL;
     float brightness = 0.0;
+    int rc = gDisplayUtilECOkay;
 #ifndef NO_NS
     float nightShiftStrength = 0.0;
     int startHr = 0, startMin = 0, endHr = 0, endMin = 0;
@@ -111,12 +108,10 @@ int main (int argc, char** argv)
         specified
     */
 
-    if (argc < 2 ||
-        argv[1] == NULL ||
-        isArg(argv[1], gStrModeHelpLong, gStrModeHelpShort) == true)
+    if (argc < 2 || argv[1] == NULL || isArgHelp(argv[1]) == true)
     {
         printUsage();
-        return gDisplayUtilECOkay;
+        return rc;
     }
 
     /* dark mode */
@@ -134,7 +129,7 @@ int main (int argc, char** argv)
                     "%s: %s\n",
                     gStrModeDarkModeLong,
                     isDarkModeEnabled() ? gStrOn : gStrOff);
-                return gDisplayUtilECOkay;
+                return rc;
         }
 
         /* enable darkmode */
@@ -142,7 +137,7 @@ int main (int argc, char** argv)
         if (isArgEnable(argv[2]) == true)
         {
             return (darkModeEnable() ?
-                gDisplayUtilECOkay : gDisplayUtilECErr);
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         /* disable darkmode */
@@ -150,20 +145,24 @@ int main (int argc, char** argv)
         if (isArgDisable(argv[2]) == true)
         {
             return (darkModeDisable() ?
-                gDisplayUtilECOkay : gDisplayUtilECErr);
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         /* unknown or unsupported option for darkmode */
 
-        fprintf(stderr,
-                "%s: error: %s: invalid argument: '%s'\n",
-                 gPgmName,
-                 gStrModeDarkModeLong,
-                 argv[2]);
-
+        if (isArgHelp(argv[2]) != true)
+        {
+            fprintf(stderr,
+                    "%s: error: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeDarkModeLong,
+                     argv[2]);
+            rc = gDisplayUtilECErr;
+        }
+        
         printDarkModeUsage();
 
-        return gDisplayUtilECErr;
+        return rc;
     }
 #endif /* NO_DM */
 
@@ -174,14 +173,13 @@ int main (int argc, char** argv)
 
         /* if no arguments, just display the current grayscale setting */
 
-        if (argc < 3 ||
-            argv[2] == NULL || argv[2][0] == '\0')
+        if (argc < 3 || argv[2] == NULL || argv[2][0] == '\0')
         {
             fprintf(stdout,
                     "%s: %s\n",
                     gStrModeGrayscaleLong,
                     isGrayScaleEnabled() ? gStrOn : gStrOff);
-            return gDisplayUtilECOkay;
+            return rc;
          }
 
         /* enable grayscale */
@@ -189,7 +187,7 @@ int main (int argc, char** argv)
         if (isArgEnable(argv[2]) == true)
         {
             grayScaleEnable();
-            return gDisplayUtilECOkay;
+            return rc;
         }
 
         /* disable grayscale */
@@ -197,20 +195,23 @@ int main (int argc, char** argv)
         if (isArgDisable(argv[2]) == true)
         {
             grayScaleDisable();
-            return gDisplayUtilECOkay;
+            return rc;
         }
 
         /* unknown or unsupported option for grayscale */
 
-        fprintf(stderr,
-                "%s: error: %s: invalid argument: '%s'\n",
-                 gPgmName,
-                 gStrModeGrayscaleLong,
-                 argv[2]);
-
+        if (isArgHelp(argv[2]) != true) {
+            fprintf(stderr,
+                    "%s: error: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeGrayscaleLong,
+                     argv[2]);
+            rc = gDisplayUtilECErr;
+        }
+        
         printGrayScaleUsage();
 
-        return gDisplayUtilECErr;
+        return rc;
     }
 
     /* list displays */
@@ -228,6 +229,11 @@ int main (int argc, char** argv)
         else if (isArg(argv[2], gStrMain, NULL) == true)
         {
             listMainDisplayOnly = true;
+        }
+        else if (isArgHelp(argv[2]) == true)
+        {
+            printListDisplaysUsage();
+            return rc;
         }
         else
         {
@@ -247,17 +253,17 @@ int main (int argc, char** argv)
             }
             
             return (listDisplay(displayId) == true ?
-                        gDisplayUtilECOkay : gDisplayUtilECErr);
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         if (listMainDisplayOnly == true)
         {
             return (listMainDisplay() == true ?
-                        gDisplayUtilECOkay : gDisplayUtilECErr);
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         return (listAllDisplays() == true ?
-                    gDisplayUtilECOkay : gDisplayUtilECErr);
+                gDisplayUtilECOkay : gDisplayUtilECErr);
     }
 
     /* brightness */
@@ -267,8 +273,7 @@ int main (int argc, char** argv)
 
         if (argc < 3)
         {
-                printBrightnessUsage();
-                return gDisplayUtilECErr;
+            listMainDisplayOnly = false;
         }
         else if (isArg(argv[2], gStrAll, NULL) == true)
         {
@@ -277,6 +282,11 @@ int main (int argc, char** argv)
         else if (isArg(argv[2], gStrMain, NULL) == true)
         {
             listMainDisplayOnly = true;
+        }
+        else if (isArgHelp(argv[2]) == true)
+        {
+            printBrightnessUsage();
+            return rc;
         }
         else
         {
@@ -348,7 +358,7 @@ int main (int argc, char** argv)
         if (argc < 3)
         {
             return (printNightShiftStatus(nightShiftStatusAll) == true ?
-                       gDisplayUtilECOkay : gDisplayUtilECErr);
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         /* enable nightshift */
@@ -461,13 +471,19 @@ int main (int argc, char** argv)
 
         /* unknown or unsupported option for nightshift */
 
-        fprintf(stderr,
-                "%s: error: %s: invalid argument: '%s'\n",
-                 gPgmName,
-                 gStrModeNightShiftLong,
-                 argv[2]);
+        if (isArgHelp(argv[2]) != true)
+        {
+            fprintf(stderr,
+                    "%s: error: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeNightShiftLong,
+                     argv[2]);
+            rc = gDisplayUtilECErr;
+        }
+        
         printNightShiftUsage();
-        return gDisplayUtilECErr;
+        
+        return rc;
     }
 #endif /* NO_NS */
 
@@ -519,15 +535,19 @@ int main (int argc, char** argv)
 
         /* unknown or unsupported option for truetone */
 
-        fprintf(stderr,
-                "%s: error: %s: invalid argument: '%s'\n",
-                 gPgmName,
-                 gStrModeTrueToneLong,
-                 argv[2]);
+        if (isArgHelp(argv[2]) != true)
+        {
+            fprintf(stderr,
+                    "%s: error: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeTrueToneLong,
+                     argv[2]);
+            rc = gDisplayUtilECErr;
+        }
 
         printTrueToneUsage();
 
-        return gDisplayUtilECErr;
+        return rc ;
     }
 #endif /* NO_TT */
 

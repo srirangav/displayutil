@@ -4,7 +4,8 @@
     History:
 
     v. 1.0.0 (04/06/2021) - Initial version
-
+    v. 1.0.1 (09/05/2021) - add help mode
+    
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -46,6 +47,8 @@ extern const char *gStrUnavail;
 extern const char *gStrMain;
 extern const char *gStrAll;
 extern const char *gStrDisp;
+extern const char *gStrModeHelpShort;
+extern const char *gStrModeHelpLong;
 
 /* maximum number of supported displays */
 
@@ -66,5 +69,6 @@ bool isArg(const char *arg,
            const char *shortMode);
 bool isArgEnable(const char *arg);
 bool isArgDisable(const char *arg);
+bool isArgHelp(const char *arg);
 
 #endif /* displayutil_argutils_h */

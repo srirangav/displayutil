@@ -4,6 +4,7 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.0.1 (09/05/2021) - add legacy preference updating
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -38,7 +39,8 @@
 
 #ifdef USE_UA
 extern void UAGrayscaleSetEnabled(int enabled);
-extern int  UAGrayscaleIsEnabled();
+extern int  UAGrayscaleIsEnabled(void);
+extern void UAGrayscaleSynchronizeLegacyPref(void);
 #else
 CG_EXTERN bool CGDisplayUsesForceToGray(void);
 CG_EXTERN void CGDisplayForceToGray(bool forceToGray);
@@ -81,6 +83,7 @@ void grayScaleEnable(void)
 {
 #ifdef USE_UA
     UAGrayscaleSetEnabled(1);
+    UAGrayscaleSynchronizeLegacyPref();
 #else
     CGDisplayForceToGray(true);
 #endif /* USE_UA*/
@@ -92,6 +95,7 @@ void grayScaleDisable(void)
 {
 #ifdef USE_UA
     UAGrayscaleSetEnabled(0);
+    UAGrayscaleSynchronizeLegacyPref();
 #else
     CGDisplayForceToGray(false);
 #endif /* USE_UA */
