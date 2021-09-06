@@ -23,6 +23,9 @@ PGM_REL       = 0.3.0
 PGM_FILES     = $(PGM_SRCS) $(PGM_SRCS_1014) $(PGM_HEADERS) \
                 $(PGM).1 Makefile README.txt LICENSE.txt
 
+SW_VERS       = /usr/bin/sw_vers
+MACHINE       = /usr/bin/machine
+
 CC = cc
 
 # complier flags, based on:
@@ -53,13 +56,15 @@ CFLAGS      = -O2 -W -Wall -Wextra -Wpedantic -Werror -Walloca \
               -fstack-clash-protection -fno-sanitize-recover -fwrapv
 CFLAGS_x64  = -fcf-protection=full -fsanitize=memory -fsanitize=cfi \
               -fsanitize=safe-stack
-# for 10.12.3 or earlier, disable darkmode, nightshift, and truetone
-CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -DNO_NS
+# for 10.12.3 or earlier, disable darkmode, truetone, and nightshift
+CFLAGS_1011 = $(CFLAGS_x64) -DNO_DM -NO_TT -DNO_NS
 # for 10.12.4 and 10.13.x, disable darkmode and truetone
 CFLAGS_1013 = $(CFLAGS_x64) -DNO_DM -NO_TT
+# for 10.14, all features are enabled
 CFLAGS_1014 = $(CFLAGS_x64)
-# for M1, use UniversalAccess for grayscale
-CFLAGS_11M1 =  -DUSE_UA -DUSE_DS
+# for M1, use UniversalAccess for grayscale and DisplayServices
+# for brightness
+CFLAGS_11M1 = -DUSE_UA -DUSE_DS
 
 # linker flags
 
@@ -75,7 +80,9 @@ LDFLAGS_1013 = -framework Foundation \
 # see: https://saagarjha.com/blog/2018/12/01/scheduling-dark-mode/
 LDFLAGS_1014 = $(LDFLAGS_1013) \
                -framework SkyLight
-# for M1, link with UniversalAccess for grayscale
+# for M1, link with UniversalAccess for grayscale and DisplayServices
+# for brightness
+# see https://github.com/nriley/brightness/blob/master/brightness.c
 LDFLAGS_11M1 = $(LDFLAGS_1014) \
                -framework UniversalAccess \
                -framework DisplayServices
@@ -90,6 +97,38 @@ all:
 	@echo "For Intel Macs on 10.14 or later:     make 10.14"
 	@echo "For M1 Macs:                          make 11.m1"
 	@echo
+
+# auto detect the MacOSX version and build accordingly 
+
+detect:
+	@if [ ! -x "$(SW_VERS)" ] ; then \
+       echo "ERROR: $(SW_VERS) not found!" ; exit 1 ; \
+    fi ; \
+    if [ ! -x "$(MACHINE)" ] ; then \
+       echo "ERROR: $(MACHINE) not found!" ; exit 1 ; \
+    fi ; \
+    OSXVERS="`$(SW_VERS) -productVersion`" ; \
+    case x"$$OSXVERS" in \
+       x"10.11."*|x"10.12."[0123]) \
+          $(MAKE) 10.11 ;; \
+       x"10.12.4"|x"10.13."*) \
+          $(MAKE) 10.13 ;; \
+       x"10.14."*) \
+          $(MAKE) 10.14 ;; \
+       x"11."*) \
+          OSXARCH="`$(MACHINE)`" ; \
+          case x"$$OSXARCH" in \
+             x"arm64e") \
+                $(MAKE) 11.m1 ;; \
+             *) \
+                $(MAKE) 10.14 ;; \
+          esac ;; \
+       *) \
+          echo "ERROR: Unsupported MacOSX version: '$$OSXVERS'" ; \
+          exit 1 ;; \
+    esac 
+
+# version specific build rules
 
 10.11:
 	$(CC) $(CFLAGS) $(CFLAGS_1011) -o $(PGM) $(PGM_SRCS) \
@@ -106,6 +145,8 @@ all:
 11.m1:
 	$(CC) $(CFLAGS) $(CFLAGS_11M1) -o $(PGM) $(PGM_SRCS) $(PGM_SRCS_11M1) \
 	      $(LDFLAGS) $(LDFLAGS_11M1)
+
+# common rules
 
 clean:
 	/bin/rm -f *.o *~ core .DS_Store $(PGM) $(PGM).1.txt *.tgz
@@ -129,4 +170,3 @@ install:
 	@echo "cp $(PGM).1 ~/man/man1"
 	@echo
 	@echo "Add ~/bin to PATH and ~/man to MANPATH"
-
