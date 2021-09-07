@@ -32,7 +32,7 @@ Usage:
 
     List Displays: 
     
-        displayutil [list|ls] [all|main|display id]
+        displayutil [list|ls] [-v] [all|main|display id]
 
     Nightshift:
     

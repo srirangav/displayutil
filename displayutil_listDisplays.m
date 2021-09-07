@@ -461,10 +461,11 @@ static bool printDisplayProps(CGDirectDisplayID display,
 void printListDisplaysUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s] [%s|%s|%s]\n",
+            "%s [%s|%s] [%s] [%s|%s|%s]\n",
             gPgmName,
             gStrModeListDisplaysLong,
             gStrModeListDisplaysShort,
+            gStrModeVerboseShort,
             gStrAll,
             gStrMain,
             gStrDisp);
