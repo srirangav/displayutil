@@ -5,6 +5,7 @@
 
     v. 1.0.0 (04/06/2021) - Initial version
     v. 1.0.1 (09/05/2021) - add help mode
+    v. 1.0.2 (09/07/2021) - add verbose mode
     
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -49,6 +50,8 @@ extern const char *gStrAll;
 extern const char *gStrDisp;
 extern const char *gStrModeHelpShort;
 extern const char *gStrModeHelpLong;
+extern const char *gStrModeVerboseLong;
+extern const char *gStrModeVerboseShort;
 
 /* maximum number of supported displays */
 
@@ -70,5 +73,6 @@ bool isArg(const char *arg,
 bool isArgEnable(const char *arg);
 bool isArgDisable(const char *arg);
 bool isArgHelp(const char *arg);
+bool isArgVerbose(const char *arg);
 
 #endif /* displayutil_argutils_h */

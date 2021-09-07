@@ -6,6 +6,7 @@
     v. 1.0.0 (04/06/2021) - Initial version
     v. 1.0.1 (04/15/2021) - Restrict args to exact matches
     v. 1.0.2 (09/05/2021) - add help mode
+    v. 1.0.3 (09/07/2021) - add verbose mode
   
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -41,13 +42,16 @@ const char *gStrEnable  = "enable";
 const char *gStrOn      = "on";
 const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
-const char *gStrStatus  = "status";
-const char *gStrUnavail = "unavailable";
 const char *gStrMain    = "main";
 const char *gStrAll     = "all";
+const char *gStrModeHelpShort    = "-h";
+const char *gStrModeHelpLong     = "-help";
+const char *gStrModeVerboseShort = "-v";
+const char *gStrModeVerboseLong  = "-verbose";
+
+const char *gStrStatus  = "status";
+const char *gStrUnavail = "unavailable";
 const char *gStrDisp    = "display id";
-const char *gStrModeHelpShort = "-h";
-const char *gStrModeHelpLong  = "-help";
 
 /* maximum number of supported displays */
 
@@ -112,4 +116,11 @@ bool isArgDisable(const char *arg)
 bool isArgHelp(const char *arg)
 {
     return isArg(arg, gStrModeHelpLong, gStrModeHelpShort);
+}
+
+/* isArgVerbose - check if the arg is verbose mode */
+
+bool isArgVerbose(const char *arg)
+{
+    return isArg(arg, gStrModeVerboseLong, gStrModeVerboseShort);
 }

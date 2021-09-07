@@ -8,7 +8,9 @@
     v. 1.0.2 (04/30/2021) - Add support for truetone
     v. 1.0.3 (09/03/2021) - Add support for brightness
     v. 1.0.4 (09/05/2021) - Add support for help mode for each sub mode
-    
+    v. 1.0.5 (09/07/2021) - Add support for verbose listing of display
+                            information
+                            
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -90,11 +92,12 @@ static void printUsage(void)
 
 int main (int argc, char** argv)
 {
-    bool listMainDisplayOnly = false;
+    bool listMainDisplayOnly = false, verbose = false;
     unsigned long displayId = 0;
     char *endptr = NULL;
     float brightness = 0.0;
     int rc = gDisplayUtilECOkay;
+    int argIndex = 0;
 #ifndef NO_NS
     float nightShiftStrength = 0.0;
     int startHr = 0, startMin = 0, endHr = 0, endMin = 0;
@@ -218,51 +221,78 @@ int main (int argc, char** argv)
 
     if (isArg(argv[1], gStrModeListDisplaysLong, gStrModeListDisplaysShort))
     {
+        /* no options were specified, just list all the display */
+        
         if (argc < 3)
         {
-            listMainDisplayOnly = false;
+            return (listAllDisplays(verbose) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
-        else if (isArg(argv[2], gStrAll, NULL) == true)
+
+        // argc >= 3 
+        
+        argIndex = 2;
+
+        /* check if the verbose option specified */
+                    
+        if (isArgVerbose(argv[argIndex]) == true)
+        {
+            verbose = true;
+            argIndex++;
+        }
+        
+        /* 
+            list all the display in verbose mode, if only the verbose 
+            option was specified 
+        */
+            
+        if (argc < argIndex+1)
+        {
+            return (listAllDisplays(verbose) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+        
+        if (isArg(argv[argIndex], gStrAll, NULL) == true)
         {
             listMainDisplayOnly = false;
         }
-        else if (isArg(argv[2], gStrMain, NULL) == true)
+        else if (isArg(argv[argIndex], gStrMain, NULL) == true)
         {
             listMainDisplayOnly = true;
         }
-        else if (isArgHelp(argv[2]) == true)
+        else if (isArgHelp(argv[argIndex]) == true)
         {
             printListDisplaysUsage();
             return rc;
         }
         else
         {
-            /* see if there is display id to list */
+                /* see if there is display id to list */
             
-            displayId = strtoul(argv[2], &endptr, 0);
+                displayId = strtoul(argv[argIndex], &endptr, 0);
 
-            if (endptr != NULL && endptr[0] != '\0')
-            {
-                fprintf(stderr,
-                        "%s: error: %s: invalid argument: '%s'\n",
-                         gPgmName,
-                         gStrModeListDisplaysLong,
-                         argv[2]);
-                printListDisplaysUsage();
-                return gDisplayUtilECErr;
-            }
-            
-            return (listDisplay(displayId) == true ?
-                    gDisplayUtilECOkay : gDisplayUtilECErr);
+                if (endptr != NULL && endptr[0] != '\0')
+                {
+                    fprintf(stderr,
+                            "%s: error: %s: invalid argument: '%s'\n",
+                             gPgmName,
+                             gStrModeListDisplaysLong,
+                             argv[2]);
+                    printListDisplaysUsage();
+                    return gDisplayUtilECErr;
+                }
+                        
+                return (listDisplay(displayId, verbose) == true ?
+                        gDisplayUtilECOkay : gDisplayUtilECErr);
         }
-
+        
         if (listMainDisplayOnly == true)
         {
-            return (listMainDisplay() == true ?
+            return (listMainDisplay(verbose) == true ?
                     gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
-        return (listAllDisplays() == true ?
+        return (listAllDisplays(verbose) == true ?
                 gDisplayUtilECOkay : gDisplayUtilECErr);
     }
 

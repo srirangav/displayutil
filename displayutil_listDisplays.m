@@ -10,6 +10,7 @@
                             through CGDisplayModeRef
     v. 1.0.2 (09/03/2021) - Add support for display information about a specific
                             display
+    v. 1.0.3 (09/07/2021) - add bit depth and verbose mode support
 
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
               https://developer.apple.com/documentation/coregraphics/quartz_display_services
@@ -40,6 +41,7 @@
 #import <stdio.h>
 #import <math.h>
 #import <IOKit/graphics/IOGraphicsLib.h>
+#import <IOKit/graphics/IOGraphicsTypes.h>
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
 
@@ -52,6 +54,7 @@ typedef struct
     size_t widthInPts;
     size_t heightInPixels;
     size_t widthInPixels;
+    size_t bitdepth;
     double heightInMM;
     double widthInMM;
     double angle;
@@ -82,9 +85,11 @@ static const char *gStrDisplayStereo      = "stereo";
 
 /* prototypes */
 
-static bool getDisplayProperties(CGDirectDisplayID displayId,
-                                 displayProperties_t *props);
-static bool printDisplayProps(CGDirectDisplayID display);
+static bool   getDisplayProperties(CGDirectDisplayID displayId,
+                                   displayProperties_t *props);
+static bool   printDisplayProps(CGDirectDisplayID display, 
+                                bool verbose);
+static size_t getDisplayBitDepth(CGDisplayModeRef mode);
 
 /* private functions */
 
@@ -123,6 +128,7 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
         props->widthInMM = 0.0;
     }
 
+    
     if (CGDisplayIsActive(displayId) == true &&
         CGDisplayIsOnline(displayId) == true &&
         CGDisplayIsAsleep(displayId) != true)
@@ -141,6 +147,7 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
         props->widthInPixels = CGDisplayModeGetPixelHeight(mode);
         props->refresh = CGDisplayModeGetRefreshRate(mode);
         props->uiCapable = CGDisplayModeIsUsableForDesktopGUI(mode);
+        props->bitdepth = getDisplayBitDepth(mode);
         CGDisplayModeRelease(mode);
     }
     else
@@ -149,14 +156,135 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
         props->widthInPixels = 0;
         props->refresh = 0;
         props->uiCapable = false;
+        props->bitdepth = 0;
     }
 
     return true;
 }
 
+/* 
+    getDisplayBitDepth - get a display's bit depth 
+    see: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
+         https://stackoverflow.com/questions/8210824/how-to-avoid-cgdisplaymodecopypixelencoding-to-get-bpp
+         https://github.com/robbertkl/ResolutionMenu/blob/master/Resolution%20Menu/DisplayModeMenuItem.m
+*/
+
+static size_t getDisplayBitDepth(CGDisplayModeRef mode)
+{
+    size_t depth = 0;
+    
+#ifdef HAVE_CP_PIXEL_ENC
+    CFStringRef pixelEncoding = NULL;
+#else
+    CFDictionaryRef dict = NULL;
+    CFNumberRef num;
+#endif /* HAVE_CP_PIXEL_ENC */
+
+    /* make sure a valid mode was specified */
+    
+    if (mode == NULL)
+    {
+        return depth;
+    }
+
+#ifdef HAVE_CP_PIXEL_ENC
+
+    /* get the bit depth from the pixel encoding (deprecated on 10.11+) */
+        
+    pixelEncoding = CGDisplayModeCopyPixelEncoding(mode);
+    if (pixelEncoding == NULL)
+    {
+        return depth;
+    }
+
+    if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                             CFSTR(IO1BitIndexedPixels), 
+                                             kCFCompareCaseInsensitive)) 
+    {
+        depth = 1;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(IO2BitIndexedPixels), 
+                                                  kCFCompareCaseInsensitive))
+    {
+        depth = 2;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(IO4BitIndexedPixels), 
+                                                  kCFCompareCaseInsensitive))
+    {
+        depth = 4;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(IO8BitIndexedPixels), 
+                                                  kCFCompareCaseInsensitive))
+    {
+        depth = 8;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(IO16BitDirectPixels), 
+                                                  kCFCompareCaseInsensitive))
+    {
+        depth = 16;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(kIO30BitDirectPixels), 
+                                                  kCFCompareCaseInsensitive))
+    {
+        depth = 30;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(IO32BitDirectPixels), 
+                                                  kCFCompareCaseInsensitive))
+    {
+        depth = 32;
+    }
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(kIO16BitFloatPixels), 
+                                                  kCFCompareCaseInsensitive)) 
+    {
+        depth = 48;
+    } 
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(kIO64BitDirectPixels), 
+                                                  kCFCompareCaseInsensitive)) 
+    {
+        depth = 64;
+    } 
+    else if (kCFCompareEqualTo == CFStringCompare(pixelEncoding, 
+                                                  CFSTR(kIO32BitFloatPixels), 
+                                                  kCFCompareCaseInsensitive)) 
+    {
+        depth = 96;
+    } 
+    
+    CFRelease(pixelEncoding);
+
+#else
+
+    dict = (CFDictionaryRef)*((int64_t *)mode + 2);
+    if (dict == NULL)    
+    {
+        return depth;
+    }
+    
+    if (CFGetTypeID(dict) == CFDictionaryGetTypeID() && 
+        CFDictionaryGetValueIfPresent(dict, 
+                                      kCGDisplayBitsPerPixel, 
+                                      (const void**)&num))
+    {
+        CFNumberGetValue(num, kCFNumberSInt32Type, (void*)&depth);
+    }
+
+#endif /* HAVE_CP_PIXEL_ENC */
+
+    return depth;
+}
+
 /* printDisplayProps - print out a display's properties */
 
-static bool printDisplayProps(CGDirectDisplayID display)
+static bool printDisplayProps(CGDirectDisplayID display, 
+                              bool verbose)
 {
     displayProperties_t displayProps;
     bool haveOpenBracket = false;
@@ -192,20 +320,29 @@ static bool printDisplayProps(CGDirectDisplayID display)
                 displayProps.heightInPts);
     }
 
-    /* if the display is rotated, print out the rotation angle */
-
-    if (fpclassify(displayProps.angle) != FP_ZERO)
+    /* print out additional details if verbose out is requested */
+    
+    if (verbose)
     {
-        fprintf(stdout, " (%3.1f deg)", displayProps.angle);
+        /* if the bit depth is available, print it out */
+    
+        fprintf(stdout," %lubit",displayProps.bitdepth);
+
+        /* print out the display's refresh rate */
+
+        if (displayProps.refresh > 0)
+        {
+            fprintf(stdout, " %3.1fHz", displayProps.refresh);
+        }
+    
+        /* if the display is rotated, print out the rotation angle */
+
+        if (fpclassify(displayProps.angle) != FP_ZERO)
+        {
+            fprintf(stdout, " %3.1fdeg", displayProps.angle);
+        }
     }
-
-    /* print out the display's refresh rate */
-
-    if (displayProps.refresh > 0)
-    {
-        fprintf(stdout, " (%3.1f Hz)", displayProps.refresh);
-    }
-
+    
     /* print out whether the display is the main display */
 
     if (displayProps.main == true)
@@ -312,6 +449,8 @@ static bool printDisplayProps(CGDirectDisplayID display)
 
     fprintf(stdout,"\n");
 
+    // TODO - if verbose mode, print out all support resolutions
+    
     return true;
 }
 
@@ -333,14 +472,14 @@ void printListDisplaysUsage(void)
 
 /* listMainDisplay - list information about the main display */
 
-bool listMainDisplay(void)
+bool listMainDisplay(bool verbose)
 {
-    return printDisplayProps(CGMainDisplayID());
+    return printDisplayProps(CGMainDisplayID(), verbose);
 }
 
 /* listAllDisplays - list information about all display */
 
-bool listAllDisplays(void)
+bool listAllDisplays(bool verbose)
 {
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
@@ -360,7 +499,7 @@ bool listAllDisplays(void)
 
     for (i = 0; i < onlineDisplayCnt; i++)
     {
-        printDisplayProps(displays[i]);
+        printDisplayProps(displays[i], verbose);
     }
 
     return true;
@@ -368,7 +507,7 @@ bool listAllDisplays(void)
 
 /* listDisplay - list information about the specified display */
 
-bool listDisplay(unsigned long display)
+bool listDisplay(unsigned long display, bool verbose)
 {
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
@@ -391,7 +530,7 @@ bool listDisplay(unsigned long display)
     {
         if (displays[i] == display) 
         {
-            ret = printDisplayProps(displays[i]);
+            ret = printDisplayProps(displays[i], verbose);
             break;
         }
     }

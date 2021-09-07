@@ -4,6 +4,7 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.0.1 (09/07/2021) - add verbose mode
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -39,9 +40,9 @@ extern const char *gStrModeListDisplaysShort;
 /* prototypes */
 
 void printListDisplaysUsage(void);
-bool listAllDisplays(void);
-bool listMainDisplay(void);
-bool listDisplay(unsigned long display);
+bool listAllDisplays(bool verbose);
+bool listMainDisplay(bool verbose);
+bool listDisplay(unsigned long display, bool verbose);
 
 #endif /* displayutil_listDisplays_h */
 
