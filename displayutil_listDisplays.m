@@ -11,7 +11,8 @@
     v. 1.0.2 (09/03/2021) - Add support for display information about a specific
                             display
     v. 1.0.3 (09/07/2021) - add bit depth and verbose mode support
-
+    v. 1.0.4 (09/09/2021) - list all available resolutions in verbose mode
+    
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
               https://developer.apple.com/documentation/coregraphics/quartz_display_services
               https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/DisplayInfo.html
@@ -59,6 +60,9 @@ typedef struct
     double widthInMM;
     double angle;
     double refresh;
+    uint32_t modelNo;
+    uint32_t serialNo;
+    uint32_t vendor;
     bool active;
     bool builtin;
     bool main;
@@ -90,10 +94,16 @@ static bool   getDisplayProperties(CGDirectDisplayID displayId,
 static bool   printDisplayProps(CGDirectDisplayID display, 
                                 bool verbose);
 static size_t getDisplayBitDepth(CGDisplayModeRef mode);
+static CFComparisonResult _compareCFDisplayModes(CGDisplayModeRef *mode1, 
+                                                 CGDisplayModeRef *mode2, 
+                                                 void *context);
 
 /* private functions */
 
-/* getDisplayProperties - get the properties for the specified display */
+/* 
+    getDisplayProperties - get the properties for the specified display 
+                           assumes that the specified displayId is valid
+*/
 
 static bool getDisplayProperties(CGDirectDisplayID displayId,
                                  displayProperties_t *props)
@@ -115,7 +125,10 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
     props->builtin = CGDisplayIsBuiltin(displayId);
     props->main = CGDisplayIsMain(displayId);
     props->mirrored = CGDisplayIsInMirrorSet(displayId);
-
+    props->modelNo = CGDisplayModelNumber(displayId);
+    props->serialNo = CGDisplaySerialNumber(displayId);
+    props->vendor = CGDisplayVendorNumber(displayId);
+    
     size = CGDisplayScreenSize(displayId);
     if (size.width > 0 && size.height > 0)
     {
@@ -288,14 +301,19 @@ static bool printDisplayProps(CGDirectDisplayID display,
 {
     displayProperties_t displayProps;
     bool haveOpenBracket = false;
-
+    CGDisplayModeRef mode = NULL;
+    CFArrayRef allModes = NULL;
+    CFMutableArrayRef allModesSorted = NULL;
+    long numModes = 0, i = 0;
+    bool ret = false;
+        
     if (getDisplayProperties(display, &displayProps) != true)
     {
         fprintf(stderr,
                 "error: %s: %s\n",
                 gStrModeListDisplaysLong,
                 gStrErrGetDisplays);
-        return false;
+        return ret;
     }
 
     /* print out the display id */
@@ -308,14 +326,14 @@ static bool printDisplayProps(CGDirectDisplayID display,
         displayProps.widthInPixels > 0)
     {
         fprintf(stdout,
-                "%-4lux%-4lu",
+                "%-4lu x %4lu",
                 displayProps.heightInPixels,
                 displayProps.widthInPixels);
     }
     else
     {
         fprintf(stdout,
-                "%-4lux%-4lu",
+                "%-4lu x %4lu",
                 displayProps.widthInPts,
                 displayProps.heightInPts);
     }
@@ -324,6 +342,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
     
     if (verbose)
     {
+
         /* if the bit depth is available, print it out */
     
         fprintf(stdout," %lubit",displayProps.bitdepth);
@@ -332,7 +351,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
         if (displayProps.refresh > 0)
         {
-            fprintf(stdout, " %3.1fHz", displayProps.refresh);
+            fprintf(stdout, " %.0fHz", displayProps.refresh);
         }
     
         /* if the display is rotated, print out the rotation angle */
@@ -449,9 +468,197 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
     fprintf(stdout,"\n");
 
-    // TODO - if verbose mode, print out all support resolutions
+    ret = true;
+
+    if (verbose == false)
+    {
+        return ret;
+    }
+
+    /* 
+        we are in verbose mode, so print out additional information 
+        about this display
+    */
+
+    fprintf(stdout, "            ");
+
+    fprintf(stdout,
+            "UI Appearance: %-4lu x %4lu\n",
+            displayProps.widthInPts,
+            displayProps.heightInPts);
     
-    return true;
+    fprintf(stdout, "            ");
+
+    fprintf(stdout, "Physical size: %.1fmm x %.1fmm\n", 
+            displayProps.widthInMM, 
+            displayProps.heightInMM);
+
+    fprintf(stdout, "            ");
+
+    fprintf(stdout, "Model: 0x%04X", displayProps.modelNo);
+    fprintf(stdout, ", Vendor: 0x%04X", displayProps.vendor);
+    fprintf(stdout, ", Serial No.: 0x%08X", displayProps.serialNo);
+    fprintf(stdout, "\n");
+    
+    /* 
+        list available resolutions
+        based on: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
+    */
+    
+    /* get all the available display modes for this display */
+    
+    allModes = CGDisplayCopyAllDisplayModes(display, NULL);
+    if (allModes == NULL)
+    {
+        return ret;
+    }
+
+    /* get the number of modes */
+    
+    numModes = CFArrayGetCount(allModes);
+
+    if (numModes <= 0)
+    {
+        return ret;
+    }
+    
+    /* sort the available display modes */
+        
+    allModesSorted = CFArrayCreateMutableCopy(kCFAllocatorDefault,
+                                              numModes,
+                                              allModes);
+    
+    CFArraySortValues(allModesSorted,
+                      CFRangeMake(0, CFArrayGetCount(allModesSorted)),
+                      (CFComparatorFunction) _compareCFDisplayModes,
+                      NULL);
+    
+    /* list each available resolution */
+
+    fprintf(stdout, "            ");
+    fprintf(stdout, "Available Resolutions:\n");
+    
+    for (i = 0; i < numModes; i++)
+    {
+
+        mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(allModesSorted, i);
+                                                     
+        if (mode == NULL)
+        {
+            continue;
+        }
+        
+        fprintf(stdout, "            ");
+        fprintf(stdout, 
+                "%-4lu x %4lu %lubit %.0fHz\n",
+                CGDisplayModeGetWidth(mode),
+                CGDisplayModeGetHeight(mode),
+                getDisplayBitDepth(mode),
+                CGDisplayModeGetRefreshRate(mode));
+    }
+    
+    CFRelease(allModesSorted);
+    CFRelease(allModes);
+    
+    return ret;
+}
+
+/* 
+    _compareCFDisplayModes - compare to display modes for sorting 
+
+    based on: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
+*/
+
+CFComparisonResult _compareCFDisplayModes(CGDisplayModeRef *mode1Ptr, 
+                                          CGDisplayModeRef *mode2Ptr, 
+                                          void *context)
+{
+    CGDisplayModeRef mode1 = NULL,  mode2 = NULL;    
+    size_t mode1Val = 0, mode2Val = 0;
+    double refreshRate1 = 0.0, refreshRate2 = 0.0;
+
+    mode1 = (CGDisplayModeRef)mode1Ptr;
+    mode2 = (CGDisplayModeRef)mode2Ptr;
+    
+    /* check if both modes are non-NULL */
+    
+    if (mode1 == NULL)
+    {
+        if (mode2 == NULL)
+        {
+            return kCFCompareEqualTo;
+        }
+        return kCFCompareGreaterThan;
+    }
+    
+    if (mode2 == NULL)
+    {
+        return kCFCompareLessThan;
+    }
+    
+    if (context != NULL)
+    {
+        /* TODO - handle a non-null context */
+    }
+    
+    /* start by comparing the widths of the two modes */
+    
+    mode1Val = CGDisplayModeGetWidth(mode1);
+    mode2Val = CGDisplayModeGetWidth(mode2);
+
+    /* 
+        if widths aren't equal, return whether mode1's width is less
+        than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? kCFCompareLessThan : 
+                                      kCFCompareGreaterThan);
+    }
+    
+    /* the widths are equal, compare the heights */
+    
+    mode1Val = CGDisplayModeGetHeight(mode1);
+    mode2Val = CGDisplayModeGetHeight(mode2);
+    
+    /* 
+        if heights aren't equal, return whether mode1's height is less
+        than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? kCFCompareLessThan : 
+                                      kCFCompareGreaterThan);
+    }
+
+    /* widths and heights are equal, compare the bit depths */
+
+    mode1Val = getDisplayBitDepth(mode1);
+    mode2Val = getDisplayBitDepth(mode2);
+    
+    /* 
+        if the bit depths aren't equal, return whether mode1's bit depth
+        is less than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? kCFCompareLessThan : 
+                                      kCFCompareGreaterThan);
+    }
+
+    /* width, height, and bit depth are equal, compare refresh rates */
+
+     refreshRate1 = CGDisplayModeGetRefreshRate(mode1);
+     refreshRate2 = CGDisplayModeGetRefreshRate(mode2);
+
+    /* return whether mode1's refresh rate is less than mode2's */
+
+    return (islessequal(refreshRate1, refreshRate2) == 1 ? 
+            kCFCompareLessThan : 
+            kCFCompareGreaterThan);
 }
 
 /* public functions */

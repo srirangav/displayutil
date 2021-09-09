@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.3.0
+displayutil v0.3.1
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
@@ -88,6 +88,8 @@ History:
     v0.1.0 - initial release
     v0.2.0 - add support for truetone
     v0.3.0 - add support for brightness
+    v0.3.1 - add support for listing all available resolutions for
+             a display
 
 License:
 

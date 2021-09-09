@@ -35,7 +35,7 @@ CC = cc
 # https://airbus-seclab.github.io/c-compiler-security/clang_compilation.html
 
 CFLAGS      = -O2 -W -Wall -Wextra -Wpedantic -Werror -Walloca \
-              -Wcast-qual -Wconversion -Wformat=2 -Wformat-security \
+              -Wconversion -Wformat=2 -Wformat-security \
               -Wnull-dereference -Wstack-protector -Wstrict-overflow=3 \
               -Wvla -Warray-bounds-pointer-arithmetic \
               -Wimplicit-fallthrough -Wconditional-uninitialized \
