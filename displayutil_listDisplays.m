@@ -11,7 +11,8 @@
     v. 1.0.2 (09/03/2021) - Add support for display information about a specific
                             display
     v. 1.0.3 (09/07/2021) - add bit depth and verbose mode support
-    v. 1.0.4 (09/09/2021) - list all available resolutions in verbose mode
+    v. 1.0.4 (09/09/2021) - list all available resolutions and retina 
+                            display equivalents in verbose mode
     
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
               https://developer.apple.com/documentation/coregraphics/quartz_display_services
