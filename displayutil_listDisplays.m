@@ -94,8 +94,8 @@ static bool   getDisplayProperties(CGDirectDisplayID displayId,
 static bool   printDisplayProps(CGDirectDisplayID display, 
                                 bool verbose);
 static size_t getDisplayBitDepth(CGDisplayModeRef mode);
-static CFComparisonResult _compareCFDisplayModes(CGDisplayModeRef *mode1, 
-                                                 CGDisplayModeRef *mode2, 
+static CFComparisonResult _compareCFDisplayModes(CGDisplayModeRef mode1, 
+                                                 CGDisplayModeRef mode2, 
                                                  void *context);
 
 /* private functions */
@@ -569,16 +569,13 @@ static bool printDisplayProps(CGDirectDisplayID display,
     based on: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
 */
 
-CFComparisonResult _compareCFDisplayModes(CGDisplayModeRef *mode1Ptr, 
-                                          CGDisplayModeRef *mode2Ptr, 
+CFComparisonResult _compareCFDisplayModes(CGDisplayModeRef mode1, 
+                                          CGDisplayModeRef mode2, 
                                           void *context)
 {
-    CGDisplayModeRef mode1 = NULL,  mode2 = NULL;    
     size_t mode1Val = 0, mode2Val = 0;
     double refreshRate1 = 0.0, refreshRate2 = 0.0;
 
-    mode1 = (CGDisplayModeRef)mode1Ptr;
-    mode2 = (CGDisplayModeRef)mode2Ptr;
     
     /* check if both modes are non-NULL */
     
