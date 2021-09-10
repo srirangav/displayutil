@@ -56,7 +56,6 @@ typedef struct
     size_t widthInPts;
     size_t heightInPixels;
     size_t widthInPixels;
-    size_t bitdepth;
     double heightInMM;
     double widthInMM;
     double angle;
@@ -94,6 +93,7 @@ static bool   getDisplayProperties(CGDirectDisplayID displayId,
                                    displayProperties_t *props);
 static bool   printDisplayProps(CGDirectDisplayID display, 
                                 bool verbose);
+static size_t getDisplayBitDepthForDisplayID(CGDirectDisplayID displayId);
 static size_t getDisplayBitDepth(CGDisplayModeRef mode);
 static CFComparisonResult compareCFDisplayModes(CGDisplayModeRef mode1, 
                                                 CGDisplayModeRef mode2, 
@@ -161,7 +161,6 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
         props->widthInPixels = CGDisplayModeGetPixelWidth(mode);
         props->refresh = CGDisplayModeGetRefreshRate(mode);
         props->uiCapable = CGDisplayModeIsUsableForDesktopGUI(mode);
-        props->bitdepth = getDisplayBitDepth(mode);
         CGDisplayModeRelease(mode);
     }
     else
@@ -170,14 +169,34 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
         props->widthInPixels = 0;
         props->refresh = 0;
         props->uiCapable = false;
-        props->bitdepth = 0;
     }
 
     return true;
 }
 
 /* 
-    getDisplayBitDepth - get a display's bit depth 
+    getDisplayBitDepth - get a display's bit depth for the specified
+                         display
+*/
+
+static size_t getDisplayBitDepthForDisplayID(CGDirectDisplayID displayId)
+{
+    CGDisplayModeRef mode = NULL;
+    size_t depth = 0;
+    
+    mode = CGDisplayCopyDisplayMode(displayId);
+    if (mode != NULL)
+    {
+        depth = getDisplayBitDepth(mode);
+        CGDisplayModeRelease(mode);
+    }
+    
+    return depth;
+}
+
+/* 
+    getDisplayBitDepth - get a display's bit depth for the specified
+                         display mode
     see: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
          https://stackoverflow.com/questions/8210824/how-to-avoid-cgdisplaymodecopypixelencoding-to-get-bpp
          https://github.com/robbertkl/ResolutionMenu/blob/master/Resolution%20Menu/DisplayModeMenuItem.m
@@ -311,6 +330,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
     const CFBooleanRef dictvalues[] = 
         {kCFBooleanTrue};
     long numModes = 0, i = 0;
+    size_t bitDepth = 0;
     size_t widthPixels = 0, widthPts = 0;
     size_t heightPixels = 0, heightsPts = 0;
     double screenSize = 0.0;
@@ -353,9 +373,12 @@ static bool printDisplayProps(CGDirectDisplayID display,
     {
 
         /* if the bit depth is available, print it out */
-    
-        fprintf(stdout," %lubit",displayProps.bitdepth);
 
+        bitDepth = getDisplayBitDepthForDisplayID(display);
+        if (bitDepth > 0) 
+        {
+            fprintf(stdout," %lubit", bitDepth);
+        }
         /* print out the display's refresh rate */
 
         if (displayProps.refresh > 0)
@@ -491,7 +514,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
     fprintf(stdout, "            ");
 
-    if (displayProps.widthInPts != displayProps.widthInPixels &&
+    if (displayProps.widthInPts != displayProps.widthInPixels ||
         displayProps.heightInPts != displayProps.heightInPixels)
     {
         fprintf(stdout,
@@ -593,15 +616,20 @@ static bool printDisplayProps(CGDirectDisplayID display,
         widthPts = CGDisplayModeGetWidth(mode);
         heightPixels = CGDisplayModeGetPixelHeight(mode);
         heightsPts = CGDisplayModeGetHeight(mode);
+        
+        fprintf(stdout, "%-4lu x %4lu", widthPixels, heightPixels);
 
-        fprintf(stdout, 
-                "%-4lu x %4lu %lubit @ %.0fHz",
-                widthPixels,
-                heightPixels,
-                getDisplayBitDepth(mode),
+        bitDepth = getDisplayBitDepth(mode);
+                
+        if (bitDepth > 0) 
+        {
+            fprintf(stdout, " %lubit", bitDepth);
+        }
+        
+        fprintf(stdout, " @ %.0fHz",
                 CGDisplayModeGetRefreshRate(mode));
 
-        if (widthPixels != widthPts &&
+        if (widthPixels != widthPts ||
             heightPixels != heightsPts)
         {
             fprintf(stdout, 
