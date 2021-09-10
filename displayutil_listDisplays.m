@@ -290,6 +290,8 @@ static size_t getDisplayBitDepth(CGDisplayModeRef mode)
         CFNumberGetValue(num, kCFNumberSInt32Type, (void*)&depth);
     }
 
+    CFRelease(dict);
+    
 #endif /* HAVE_CP_PIXEL_ENC */
 
     return depth;
@@ -593,14 +595,14 @@ static bool printDisplayProps(CGDirectDisplayID display,
 }
 
 /* 
-    _compareCFDisplayModes - compare to display modes for sorting 
+    compareCFDisplayModes - compare to display modes for sorting 
 
     based on: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
 */
 
-CFComparisonResult compareCFDisplayModes(CGDisplayModeRef mode1, 
-                                         CGDisplayModeRef mode2, 
-                                         void *context)
+static CFComparisonResult compareCFDisplayModes(CGDisplayModeRef mode1, 
+                                                CGDisplayModeRef mode2, 
+                                                void *context)
 {
     size_t mode1Val = 0, mode2Val = 0;
     double refreshRate1 = 0.0, refreshRate2 = 0.0;
