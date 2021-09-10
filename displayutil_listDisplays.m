@@ -11,8 +11,8 @@
     v. 1.0.2 (09/03/2021) - Add support for display information about a specific
                             display
     v. 1.0.3 (09/07/2021) - add bit depth and verbose mode support
-    v. 1.0.4 (09/09/2021) - list all available resolutions and retina 
-                            display equivalents in verbose mode
+    v. 1.0.4 (09/09/2021) - list physical size, all available resolutions and 
+                            retina equivalents (as applicable) in verbose mode
     
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
               https://developer.apple.com/documentation/coregraphics/quartz_display_services
@@ -157,8 +157,8 @@ static bool getDisplayProperties(CGDirectDisplayID displayId,
     mode = CGDisplayCopyDisplayMode(displayId);
     if (mode != NULL)
     {
-        props->heightInPixels = CGDisplayModeGetPixelWidth(mode);
-        props->widthInPixels = CGDisplayModeGetPixelHeight(mode);
+        props->heightInPixels = CGDisplayModeGetPixelHeight(mode);
+        props->widthInPixels = CGDisplayModeGetPixelWidth(mode);
         props->refresh = CGDisplayModeGetRefreshRate(mode);
         props->uiCapable = CGDisplayModeIsUsableForDesktopGUI(mode);
         props->bitdepth = getDisplayBitDepth(mode);
@@ -289,8 +289,6 @@ static size_t getDisplayBitDepth(CGDisplayModeRef mode)
     {
         CFNumberGetValue(num, kCFNumberSInt32Type, (void*)&depth);
     }
-
-    CFRelease(dict);
     
 #endif /* HAVE_CP_PIXEL_ENC */
 
@@ -313,6 +311,9 @@ static bool printDisplayProps(CGDirectDisplayID display,
     const CFBooleanRef dictvalues[] = 
         {kCFBooleanTrue};
     long numModes = 0, i = 0;
+    size_t widthPixels = 0, widthPts = 0;
+    size_t heightPixels = 0, heightsPts = 0;
+    double screenSize = 0.0;
     bool ret = false;
         
     if (getDisplayProperties(display, &displayProps) != true)
@@ -335,8 +336,8 @@ static bool printDisplayProps(CGDirectDisplayID display,
     {
         fprintf(stdout,
                 "%-4lu x %4lu",
-                displayProps.heightInPixels,
-                displayProps.widthInPixels);
+                displayProps.widthInPixels,
+                displayProps.heightInPixels);
     }
     else
     {
@@ -490,14 +491,23 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
     fprintf(stdout, "            ");
 
-    fprintf(stdout,
+    if (displayProps.widthInPts != displayProps.widthInPixels &&
+        displayProps.heightInPts != displayProps.heightInPixels)
+    {
+        fprintf(stdout,
             "UI Appearance: %-4lu x %4lu\n",
             displayProps.widthInPts,
             displayProps.heightInPts);
     
-    fprintf(stdout, "            ");
-
-    fprintf(stdout, "Physical size: %.1fmm x %.1fmm\n", 
+        fprintf(stdout, "            ");
+    }
+    
+    screenSize = 
+        sqrt((displayProps.widthInMM * displayProps.widthInMM) +
+             (displayProps.heightInMM * displayProps.heightInMM)) / 25.4;
+             
+    fprintf(stdout, "Physical size: %.1fin (%.1fmm x %.1fmm)\n",
+            screenSize,
             displayProps.widthInMM, 
             displayProps.heightInMM);
 
@@ -578,14 +588,29 @@ static bool printDisplayProps(CGDirectDisplayID display,
         }
         
         fprintf(stdout, "            ");
+
+        widthPixels = CGDisplayModeGetPixelWidth(mode);
+        widthPts = CGDisplayModeGetWidth(mode);
+        heightPixels = CGDisplayModeGetPixelHeight(mode);
+        heightsPts = CGDisplayModeGetHeight(mode);
+
         fprintf(stdout, 
-                "%-4lu x %4lu %lubit @ %.0fHz (UI Appearance: %-4lu x %4lu) \n",
-                CGDisplayModeGetPixelWidth(mode),
-                CGDisplayModeGetPixelHeight(mode),
+                "%-4lu x %4lu %lubit @ %.0fHz",
+                widthPixels,
+                heightPixels,
                 getDisplayBitDepth(mode),
-                CGDisplayModeGetRefreshRate(mode),
-                CGDisplayModeGetWidth(mode),
-                CGDisplayModeGetHeight(mode));
+                CGDisplayModeGetRefreshRate(mode));
+
+        if (widthPixels != widthPts &&
+            heightPixels != heightsPts)
+        {
+            fprintf(stdout, 
+                    " (UI Appearance: %-4lu x %4lu)",
+                    widthPts,
+                    heightsPts);
+        }
+
+        fprintf(stdout, "\n");
     }
     
     CFRelease(allModesSorted);
