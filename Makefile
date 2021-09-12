@@ -84,9 +84,9 @@ LDFLAGS_1014 = $(LDFLAGS_1013) \
 # for brightness
 # see https://github.com/nriley/brightness/blob/master/brightness.c
 LDFLAGS_11M1 = $(LDFLAGS_1014) \
+               -framework DisplayServices \
                -framework UniversalAccess \
-               -framework DisplayServices
-
+               -lUniversalAccess
 # rules
 
 all:

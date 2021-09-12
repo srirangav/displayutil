@@ -5,7 +5,9 @@
 
     v. 1.0.0 (04/01/2021) - Initial version
     v. 1.0.1 (09/05/2021) - add legacy preference updating
-
+    v. 1.0.2 (09/11/2021) - start universal access daemon to put grayscale
+                            changes into effect immediately
+                            
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -33,17 +35,64 @@
 
 /*
     Private APIs for setting grayscale mode:
+    
     https://gist.github.com/danielpunkass/df0d72be11b8956f2ef4f4d52cce7a41
     https://apple.stackexchange.com/questions/240446/how-to-enable-disable-grayscale-mode-in-accessibility-via-terminal-app
+
+    use universal access instead of core graphics on M1, see:
+
+    https://github.com/brettferdosi/grayscale/blob/master/Sources/Bridge.h
+        
+    Alternative to the Universal Access functions is to use the Media 
+    Accessibility functions:
+    
+        extern _Bool MADisplayFilterPrefGetCategoryEnabled(int filter);
+        extern void  MADisplayFilterPrefSetCategoryEnabled(int filter, _Bool enable);
+        extern int MADisplayFilterPrefGetType(int filter);
+        extern void MADisplayFilterPrefSetType(int filter, int type);
+
+        int __attribute__((weak)) SYSTEM_FILTER = 0x1;
+        int __attribute__((weak)) GRAYSCALE_TYPE = 0x1;
+    
+    enable using Media Accessibility functions:
+    
+        1. set the system filter to grayscale:
+    
+            MADisplayFilterPrefSetType(SYSTEM_FILTER, GRAYSCALE_TYPE)
+
+        2. enable the system filter:
+        
+            MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, true)
+    
+        3. start universal access daemon to put the setting into effect
+    
+            _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
+    
+    disable:
+
+        1. disable the system filter:
+            
+            MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, false)
+    
+        3. start universal access daemon to put the setting into effect
+    
+            _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)    
  */
 
 #ifdef USE_UA
+
+int __attribute__((weak)) UNIVERSALACCESSD_MAGIC = 0x8;
+
 extern void UAGrayscaleSetEnabled(int enabled);
 extern int  UAGrayscaleIsEnabled(void);
 extern void UAGrayscaleSynchronizeLegacyPref(void);
+extern void _UniversalAccessDStart(int magic);
+
 #else
+
 CG_EXTERN bool CGDisplayUsesForceToGray(void);
 CG_EXTERN void CGDisplayForceToGray(bool forceToGray);
+
 #endif /* USE_UA */
 
 /* strings to select grayscale mode */
@@ -82,8 +131,12 @@ bool isGrayScaleEnabled(void)
 void grayScaleEnable(void)
 {
 #ifdef USE_UA
+    /* enable grayscale using universal access */
     UAGrayscaleSetEnabled(1);
+    /* synchronize the preference setting */    
     UAGrayscaleSynchronizeLegacyPref();
+    /* start universal access daemon in case it is not running */
+    _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC);
 #else
     CGDisplayForceToGray(true);
 #endif /* USE_UA*/
@@ -96,6 +149,7 @@ void grayScaleDisable(void)
 #ifdef USE_UA
     UAGrayscaleSetEnabled(0);
     UAGrayscaleSynchronizeLegacyPref();
+    _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC);
 #else
     CGDisplayForceToGray(false);
 #endif /* USE_UA */
