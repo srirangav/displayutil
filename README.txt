@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.3.1
+displayutil v0.3.2
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
@@ -80,9 +80,6 @@ Known Bugs and Issues:
     Enabling nightshift's sunset to sunrise mode may require location
     services to be enabled.
 
-    Sometimes on M1 macs the Accessibility System Preference needs to 
-    be opened before the grayscale setting can be applied.
-
 History:
 
     v0.1.0 - initial release
@@ -90,6 +87,7 @@ History:
     v0.3.0 - add support for brightness
     v0.3.1 - add support for listing all available resolutions for
              a display
+    v0.3.2 - fixes for grayscale on MacOS X 11.x (M1)
 
 License:
 
