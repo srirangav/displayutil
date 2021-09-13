@@ -1,6 +1,8 @@
 /*
     displayutil - displayutil_nightshift.m
 
+    enable / disable / schedule nightshift 
+    
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version

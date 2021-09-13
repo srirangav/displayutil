@@ -1,6 +1,8 @@
 /*
     displayutil - displayutil_grayscale.m
 
+    enable / disable grayscale mode
+    
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version

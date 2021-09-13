@@ -1,7 +1,7 @@
 /*
     displayutil - displayutil_listDisplays.m
 
-    lists online displays
+    list online displays
 
     History:
 
@@ -13,11 +13,16 @@
     v. 1.0.3 (09/07/2021) - add bit depth and verbose mode support
     v. 1.0.4 (09/09/2021) - list physical size, all available resolutions and 
                             retina equivalents (as applicable) in verbose mode
-    
+    v. 1.0.5 (09/12/2021) - default verbose mode to supported resolutions, add
+                            extended mode to list all available resolutions using
+                            public apis, and hidden mode to list all available 
+                            resolutions using private apis
+                            
     Based on: https://gist.github.com/markandrewj/5a465e91bd29d9f9c9e0f84cedb2ca49
               https://developer.apple.com/documentation/coregraphics/quartz_display_services
               https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/DisplayInfo.html
               https://github.com/nriley/brightness/blob/master/brightness.c
+              https://github.com/avibrazil/RDM
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 

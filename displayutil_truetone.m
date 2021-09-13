@@ -1,6 +1,8 @@
 /*
     displayutil - displayutil_truetone.m
 
+    enable / disable truetone 
+    
     History:
 
     v. 1.0.0 (04/29/2021) - Initial version
