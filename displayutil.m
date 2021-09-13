@@ -1,6 +1,8 @@
 /*
     displayutil - displayutil.m
 
+    displayutil command line interface
+     
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
@@ -10,7 +12,9 @@
     v. 1.0.4 (09/05/2021) - Add support for help mode for each sub mode
     v. 1.0.5 (09/07/2021) - Add support for verbose listing of display
                             information
-                            
+    v. 1.0.6 (09/12/2021) - Add support for verbose and extended mode
+                            listing of display information
+
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining

@@ -1,6 +1,8 @@
 /*
     displayutil - displayutil_argutils.m
 
+    command line argument handling utility functions
+    
     History:
 
     v. 1.0.0 (04/06/2021) - Initial version
