@@ -716,20 +716,20 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
     fprintf(stdout, "            ");
     fprintf(stdout, 
-            "%ld %s resolutions available:\n", 
+            "%ld%s resolutions available:\n", 
             numModes,
-            (listMode == LIST_SUPPORTED ? "other" : ""));
+            (listMode == LIST_SUPPORTED ? " other" : ""));
     
     for (i = 0; i < numModes; i++)
     {
 
         mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(allModesSorted, i);
-                                                     
+
         if (mode == NULL)
         {
             continue;
         }
-        
+
         fprintf(stdout, "            ");
 
         widthPixels = CGDisplayModeGetPixelWidth(mode);
@@ -740,7 +740,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
         fprintf(stdout, "%-4lu x %4lu", widthPixels, heightPixels);
 
         bitDepth = getDisplayBitDepth(mode);
-                
+
         if (bitDepth > 0) 
         {
             fprintf(stdout, " %lubit", bitDepth);
