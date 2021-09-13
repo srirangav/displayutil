@@ -52,6 +52,9 @@ extern const char *gStrModeHelpShort;
 extern const char *gStrModeHelpLong;
 extern const char *gStrModeVerboseLong;
 extern const char *gStrModeVerboseShort;
+extern const char *gStrModeExtendedLong;
+extern const char *gStrModeExtendedShort;
+extern const char *gStrModeHiddenLong;
 
 /* maximum number of supported displays */
 
@@ -74,5 +77,7 @@ bool isArgEnable(const char *arg);
 bool isArgDisable(const char *arg);
 bool isArgHelp(const char *arg);
 bool isArgVerbose(const char *arg);
+bool isArgExtended(const char *arg);
+bool isArgHidden(const char *arg);
 
 #endif /* displayutil_argutils_h */

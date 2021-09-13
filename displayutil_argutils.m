@@ -44,10 +44,13 @@ const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
 const char *gStrMain    = "main";
 const char *gStrAll     = "all";
-const char *gStrModeHelpShort    = "-h";
-const char *gStrModeHelpLong     = "-help";
-const char *gStrModeVerboseShort = "-v";
-const char *gStrModeVerboseLong  = "-verbose";
+const char *gStrModeHelpShort     = "-h";
+const char *gStrModeHelpLong      = "-help";
+const char *gStrModeVerboseShort  = "-v";
+const char *gStrModeVerboseLong   = "-verbose";
+const char *gStrModeExtendedShort = "-e";
+const char *gStrModeExtendedLong  = "-extended";
+const char *gStrModeHiddenLong    = "-hidden";
 
 const char *gStrStatus  = "status";
 const char *gStrUnavail = "unavailable";
@@ -123,4 +126,18 @@ bool isArgHelp(const char *arg)
 bool isArgVerbose(const char *arg)
 {
     return isArg(arg, gStrModeVerboseLong, gStrModeVerboseShort);
+}
+
+/* isArgExtended - check if the arg is extended mode */
+
+bool isArgExtended(const char *arg)
+{
+    return isArg(arg, gStrModeExtendedLong, gStrModeExtendedShort);
+}
+
+/* isArgHidden - check if the arg is hidden mode */
+
+bool isArgHidden(const char *arg)
+{
+    return isArg(arg, gStrModeHiddenLong, NULL);
 }

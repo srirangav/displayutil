@@ -41,14 +41,18 @@ The 'enable' or 'on' options enable grayscale mode.
 
 The 'disable' or 'off' options disable grayscale mode.
 .TP
-.B ls|list [-v] [all|main|display id]
+.B ls|list [-v|-e] [all|main|display id]
 
 Lists information about all active displays if no options are specified,
 or if the 'all' option is specified. If the 'main' option is specified, 
 information about the main display is listed.  If a 'display id' is 
 specified, information about the specified display, if available, is
-listed.  Extended information is shown if the -v (verbose) option is
-specified.
+listed.  
+
+Additional information is shown if the -v (verbose) or -e (extended) 
+options are specified.  The -v (verbose) option only shows information 
+for supported display resolutions, whereas the -e (extended) option 
+shows information for all available display resolutions.
 .TP
 .B nightshift|ns [enable|disable|on|off]
        [schedule [disable|sunset|[h]h:mm [h]h:mm]]

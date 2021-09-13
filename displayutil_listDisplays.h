@@ -32,6 +32,14 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 
+typedef enum
+{
+    LIST_SHORT     = 0,
+    LIST_SUPPORTED = 1,
+    LIST_EXTENDED  = 2,
+    LIST_HIDDEN    = 3,
+} list_mode_t;
+
 /* mode and option strings for list mode */
 
 extern const char *gStrModeListDisplaysLong;
@@ -40,9 +48,9 @@ extern const char *gStrModeListDisplaysShort;
 /* prototypes */
 
 void printListDisplaysUsage(void);
-bool listAllDisplays(bool verbose);
-bool listMainDisplay(bool verbose);
-bool listDisplay(unsigned long display, bool verbose);
+bool listAllDisplays(list_mode_t listMode);
+bool listMainDisplay(list_mode_t listMode);
+bool listDisplay(unsigned long display, list_mode_t listMode);
 
 #endif /* displayutil_listDisplays_h */
 

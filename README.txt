@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.3.2
+displayutil v0.3.3
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
@@ -30,22 +30,24 @@ Usage:
 
         displayutil [grayscale|gs] [on|enable|off|disable]
 
-    List Displays: 
+    List Display Information: 
     
-        displayutil [list|ls] [-v] [all|main|display id]
+        displayutil [list|ls] [-v|-e] [all|main|display id]
 
     Nightshift:
     
-        displayutil [nightshift|ns] [on|enable|off|disable] 
+        Status:
+        
+            displayutil [nightshift|ns] [on|enable|off|disable] 
         
         Schedule:
     
-        displayutil [nightshift|ns] 
-                    [schedule [disable|sunset|[h]h:mm [h]h:mm]]] 
+            displayutil [nightshift|ns] schedule 
+                        [disable|sunset|[h]h:mm [h]h:mm]]
 
         Strength:
 
-        displayutil [nightshift|ns] [0.0 - 1.0]
+            displayutil [nightshift|ns] [0.0 - 1.0]
 
     Truetone:
     
@@ -88,6 +90,9 @@ History:
     v0.3.1 - add support for listing all available resolutions for
              a display
     v0.3.2 - fixes for grayscale on MacOS X 11.x (M1)
+    v0.3.3 - default verbose listing to show only supported 
+             resolutions for a display and add an extended mode to
+             show all available resolutions for a display
 
 License:
 

@@ -92,7 +92,8 @@ static void printUsage(void)
 
 int main (int argc, char** argv)
 {
-    bool listMainDisplayOnly = false, verbose = false;
+    bool listMainDisplayOnly = false;
+    list_mode_t verbose = LIST_SHORT;
     unsigned long displayId = 0;
     char *endptr = NULL;
     float brightness = 0.0;
@@ -237,7 +238,17 @@ int main (int argc, char** argv)
                     
         if (isArgVerbose(argv[argIndex]) == true)
         {
-            verbose = true;
+            verbose = LIST_SUPPORTED;
+            argIndex++;
+        }
+        else if (isArgExtended(argv[argIndex]) == true)
+        {
+            verbose = LIST_EXTENDED;
+            argIndex++;
+        }
+        else if (isArgHidden(argv[argIndex]) == true)
+        {
+            verbose = LIST_HIDDEN;
             argIndex++;
         }
         

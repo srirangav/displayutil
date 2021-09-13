@@ -19,7 +19,7 @@ PGM_HEADERS   = CBBlueLightClient.h \
                 displayutil_nightshift.h \
                 displayutil_brightness.h
 PGM           = displayutil
-PGM_REL       = 0.3.0
+PGM_REL       = 0.3.3
 PGM_FILES     = $(PGM_SRCS) $(PGM_SRCS_1014) $(PGM_HEADERS) \
                 $(PGM).1 Makefile README.txt LICENSE.txt
 
@@ -89,7 +89,9 @@ LDFLAGS_11M1 = $(LDFLAGS_1014) \
                -lUniversalAccess
 # rules
 
-all:
+all: detect
+
+help:
 	@echo "To build, use one of the following:"
 	@echo
 	@echo "For Intel Macs on 10.12.3 or earlier: make 10.11"

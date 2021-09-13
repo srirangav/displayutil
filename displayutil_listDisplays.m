@@ -40,12 +40,47 @@
     DEALINGS IN THE SOFTWARE.
  */
 
+#import <stdlib.h>
 #import <stdio.h>
 #import <math.h>
 #import <IOKit/graphics/IOGraphicsLib.h>
 #import <IOKit/graphics/IOGraphicsTypes.h>
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
+
+/* 
+    CoreGraphics DisplayMode struct used in private APIs 
+    see: https://github.com/robbertkl/ResolutionMenu/blob/master/Resolution%20Menu/DisplayModeMenuItem.m
+*/
+
+typedef struct 
+{
+    uint32_t modeNumber;
+    uint32_t flags;
+    uint32_t widthInPts;
+    uint32_t heightInPts;
+    uint32_t unknown1[2];
+    uint32_t bitDepth;
+    uint32_t unknown2[40];
+    uint16_t unknown3;
+    uint16_t freq;
+    uint32_t unknown4[2];
+    uint32_t widthInPixels;
+    uint32_t heightInPixels;
+    float    density;
+} CGSDisplayMode;
+
+/* 
+    CoreGraphics private APIs with support for scaled (retina) display modes 
+    see: https://github.com/robbertkl/ResolutionMenu/blob/master/Resolution%20Menu/DisplayModeMenuItem.m
+*/
+
+void CGSGetNumberOfDisplayModes(CGDirectDisplayID display, 
+                                int *nModes);
+void CGSGetDisplayModeDescriptionOfLength(CGDirectDisplayID display, 
+                                          int idx, 
+                                          CGSDisplayMode *mode, 
+                                          int length);
 
 /* struct to hold a display's properties */
 
@@ -92,12 +127,14 @@ static const char *gStrDisplayStereo      = "stereo";
 static bool   getDisplayProperties(CGDirectDisplayID displayId,
                                    displayProperties_t *props);
 static bool   printDisplayProps(CGDirectDisplayID display, 
-                                bool verbose);
+                                list_mode_t listMode);
 static size_t getDisplayBitDepthForDisplayID(CGDirectDisplayID displayId);
 static size_t getDisplayBitDepth(CGDisplayModeRef mode);
 static CFComparisonResult compareCFDisplayModes(CGDisplayModeRef mode1, 
                                                 CGDisplayModeRef mode2, 
                                                 void *context);
+static int compareCSGDisplayModes(const void *mode1, 
+                                  const void *mode2);
 
 /* private functions */
 
@@ -317,7 +354,7 @@ static size_t getDisplayBitDepth(CGDisplayModeRef mode)
 /* printDisplayProps - print out a display's properties */
 
 static bool printDisplayProps(CGDirectDisplayID display, 
-                              bool verbose)
+                              list_mode_t listMode)
 {
     displayProperties_t displayProps;
     bool haveOpenBracket = false;
@@ -329,7 +366,9 @@ static bool printDisplayProps(CGDirectDisplayID display,
         {kCGDisplayShowDuplicateLowResolutionModes};
     const CFBooleanRef dictvalues[] = 
         {kCFBooleanTrue};
+    CGSDisplayMode *hiddenModes = NULL;
     long numModes = 0, i = 0;
+    int numHiddenModes = 0, j = 0;
     size_t bitDepth = 0;
     size_t widthPixels = 0, widthPts = 0;
     size_t heightPixels = 0, heightsPts = 0;
@@ -369,7 +408,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
     /* print out additional details if verbose out is requested */
     
-    if (verbose)
+    if (listMode != LIST_SHORT)
     {
 
         /* if the bit depth is available, print it out */
@@ -502,7 +541,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
     ret = true;
 
-    if (verbose == false)
+    if (listMode == LIST_SHORT)
     {
         return ret;
     }
@@ -540,36 +579,109 @@ static bool printDisplayProps(CGDirectDisplayID display,
     fprintf(stdout, ", Vendor: 0x%04X", displayProps.vendor);
     fprintf(stdout, ", Serial No.: 0x%08X", displayProps.serialNo);
     fprintf(stdout, "\n");
+
+    /* 
+        list all the hidden display modes for this display
+        see: https://github.com/robbertkl/ResolutionMenu/blob/master/Resolution%20Menu/DisplayModeMenuItem.m
+    */
     
+    if (listMode == LIST_HIDDEN)
+    {
+        CGSGetNumberOfDisplayModes(display, &numHiddenModes);
+        if (numHiddenModes <= 0)
+        {
+            return ret;
+        }
+
+        hiddenModes = calloc((unsigned long)numHiddenModes, 
+                             sizeof(CGSDisplayMode));
+        if (hiddenModes == NULL)
+        {
+            return ret;
+        }
+        
+        
+        fprintf(stdout, "            ");
+        fprintf(stdout, 
+                "%d resolutions available:\n", 
+                numHiddenModes);
+
+        for (j = 0; j < numHiddenModes; j++)
+        {
+            CGSGetDisplayModeDescriptionOfLength(display,
+                                                 j,
+                                                 &hiddenModes[j],
+                                                 sizeof(CGSDisplayMode));
+        }
+
+        qsort(hiddenModes, 
+              (size_t)numHiddenModes, 
+              sizeof(CGSDisplayMode),
+              compareCSGDisplayModes);
+        
+        for (j = 0; j < numHiddenModes; j++)
+        {
+            fprintf(stdout, "            ");
+
+            fprintf(stdout, 
+                    "%-4u x %4u %ubit @ %dHz", 
+                    hiddenModes[j].widthInPixels, 
+                    hiddenModes[j].heightInPixels,
+                    hiddenModes[j].bitDepth,
+                    hiddenModes[j].freq);
+
+            if (hiddenModes[j].widthInPixels != hiddenModes[j].widthInPts ||
+                hiddenModes[j].heightInPts != hiddenModes[j].heightInPts)
+            {
+                fprintf(stdout, 
+                        " (UI Appearance: %-4u x %4u)",
+                        hiddenModes[j].widthInPts,
+                        hiddenModes[j].heightInPts);
+            }
+
+            fprintf(stdout, "\n");
+        }
+        
+        if (hiddenModes != NULL)
+        {
+            free(hiddenModes);
+        }
+        
+        return ret;
+    }
+
     /* 
         list available resolutions
         based on: https://github.com/jhford/screenresolution/blob/master/cg_utils.c
         https://github.com/panda3d/panda3d/blob/master/panda/src/cocoadisplay/cocoaGraphicsWindow.mm
         https://stackoverflow.com/questions/53595111/how-to-get-the-physical-display-resolution-on-macos
     */
-    
+
     /* get all the available display modes for this display */
-    
-    options = CFDictionaryCreate(NULL,
-                                 (const void **)dictkeys,
-                                 (const void **)dictvalues,
-                                 1,
-                                 &kCFCopyStringDictionaryKeyCallBacks,
-                                 &kCFTypeDictionaryValueCallBacks);
-                                     
+
+    if (listMode == LIST_EXTENDED)
+    {
+        options = CFDictionaryCreate(NULL,
+                                     (const void **)dictkeys,
+                                     (const void **)dictvalues,
+                                     1,
+                                     &kCFCopyStringDictionaryKeyCallBacks,
+                                     &kCFTypeDictionaryValueCallBacks);
+    }                                     
+
     allModes = CGDisplayCopyAllDisplayModes(display, options);
     if (options != NULL)
     {
         CFRelease(options);
     }
-    
+
     if (allModes == NULL)
     {
         return ret;
     }
 
     /* get the number of modes */
-    
+
     numModes = CFArrayGetCount(allModes);
 
     if (numModes <= 0)
@@ -577,19 +689,19 @@ static bool printDisplayProps(CGDirectDisplayID display,
         CFRelease(allModes);
         return ret;
     }
-    
+
     /* sort the available display modes */
-        
+    
     allModesSorted = CFArrayCreateMutableCopy(kCFAllocatorDefault,
                                               numModes,
                                               allModes);
-    
+
     if (allModesSorted == NULL)
     {
         CFRelease(allModes);
         return ret;
     }
-    
+
     CFArraySortValues(allModesSorted,
                       CFRangeMake(0, CFArrayGetCount(allModesSorted)),
                       (CFComparatorFunction)compareCFDisplayModes,
@@ -598,7 +710,10 @@ static bool printDisplayProps(CGDirectDisplayID display,
     /* list each available resolution */
 
     fprintf(stdout, "            ");
-    fprintf(stdout, "%ld Resolutions Available:\n", numModes);
+    fprintf(stdout, 
+            "%ld %s resolutions available:\n", 
+            numModes,
+            (listMode == LIST_SUPPORTED ? "other" : ""));
     
     for (i = 0; i < numModes; i++)
     {
@@ -640,9 +755,16 @@ static bool printDisplayProps(CGDirectDisplayID display,
 
         fprintf(stdout, "\n");
     }
+
+    if (allModesSorted != NULL)
+    {
+        CFRelease(allModesSorted);
+    }
     
-    CFRelease(allModesSorted);
-    CFRelease(allModes);
+    if (allModes != NULL)
+    {
+        CFRelease(allModes);
+    }
     
     return ret;
 }
@@ -778,6 +900,129 @@ static CFComparisonResult compareCFDisplayModes(CGDisplayModeRef mode1,
             kCFCompareGreaterThan);
 }
 
+/* compareCSGDisplayModes - compare to display modes for sorting */
+
+static int compareCSGDisplayModes(const void *val1, 
+                                  const void *val2)
+{
+    uint32_t mode1Val = 0, mode2Val = 0;
+    uint16_t refreshRate1 = 0, refreshRate2 = 0;
+    CGSDisplayMode *mode1 = NULL, *mode2 = NULL;
+    
+    /* check if both modes are non-NULL */
+    
+    if (val1 == NULL)
+    {
+        if (val2 == NULL)
+        {
+            return 0;
+        }
+        return 1;
+    }
+    
+    if (val2 == NULL)
+    {
+        return -1;
+    }
+        
+    mode1 = (CGSDisplayMode *)val1;
+    mode2 = (CGSDisplayMode *)val2;
+    
+    /* start by comparing the pixel widths of the two modes */
+    
+       mode1Val = mode1->widthInPixels;
+       mode2Val = mode2->widthInPixels;
+
+    /* 
+        if pixel widths aren't equal, return whether mode1's width is less
+        than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? -1 : 1);
+    }
+    
+    /* the pixel widths are equal, compare the apparent widths */
+    
+    mode1Val = mode1->widthInPts;
+    mode2Val = mode2->widthInPts;
+
+    /* 
+        if apparent widths aren't equal, return whether mode1's apparent 
+        width is less than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? -1 : 1);
+    }
+
+    /* 
+        pixel widths and apparent widths are the same, compare the 
+        pixel heights
+    */
+
+    mode1Val = mode1->heightInPixels;
+    mode2Val = mode2->heightInPixels;
+
+    /* 
+        if pixel heights aren't equal, return whether mode1's pixel 
+        height is less than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? -1 : 1);
+    }
+    
+    /* 
+        pixel heights are equal, compare the apparent heights
+    */
+
+    mode1Val = mode1->heightInPts;
+    mode2Val = mode2->heightInPts;
+    
+    /* 
+        if apparent heights aren't equal, return whether mode1's 
+        apparent height is less than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? -1 : 1);
+    }
+
+    /* widths and heights are equal, compare the bit depths */
+
+    mode1Val = mode1->bitDepth;
+    mode2Val = mode2->bitDepth;
+
+    /* 
+        if the bit depths aren't equal, return whether mode1's bit depth
+        is less than mode2's
+    */
+    
+    if (mode1Val != mode2Val) 
+    {
+        return (mode1Val < mode2Val ? -1 : 1);
+    }
+
+    /* widths, heights, and bit depth are equal, compare refresh rates */
+
+     refreshRate1 = mode1->freq;
+     refreshRate2 = mode2->freq;
+
+    /* return whether mode1's refresh rate is less than mode2's */
+
+    if (refreshRate1 != refreshRate2)
+    {
+        return (refreshRate1 < refreshRate2 ? -1 : 1);
+    }
+    
+    return 0;
+}
+
 /* public functions */
 
 /* printListDisplaysUsage - print usage message list mode */
@@ -785,11 +1030,12 @@ static CFComparisonResult compareCFDisplayModes(CGDisplayModeRef mode1,
 void printListDisplaysUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s] [%s] [%s|%s|%s]\n",
+            "%s [%s|%s] [%s|%s] [%s|%s|%s]\n",
             gPgmName,
             gStrModeListDisplaysLong,
             gStrModeListDisplaysShort,
             gStrModeVerboseShort,
+            gStrModeExtendedLong,
             gStrAll,
             gStrMain,
             gStrDisp);
@@ -797,14 +1043,14 @@ void printListDisplaysUsage(void)
 
 /* listMainDisplay - list information about the main display */
 
-bool listMainDisplay(bool verbose)
+bool listMainDisplay(list_mode_t listMode)
 {
-    return printDisplayProps(CGMainDisplayID(), verbose);
+    return printDisplayProps(CGMainDisplayID(), listMode);
 }
 
 /* listAllDisplays - list information about all display */
 
-bool listAllDisplays(bool verbose)
+bool listAllDisplays(list_mode_t listMode)
 {
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
@@ -824,7 +1070,7 @@ bool listAllDisplays(bool verbose)
 
     for (i = 0; i < onlineDisplayCnt; i++)
     {
-        printDisplayProps(displays[i], verbose);
+        printDisplayProps(displays[i], listMode);
     }
 
     return true;
@@ -832,7 +1078,7 @@ bool listAllDisplays(bool verbose)
 
 /* listDisplay - list information about the specified display */
 
-bool listDisplay(unsigned long display, bool verbose)
+bool listDisplay(unsigned long display, list_mode_t listMode)
 {
     CGDisplayErr err;
     CGDisplayCount onlineDisplayCnt, i;
@@ -855,7 +1101,7 @@ bool listDisplay(unsigned long display, bool verbose)
     {
         if (displays[i] == display) 
         {
-            ret = printDisplayProps(displays[i], verbose);
+            ret = printDisplayProps(displays[i], listMode);
             break;
         }
     }
