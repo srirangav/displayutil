@@ -14,6 +14,9 @@
                             information
     v. 1.0.6 (09/12/2021) - Add support for verbose and extended mode
                             listing of display information
+    v. 1.0.7 (09/17/2021) - change verbose, extended, and hidden modes
+                            to -l (long), -a (all), and -p (private),
+                            respectively
 
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -240,17 +243,18 @@ int main (int argc, char** argv)
 
         /* check if the verbose option specified */
                     
-        if (isArgVerbose(argv[argIndex]) == true)
+        if (isArgLong(argv[argIndex]) == true)
         {
             verbose = LIST_SUPPORTED;
             argIndex++;
         }
-        else if (isArgExtended(argv[argIndex]) == true)
+        else if (isArgAll(argv[argIndex]) == true  ||
+                 isArgAllLong(argv[argIndex]) == true)
         {
             verbose = LIST_EXTENDED;
             argIndex++;
         }
-        else if (isArgHidden(argv[argIndex]) == true)
+        else if (isArgPrivate(argv[argIndex]) == true)
         {
             verbose = LIST_HIDDEN;
             argIndex++;

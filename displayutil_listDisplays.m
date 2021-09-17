@@ -1039,8 +1039,8 @@ void printListDisplaysUsage(void)
             gPgmName,
             gStrModeListDisplaysLong,
             gStrModeListDisplaysShort,
-            gStrModeVerboseShort,
-            gStrModeExtendedLong,
+            gStrModeAll,
+            gStrModeLong,
             gStrAll,
             gStrMain,
             gStrDisp);

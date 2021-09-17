@@ -6,7 +6,10 @@
     v. 1.0.0 (04/06/2021) - Initial version
     v. 1.0.1 (09/05/2021) - add help mode
     v. 1.0.2 (09/07/2021) - add verbose mode
-    
+    v. 1.0.3 (09/17/2021) - change verbose, extended, and hidden modes
+                            to -l (long), -a (all), and -p (private),
+                            respectively
+
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -48,13 +51,13 @@ extern const char *gStrUnavail;
 extern const char *gStrMain;
 extern const char *gStrAll;
 extern const char *gStrDisp;
+extern const char *gStrModeAll;
+extern const char *gStrModeAllLong;
 extern const char *gStrModeHelpShort;
 extern const char *gStrModeHelpLong;
-extern const char *gStrModeVerboseLong;
-extern const char *gStrModeVerboseShort;
-extern const char *gStrModeExtendedLong;
-extern const char *gStrModeExtendedShort;
-extern const char *gStrModeHiddenLong;
+extern const char *gStrModeLong;
+extern const char *gStrModeLongAll;
+extern const char *gStrModePrivate;
 
 /* maximum number of supported displays */
 
@@ -75,9 +78,10 @@ bool isArg(const char *arg,
            const char *shortMode);
 bool isArgEnable(const char *arg);
 bool isArgDisable(const char *arg);
+bool isArgAll(const char *arg);
+bool isArgAllLong(const char *arg);
 bool isArgHelp(const char *arg);
-bool isArgVerbose(const char *arg);
-bool isArgExtended(const char *arg);
-bool isArgHidden(const char *arg);
+bool isArgLong(const char *arg);
+bool isArgPrivate(const char *arg);
 
 #endif /* displayutil_argutils_h */

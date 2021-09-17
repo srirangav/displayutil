@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.3.3
+displayutil v0.3.4
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
@@ -32,7 +32,7 @@ Usage:
 
     List Display Information: 
     
-        displayutil [list|ls] [-v|-e] [all|main|display id]
+        displayutil [list|ls] [-a|-l] [all|main|display id]
 
     Nightshift:
     
@@ -93,6 +93,8 @@ History:
     v0.3.3 - default verbose listing to show only supported 
              resolutions for a display and add an extended mode to
              show all available resolutions for a display
+    v0.3.4 - change verbose and extended modes for display listing
+             to -l (long) and -a (all), respectively
 
 License:
 

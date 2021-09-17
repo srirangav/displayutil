@@ -9,7 +9,10 @@
     v. 1.0.1 (04/15/2021) - Restrict args to exact matches
     v. 1.0.2 (09/05/2021) - add help mode
     v. 1.0.3 (09/07/2021) - add verbose mode
-  
+    v. 1.0.4 (09/17/2021) - change verbose, extended, and hidden modes
+                            to -l (long), -a (all), and -p (private),
+                            respectively
+
     Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -46,17 +49,17 @@ const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
 const char *gStrMain    = "main";
 const char *gStrAll     = "all";
-const char *gStrModeHelpShort     = "-h";
-const char *gStrModeHelpLong      = "-help";
-const char *gStrModeVerboseShort  = "-v";
-const char *gStrModeVerboseLong   = "-verbose";
-const char *gStrModeExtendedShort = "-e";
-const char *gStrModeExtendedLong  = "-extended";
-const char *gStrModeHiddenLong    = "-hidden";
+const char *gStrDisp    = "display id";
+const char *gStrModeAll       = "-a";
+const char *gStrModeAllLong   = "-al";
+const char *gStrModeHelpShort = "-h";
+const char *gStrModeHelpLong  = "-help";
+const char *gStrModeLong      = "-l";
+const char *gStrModeLongAll   = "-la";
+const char *gStrModePrivate   = "-p";
 
 const char *gStrStatus  = "status";
 const char *gStrUnavail = "unavailable";
-const char *gStrDisp    = "display id";
 
 /* maximum number of supported displays */
 
@@ -116,6 +119,21 @@ bool isArgDisable(const char *arg)
     return isArg(arg, gStrDisable, gStrOff);
 }
 
+/* isArgAll - check if the arg is all output mode */
+
+bool isArgAll(const char *arg)
+{
+    return isArg(arg, gStrModeAll, NULL);
+}
+
+/* isArgAllLong - check if the arg is all and long output mode */
+
+bool isArgAllLong(const char *arg)
+{
+    return isArg(arg, gStrModeAllLong, gStrModeLongAll);
+}
+
+
 /* isArgHelp - check if the arg is help mode */
 
 bool isArgHelp(const char *arg)
@@ -123,23 +141,16 @@ bool isArgHelp(const char *arg)
     return isArg(arg, gStrModeHelpLong, gStrModeHelpShort);
 }
 
-/* isArgVerbose - check if the arg is verbose mode */
+/* isArgLong - check if the arg is long output mode */
 
-bool isArgVerbose(const char *arg)
+bool isArgLong(const char *arg)
 {
-    return isArg(arg, gStrModeVerboseLong, gStrModeVerboseShort);
+    return isArg(arg, gStrModeLong, NULL);
 }
 
-/* isArgExtended - check if the arg is extended mode */
+/* isArgPrivate - check if the arg is private information output mode */
 
-bool isArgExtended(const char *arg)
+bool isArgPrivate(const char *arg)
 {
-    return isArg(arg, gStrModeExtendedLong, gStrModeExtendedShort);
-}
-
-/* isArgHidden - check if the arg is hidden mode */
-
-bool isArgHidden(const char *arg)
-{
-    return isArg(arg, gStrModeHiddenLong, NULL);
+    return isArg(arg, gStrModePrivate, NULL);
 }

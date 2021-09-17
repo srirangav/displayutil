@@ -19,7 +19,7 @@ PGM_HEADERS   = CBBlueLightClient.h \
                 displayutil_nightshift.h \
                 displayutil_brightness.h
 PGM           = displayutil
-PGM_REL       = 0.3.3
+PGM_REL       = 0.3.4
 PGM_FILES     = $(PGM_SRCS) $(PGM_SRCS_1014) $(PGM_HEADERS) \
                 $(PGM).1 Makefile README.txt LICENSE.txt
 
