@@ -672,7 +672,7 @@ static bool printDisplayProps(CGDirectDisplayID display,
                                      1,
                                      &kCFCopyStringDictionaryKeyCallBacks,
                                      &kCFTypeDictionaryValueCallBacks);
-    }                                     
+    }
 
     allModes = CGDisplayCopyAllDisplayModes(display, options);
     if (options != NULL)
