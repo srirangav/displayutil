@@ -19,4 +19,10 @@ profile
 *.moved-aside
 DerivedData
 .idea/
-
+*.cache
+*.log
+*.status
+*.orig
+Makefile
+*~
+*.dSYM

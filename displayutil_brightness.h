@@ -4,8 +4,10 @@
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
+    v. 1.1.0 (04/27/2022) - add support for setting the main display's
+                            brightness
 
-    Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
+    Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the "Software"),
@@ -40,6 +42,7 @@ extern const char *gStrModeBrightnessShort;
 
 void printBrightnessUsage(void);
 bool setBrightnessForDisplay(unsigned long display, float brightness);
+bool setBrightnessForMainDisplay(float brightness);
 bool printBrightnessForDisplay(unsigned long display);
 bool printBrightnessForMainDisplay(void);
 bool printBrightnessForAllDisplays(void);

@@ -6,10 +6,12 @@
     History:
 
     v. 1.0.0 (09/03/2021) - Initial working version
-    
+    v. 1.1.0 (04/27/2022) - add support for setting the main display's
+                            brightness
+
     Based on: https://github.com/nriley/brightness/blob/master/brightness.c
 
-    Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
+    Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the "Software"),
@@ -79,9 +81,9 @@ extern int DisplayServicesSetBrightness(CGDirectDisplayID id,
 
 #ifdef NEED_IOSVCPORT
 
-static bool CFNumberEqualsUInt32(CFNumberRef numberRef, 
-                                 uint32_t uint32Val); 
-static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display); 
+static bool CFNumberEqualsUInt32(CFNumberRef numberRef,
+                                 uint32_t uint32Val);
+static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display);
 
 #endif /* NEED_IOSVCPORT */
 
@@ -89,44 +91,44 @@ static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display);
 
 #ifdef NEED_IOSVCPORT
 
-static bool CFNumberEqualsUInt32(CFNumberRef numberRef, 
-                                 uint32_t uint32Val) 
+static bool CFNumberEqualsUInt32(CFNumberRef numberRef,
+                                 uint32_t uint32Val)
 {
     int64_t int64Val;
-  
+
     if (numberRef == NULL) {
         return (uint32Val == 0);
     }
-    
+
     /* there's no CFNumber type guaranteed to be a uint32, so pick
         something bigger that's guaranteed not to truncate */
 
-    if (!CFNumberGetValue(numberRef, kCFNumberSInt64Type, &int64Val)) 
+    if (!CFNumberGetValue(numberRef, kCFNumberSInt64Type, &int64Val))
     {
         return false;
     }
-    
+
     return (int64Val == uint32Val);
 }
 
-/* 
-    getIOServicePortForDisplay - gets the IOServicePort for the 
-                                 specified display 
-    
+/*
+    getIOServicePortForDisplay - gets the IOServicePort for the
+                                 specified display
+
     Based on: https://github.com/nriley/brightness/blob/master/brightness.c
 */
 
-static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display) 
+static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display)
 {
     uint32_t vendor = 0, model = 0, serial = 0;
     CFMutableDictionaryRef matching;
     CFDictionaryRef info;
     CFNumberRef vendorID, productID, serialNumber;
     io_service_t service = 0, matching_service = 0;
-    io_iterator_t iter;    
-    
+    io_iterator_t iter;
+
     vendor = CGDisplayVendorNumber(display);
-    model  = CGDisplayModelNumber(display); 
+    model  = CGDisplayModelNumber(display);
     serial = CGDisplaySerialNumber(display);
 
     matching = IOServiceMatching("IODisplayConnect");
@@ -140,27 +142,27 @@ static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display)
         return matching_service;
     }
 
-    while ((service = IOIteratorNext(iter)) != 0) 
+    while ((service = IOIteratorNext(iter)) != 0)
     {
-        info = IODisplayCreateInfoDictionary(service, 
+        info = IODisplayCreateInfoDictionary(service,
                                              kIODisplayNoProductName);
         if (info == NULL)
         {
             continue;
         }
-        
-        vendorID = CFDictionaryGetValue(info, 
+
+        vendorID = CFDictionaryGetValue(info,
                                         CFSTR(kDisplayVendorID));
-        productID = CFDictionaryGetValue(info, 
+        productID = CFDictionaryGetValue(info,
                                          CFSTR(kDisplayProductID));
-        serialNumber = CFDictionaryGetValue(info, 
+        serialNumber = CFDictionaryGetValue(info,
                                             CFSTR(kDisplaySerialNumber));
 
         CFRelease(info);
 
         if (CFNumberEqualsUInt32(vendorID, vendor) &&
             CFNumberEqualsUInt32(productID, model) &&
-            CFNumberEqualsUInt32(serialNumber, serial)) 
+            CFNumberEqualsUInt32(serialNumber, serial))
         {
             matching_service = service;
             break;
@@ -168,7 +170,7 @@ static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display)
     }
 
     IOObjectRelease(iter);
-    
+
     return matching_service;
 }
 
@@ -192,6 +194,13 @@ void printBrightnessUsage(void)
             gStrModeBrightnessRange);
 }
 
+/* setBrightnessForDisplay - sets the brightness for the main display */
+
+bool setBrightnessForMainDisplay(float brightness)
+{
+    return setBrightnessForDisplay(CGMainDisplayID(), brightness);
+}
+
 /* setBrightnessForDisplay - sets the brightness for the specified display */
 
 bool setBrightnessForDisplay(unsigned long display, float brightness)
@@ -202,12 +211,12 @@ bool setBrightnessForDisplay(unsigned long display, float brightness)
     bool ret = false;
 
     /* confirm that the requested brightness level is between 0 and 1 */
-        
+
     if (brightness < 0.0 || brightness > 1.0)
     {
         return ret;
     }
-    
+
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
                                  &onlineDisplayCnt);
@@ -225,8 +234,8 @@ bool setBrightnessForDisplay(unsigned long display, float brightness)
         if (displays[i] != display)
         {
             continue;
-        }    
-        
+        }
+
         if (!DisplayServicesCanChangeBrightness((CGDirectDisplayID)display))
         {
             fprintf(stderr,
@@ -236,9 +245,9 @@ bool setBrightnessForDisplay(unsigned long display, float brightness)
                     display);
             break;
         }
-        
+
 #ifdef USE_DS
-        if (DisplayServicesSetBrightness((CGDirectDisplayID)display, 
+        if (DisplayServicesSetBrightness((CGDirectDisplayID)display,
                                          brightness))
         {
             fprintf(stderr,
@@ -248,16 +257,16 @@ bool setBrightnessForDisplay(unsigned long display, float brightness)
             break;
         }
 #else
-        CoreDisplay_Display_SetUserBrightness((CGDirectDisplayID)display, 
+        CoreDisplay_Display_SetUserBrightness((CGDirectDisplayID)display,
                                               (double)brightness);
 #endif /* USE_DS */
 
-        DisplayServicesBrightnessChanged((CGDirectDisplayID)display, 
+        DisplayServicesBrightnessChanged((CGDirectDisplayID)display,
                                          (double)brightness);
         ret = true;
         break;
     }
-    
+
     return ret;
 }
 
@@ -277,7 +286,7 @@ bool printBrightnessForAllDisplays(void)
     CGDirectDisplayID displays[MAXDISPLAYS];
     float currentBrightness = 0.0;
     bool failed = false;
-    
+
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
                                  &onlineDisplayCnt);
@@ -304,14 +313,14 @@ bool printBrightnessForAllDisplays(void)
             continue;
         }
 #else
-        currentBrightness = 
+        currentBrightness =
             (float)CoreDisplay_Display_GetUserBrightness((CGDirectDisplayID)displays[i]);
 #endif /* USE_DS */
 
         /* print out the brightness for this display */
-        fprintf(stdout, 
-                "0x%08X: %0.2f\n", 
-                (CGDirectDisplayID)displays[i], 
+        fprintf(stdout,
+                "0x%08X: %0.2f\n",
+                (CGDirectDisplayID)displays[i],
                 currentBrightness);
     }
 
@@ -327,7 +336,7 @@ bool printBrightnessForDisplay(unsigned long display)
     CGDirectDisplayID displays[MAXDISPLAYS];
     float currentBrightness = 0.0;
     bool ret = false, failed = false;
-    
+
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
                                  &onlineDisplayCnt);
@@ -346,7 +355,7 @@ bool printBrightnessForDisplay(unsigned long display)
         {
             continue;
         }
-        
+
 #ifdef USE_DS
         if (DisplayServicesGetBrightness((CGDirectDisplayID)displays[i],
                                          &currentBrightness))
@@ -359,14 +368,14 @@ bool printBrightnessForDisplay(unsigned long display)
             break;
         }
 #else
-        currentBrightness = 
+        currentBrightness =
             (float)CoreDisplay_Display_GetUserBrightness((CGDirectDisplayID)displays[i]);
 #endif /* USE_DS */
 
         /* print out the brightness for this display */
-        fprintf(stdout, 
-                "0x%08X: %0.2f\n", 
-                (CGDirectDisplayID)display, 
+        fprintf(stdout,
+                "0x%08X: %0.2f\n",
+                (CGDirectDisplayID)display,
                 currentBrightness);
         ret = true;
         break;

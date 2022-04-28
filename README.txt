@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.3.4
+displayutil v0.3.5
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
@@ -53,12 +53,35 @@ Usage:
     
         displayutil [truetone|tt] [on|enable|off|disable]
 
-Building:
+Build:
 
-    For Intel Macs running 10.12.3 or earlier:  make 10.11
-    For Intel Macs running 10.12.4 or 10.13.x:  make 10.13
-    For Intel Macs running 10.14 or later:      make 10.14
-    For M1 Macs running 11.0 or later:          make 11.m1
+    $ ./configure
+    $ make
+
+Install:
+
+    $ ./configure
+    $ make
+    $ make install
+
+    By default, displayutil is installed in /usr/local/bin.  To 
+    install it in a different location, the alternate installation 
+    prefix can be supplied to configure:
+
+        $ ./configure --prefix="<prefix>"
+
+    or, alternately to make:
+
+        $ make install PREFIX="<prefix>"
+
+    For example, the following will install vocr in /opt/local:
+
+        $ make PREFIX=/opt/local install
+
+    A DESTDIR can also be specified for staging purposes (with or
+    without an alternate prefix):
+
+        $ make DESTDIR="<destdir>" [PREFIX="<prefix>"] install
 
 Notes:
 
@@ -84,17 +107,18 @@ Known Bugs and Issues:
 
 History:
 
-    v0.1.0 - initial release
-    v0.2.0 - add support for truetone
-    v0.3.0 - add support for brightness
-    v0.3.1 - add support for listing all available resolutions for
-             a display
-    v0.3.2 - fixes for grayscale on MacOS X 11.x (M1)
-    v0.3.3 - default verbose listing to show only supported 
-             resolutions for a display and add an extended mode to
-             show all available resolutions for a display
-    v0.3.4 - change verbose and extended modes for display listing
-             to -l (long) and -a (all), respectively
+    v. 0.3.5 - switch to autoconf for configuration / build
+    v. 0.3.4 - change verbose and extended modes for display listing
+               to -l (long) and -a (all), respectively
+    v. 0.3.3 - default verbose listing to show only supported 
+               resolutions for a display and add an extended mode to
+               show all available resolutions for a display
+    v. 0.3.2 - fixes for grayscale on MacOS X 11.x (M1)
+    v. 0.3.1 - add support for listing all available resolutions for
+               a display
+    v. 0.3.0 - add support for brightness
+    v. 0.2.0 - add support for truetone
+    v. 0.1.0 - initial release
 
 License:
 

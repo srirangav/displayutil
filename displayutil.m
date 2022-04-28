@@ -17,8 +17,10 @@
     v. 1.0.7 (09/17/2021) - change verbose, extended, and hidden modes
                             to -l (long), -a (all), and -p (private),
                             respectively
+    v. 1.0.8 (04/27/2022) - add support for setting the main display's
+                            brightness
 
-    Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
+    Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the "Software"),
@@ -331,6 +333,34 @@ int main (int argc, char** argv)
         else if (isArg(argv[2], gStrMain, NULL) == true)
         {
             listMainDisplayOnly = true;
+            
+            /* 
+                if a brightness level is specified for the main,
+                display try to set the brightness to that level
+            */
+            
+            if (argc >= 4 && argv[3] != NULL)
+            {
+                brightness = strtof(argv[3], &endptr);
+                if ((brightness >= 0.0 &&
+                     brightness <= 1.0) &&
+                    (endptr == NULL || endptr[0] == '\0'))
+                {
+                    return (setBrightnessForMainDisplay(brightness) == true ?
+                                gDisplayUtilECOkay : gDisplayUtilECErr);
+                }
+                else
+                {
+                    fprintf(stderr,
+                            "%s: error: %s: invalid argument: '%s'\n",
+                             gPgmName,
+                             gStrModeBrightnessLong,
+                             argv[3]);
+                    printBrightnessUsage();
+                    return gDisplayUtilECErr;
+                }
+            }
+            
         }
         else if (isArgHelp(argv[2]) == true)
         {
