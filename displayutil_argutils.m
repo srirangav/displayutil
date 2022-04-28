@@ -2,7 +2,7 @@
     displayutil - displayutil_argutils.m
 
     command line argument handling utility functions
-    
+
     History:
 
     v. 1.0.0 (04/06/2021) - Initial version
@@ -12,8 +12,10 @@
     v. 1.0.4 (09/17/2021) - change verbose, extended, and hidden modes
                             to -l (long), -a (all), and -p (private),
                             respectively
+    v. 1.0.5 (04/27/2022) - add plain help without a dash as a valid
+                            help mode
 
-    Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
+    Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the "Software"),
@@ -54,6 +56,7 @@ const char *gStrModeAll       = "-a";
 const char *gStrModeAllLong   = "-al";
 const char *gStrModeHelpShort = "-h";
 const char *gStrModeHelpLong  = "-help";
+const char *gStrModeHelpPlain = "help";
 const char *gStrModeLong      = "-l";
 const char *gStrModeLongAll   = "-la";
 const char *gStrModePrivate   = "-p";
@@ -78,13 +81,13 @@ bool isArg(const char *arg,
            const char *shortMode)
 {
     size_t modeStrLen = 0;
-    
+
     if (arg == NULL || arg[0] == '\0')
     {
         return false;
     }
 
-    if (longMode != NULL) 
+    if (longMode != NULL)
     {
         modeStrLen = strlen(longMode);
         if (strncasecmp(arg, longMode, modeStrLen) == 0)
@@ -138,7 +141,12 @@ bool isArgAllLong(const char *arg)
 
 bool isArgHelp(const char *arg)
 {
-    return isArg(arg, gStrModeHelpLong, gStrModeHelpShort);
+    if (isArg(arg, gStrModeHelpLong, gStrModeHelpShort))
+    {
+        return true;
+    }
+
+    return isArg(arg, gStrModeHelpPlain, NULL);
 }
 
 /* isArgLong - check if the arg is long output mode */
