@@ -2,7 +2,7 @@
     displayutil - displayutil.m
 
     displayutil command line interface
-     
+
     History:
 
     v. 1.0.0 (04/01/2021) - Initial version
@@ -86,7 +86,7 @@ static void printUsage(void)
     printGrayScaleUsage();
 
     printListDisplaysUsage();
-    
+
 #ifndef NO_NS
     printNightShiftUsage();
 #endif /* NO_NS */
@@ -172,7 +172,7 @@ int main (int argc, char** argv)
                      argv[2]);
             rc = gDisplayUtilECErr;
         }
-        
+
         printDarkModeUsage();
 
         return rc;
@@ -221,7 +221,7 @@ int main (int argc, char** argv)
                      argv[2]);
             rc = gDisplayUtilECErr;
         }
-        
+
         printGrayScaleUsage();
 
         return rc;
@@ -232,19 +232,19 @@ int main (int argc, char** argv)
     if (isArg(argv[1], gStrModeListDisplaysLong, gStrModeListDisplaysShort))
     {
         /* no options were specified, just list all the display */
-        
+
         if (argc < 3)
         {
             return (listAllDisplays(verbose) == true ?
                     gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
-        // argc >= 3 
-        
+        // argc >= 3
+
         argIndex = 2;
 
         /* check if the verbose option specified */
-                    
+
         if (isArgLong(argv[argIndex]) == true)
         {
             verbose = LIST_SUPPORTED;
@@ -261,18 +261,18 @@ int main (int argc, char** argv)
             verbose = LIST_HIDDEN;
             argIndex++;
         }
-        
-        /* 
-            list all the display in verbose mode, if only the verbose 
-            option was specified 
+
+        /*
+            list all the display in verbose mode, if only the verbose
+            option was specified
         */
-            
+
         if (argc < argIndex+1)
         {
             return (listAllDisplays(verbose) == true ?
                     gDisplayUtilECOkay : gDisplayUtilECErr);
         }
-        
+
         if (isArg(argv[argIndex], gStrAll, NULL) == true)
         {
             listMainDisplayOnly = false;
@@ -289,7 +289,7 @@ int main (int argc, char** argv)
         else
         {
                 /* see if there is display id to list */
-            
+
                 displayId = strtoul(argv[argIndex], &endptr, 0);
 
                 if (endptr != NULL && endptr[0] != '\0')
@@ -302,11 +302,11 @@ int main (int argc, char** argv)
                     printListDisplaysUsage();
                     return gDisplayUtilECErr;
                 }
-                        
+
                 return (listDisplay(displayId, verbose) == true ?
                         gDisplayUtilECOkay : gDisplayUtilECErr);
         }
-        
+
         if (listMainDisplayOnly == true)
         {
             return (listMainDisplay(verbose) == true ?
@@ -333,12 +333,12 @@ int main (int argc, char** argv)
         else if (isArg(argv[2], gStrMain, NULL) == true)
         {
             listMainDisplayOnly = true;
-            
-            /* 
+
+            /*
                 if a brightness level is specified for the main,
                 display try to set the brightness to that level
             */
-            
+
             if (argc >= 4 && argv[3] != NULL)
             {
                 brightness = strtof(argv[3], &endptr);
@@ -360,7 +360,7 @@ int main (int argc, char** argv)
                     return gDisplayUtilECErr;
                 }
             }
-            
+
         }
         else if (isArgHelp(argv[2]) == true)
         {
@@ -370,7 +370,7 @@ int main (int argc, char** argv)
         else
         {
             /* see if a display id is specified */
-            
+
             displayId = strtoul(argv[2], &endptr, 0);
 
             if (endptr != NULL && endptr[0] != '\0')
@@ -384,11 +384,11 @@ int main (int argc, char** argv)
                 return gDisplayUtilECErr;
             }
 
-            /* 
+            /*
                 if a brightness level is specified for the display,
                 try to set the display's brightness to that level
             */
-            
+
             if (argc >= 4 && argv[3] != NULL)
             {
                 brightness = strtof(argv[3], &endptr);
@@ -414,7 +414,7 @@ int main (int argc, char** argv)
             return (printBrightnessForDisplay(displayId) == true ?
                     gDisplayUtilECOkay : gDisplayUtilECErr);
         }
-                
+
         if (listMainDisplayOnly == true)
         {
             return (printBrightnessForMainDisplay() == true ?
@@ -493,7 +493,7 @@ int main (int argc, char** argv)
             }
 
             /* see if a valid time interval was specified */
-            
+
             if (argc >= 5)
             {
                 if (strToTimeComponents(argv[3], &startHr, &startMin) != true)
@@ -507,7 +507,7 @@ int main (int argc, char** argv)
                     printNightShiftUsage();
                     return gDisplayUtilECErr;
                 }
-                
+
                 if (strToTimeComponents(argv[4], &endHr, &endMin) != true)
                 {
                     fprintf(stderr,
@@ -519,14 +519,14 @@ int main (int argc, char** argv)
                     printNightShiftUsage();
                     return gDisplayUtilECErr;
                 }
-                                    
-                return (nightShiftSchedule(startHr, 
-                                           startMin, 
-                                           endHr, 
+
+                return (nightShiftSchedule(startHr,
+                                           startMin,
+                                           endHr,
                                            endMin) == true ?
                         gDisplayUtilECOkay : gDisplayUtilECErr);
             }
-            
+
             fprintf(stderr,
                     "%s: error: %s: %s: invalid argument: '%s'\n",
                      gPgmName,
@@ -559,9 +559,9 @@ int main (int argc, char** argv)
                      argv[2]);
             rc = gDisplayUtilECErr;
         }
-        
+
         printNightShiftUsage();
-        
+
         return rc;
     }
 #endif /* NO_NS */
@@ -576,9 +576,9 @@ int main (int argc, char** argv)
             argv[2] == NULL || argv[2][0] == '\0')
         {
             ttStatus = isTrueToneEnabled();
-            
+
             fprintf(stdout, "%s: ", gStrModeTrueToneLong);
-            
+
             switch(ttStatus)
             {
                 case trueToneDisabled:
@@ -591,7 +591,7 @@ int main (int argc, char** argv)
                     /* intentionally fall through */
                 default:
                     fprintf(stdout, "%s\n", gStrUnavail);
-                    break;                
+                    break;
             }
             return gDisplayUtilECOkay;
         }
