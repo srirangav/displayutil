@@ -37,7 +37,7 @@ AC_C_CONST
 
 PGM_SRCS="displayutil_listDisplays.m displayutil_grayscale.m"
 PGM_SRCS="$PGM_SRCS displayutil_brightness.m displayutil_argutils.m"
-PGM_SRCS="$PGM_SRCS displayutil.m"
+PGM_SRCS="$PGM_SRCS displayutil_display.m displayutil.m"
 
 # check for libm
 

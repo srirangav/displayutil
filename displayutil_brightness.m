@@ -34,6 +34,7 @@
 
 #import <stdio.h>
 #import <IOKit/graphics/IOGraphicsLib.h>
+#import "displayutil_display.h"
 #import "displayutil_argutils.h"
 #import "displayutil_brightness.h"
 
@@ -76,106 +77,6 @@ extern int DisplayServicesSetBrightness(CGDirectDisplayID id,
   __attribute__((weak_import));
 
 #endif /* USE_DS */
-
-/* private functions prototypes */
-
-#ifdef NEED_IOSVCPORT
-
-static bool CFNumberEqualsUInt32(CFNumberRef numberRef,
-                                 uint32_t uint32Val);
-static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display);
-
-#endif /* NEED_IOSVCPORT */
-
-/* private functions */
-
-#ifdef NEED_IOSVCPORT
-
-static bool CFNumberEqualsUInt32(CFNumberRef numberRef,
-                                 uint32_t uint32Val)
-{
-    int64_t int64Val;
-
-    if (numberRef == NULL) {
-        return (uint32Val == 0);
-    }
-
-    /* there's no CFNumber type guaranteed to be a uint32, so pick
-        something bigger that's guaranteed not to truncate */
-
-    if (!CFNumberGetValue(numberRef, kCFNumberSInt64Type, &int64Val))
-    {
-        return false;
-    }
-
-    return (int64Val == uint32Val);
-}
-
-/*
-    getIOServicePortForDisplay - gets the IOServicePort for the
-                                 specified display
-
-    Based on: https://github.com/nriley/brightness/blob/master/brightness.c
-*/
-
-static io_service_t getIOServicePortForDisplay(CGDirectDisplayID display)
-{
-    uint32_t vendor = 0, model = 0, serial = 0;
-    CFMutableDictionaryRef matching;
-    CFDictionaryRef info;
-    CFNumberRef vendorID, productID, serialNumber;
-    io_service_t service = 0, matching_service = 0;
-    io_iterator_t iter;
-
-    vendor = CGDisplayVendorNumber(display);
-    model  = CGDisplayModelNumber(display);
-    serial = CGDisplaySerialNumber(display);
-
-    matching = IOServiceMatching("IODisplayConnect");
-    if (matching == nil)
-    {
-        return matching_service;
-    }
-
-    if (IOServiceGetMatchingServices(kIOMasterPortDefault, matching, &iter))
-    {
-        return matching_service;
-    }
-
-    while ((service = IOIteratorNext(iter)) != 0)
-    {
-        info = IODisplayCreateInfoDictionary(service,
-                                             kIODisplayNoProductName);
-        if (info == NULL)
-        {
-            continue;
-        }
-
-        vendorID = CFDictionaryGetValue(info,
-                                        CFSTR(kDisplayVendorID));
-        productID = CFDictionaryGetValue(info,
-                                         CFSTR(kDisplayProductID));
-        serialNumber = CFDictionaryGetValue(info,
-                                            CFSTR(kDisplaySerialNumber));
-
-        CFRelease(info);
-
-        if (CFNumberEqualsUInt32(vendorID, vendor) &&
-            CFNumberEqualsUInt32(productID, model) &&
-            CFNumberEqualsUInt32(serialNumber, serial))
-        {
-            matching_service = service;
-            break;
-        }
-    }
-
-    IOObjectRelease(iter);
-
-    return matching_service;
-}
-
-#endif /* NEED_IOSVCPORT */
-
 
 /* public functions */
 

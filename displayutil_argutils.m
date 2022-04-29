@@ -49,9 +49,7 @@ const char *gStrEnable  = "enable";
 const char *gStrOn      = "on";
 const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
-const char *gStrMain    = "main";
 const char *gStrAll     = "all";
-const char *gStrDisp    = "display id";
 const char *gStrModeAll       = "-a";
 const char *gStrModeAllLong   = "-al";
 const char *gStrModeHelpShort = "-h";
@@ -60,19 +58,6 @@ const char *gStrModeHelpPlain = "help";
 const char *gStrModeLong      = "-l";
 const char *gStrModeLongAll   = "-la";
 const char *gStrModePrivate   = "-p";
-
-const char *gStrStatus  = "status";
-const char *gStrUnavail = "unavailable";
-
-/* maximum number of supported displays */
-
-const UInt32 gMaxDisplays = MAXDISPLAYS;
-
-/* error messages */
-
-const char *gStrErrGetDisplays   = "cannot get display information";
-const char *gStrErrNoSuchDisplay = "display not found";
-
 
 /* isArg - check if the arg is the requested mode */
 

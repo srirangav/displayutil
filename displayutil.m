@@ -49,6 +49,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/objc.h>
 
+#import "displayutil_display.h"
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"
 #import "displayutil_grayscale.h"
