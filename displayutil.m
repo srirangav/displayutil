@@ -19,6 +19,7 @@
                             respectively
     v. 1.0.8 (04/27/2022) - add support for setting the main display's
                             brightness
+    v. 1.0.9 (04/30/2022) - add support for setting display resolutions
 
     Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -54,6 +55,7 @@
 #import "displayutil_listDisplays.h"
 #import "displayutil_grayscale.h"
 #import "displayutil_brightness.h"
+#import "displayutil_resolution.h"
 #ifndef NO_DM
 #import "displayutil_darkmode.h"
 #endif /* NO_DM */
@@ -96,6 +98,7 @@ static void printUsage(void)
     printTrueToneUsage();
 #endif /* NO_TT */
 
+    printResolutionUsage();
 }
 
 /* main */
@@ -103,8 +106,9 @@ static void printUsage(void)
 int main (int argc, char** argv)
 {
     bool listMainDisplayOnly = false;
+    bool setMainDisplayResolution = false, inPts = false;
     list_mode_t verbose = LIST_SHORT;
-    unsigned long displayId = 0;
+    unsigned long displayId = 0, width = 0, height = 0;
     char *endptr = NULL;
     float brightness = 0.0;
     int rc = gDisplayUtilECOkay;
@@ -299,7 +303,7 @@ int main (int argc, char** argv)
                             "%s: error: %s: invalid argument: '%s'\n",
                              gPgmName,
                              gStrModeListDisplaysLong,
-                             argv[2]);
+                             argv[argIndex]);
                     printListDisplaysUsage();
                     return gDisplayUtilECErr;
                 }
@@ -630,6 +634,122 @@ int main (int argc, char** argv)
         return rc ;
     }
 #endif /* NO_TT */
+
+    /* set resolution */
+
+    if (isArg(argv[1], gStrModeResolutionLong, gStrModeResolutionShort))
+    {
+        /* no options were specified, just list all the display */
+
+        if (argc < 3)
+        {
+            printResolutionUsage();
+            return (gDisplayUtilECErr);
+        }
+
+        argIndex = 2;
+
+        /* check if the help was requested */
+
+        if (argc == 3 && isArgHelp(argv[argIndex]) == true)
+        {
+            printResolutionUsage();
+            return gDisplayUtilECOkay;
+        } 
+        else if (argc < 5)
+        {
+            printResolutionUsage();
+            return (gDisplayUtilECErr);
+        }
+
+        if (isArg(argv[argIndex], gStrMain, NULL) == true)
+        {
+            setMainDisplayResolution = true;
+        }
+        else
+        {
+            /* see if we have a valid display id */
+
+            displayId = strtoul(argv[argIndex], &endptr, 0);
+
+            if (endptr != NULL && endptr[0] != '\0')
+            {
+                fprintf(stderr,
+                        "%s: error: %s: invalid argument: '%s'\n",
+                         gPgmName,
+                         gStrModeResolutionLong,
+                         argv[argIndex]);
+                printResolutionUsage();
+                return gDisplayUtilECErr;
+            }
+        }
+        
+        argIndex++;
+
+        /* see if we have a valid width */
+
+        width = strtoul(argv[argIndex], &endptr, 0);
+
+        if (endptr != NULL && endptr[0] != '\0')
+        {
+            fprintf(stderr,
+                    "%s: error: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeResolutionLong,
+                     argv[argIndex]);
+            printResolutionUsage();
+            return gDisplayUtilECErr;
+        }
+
+        argIndex++;
+
+        /* see if we have a valid height */
+
+        height = strtoul(argv[argIndex], &endptr, 0);
+
+        if (endptr != NULL && endptr[0] != '\0')
+        {
+            fprintf(stderr,
+                    "%s: error: %s: invalid argument: '%s'\n",
+                     gPgmName,
+                     gStrModeResolutionLong,
+                     argv[argIndex]);
+            printResolutionUsage();
+            return gDisplayUtilECErr;
+        }
+
+        if (argc >= 6)
+        {
+            argIndex++;
+            if (isArgYes(argv[argIndex]) != true)
+            {
+                fprintf(stderr,
+                        "%s: error: %s: invalid argument: '%s'\n",
+                         gPgmName,
+                         gStrModeResolutionLong,
+                         argv[argIndex]);
+                printResolutionUsage();
+                return gDisplayUtilECErr;
+            }
+            inPts = true;
+        }
+
+        if (setMainDisplayResolution == true)
+        {
+            return (setResolutionForMainDisplay(width,
+                                                height,
+                                                inPts,
+                                                false) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+
+        return (setResolutionForDisplay(displayId,
+                                        width,
+                                        height,
+                                        inPts,
+                                        false) == true ?
+                gDisplayUtilECOkay : gDisplayUtilECErr);
+    }
 
     /* unsupported or unknown mode */
 

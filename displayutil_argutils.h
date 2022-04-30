@@ -9,8 +9,9 @@
     v. 1.0.3 (09/17/2021) - change verbose, extended, and hidden modes
                             to -l (long), -a (all), and -p (private),
                             respectively
+    v. 1.0.4 (04/30/2022) - add checking for yes as a mode / argument
 
-    Copyright (c) 2021 Sriranga R. Veeraraghavan <ranga@calalum.org>
+    Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the "Software"),
@@ -49,8 +50,6 @@ extern const char *gStrOff;
 extern const char *gStrAll;
 extern const char *gStrModeAll;
 extern const char *gStrModeAllLong;
-extern const char *gStrModeHelpShort;
-extern const char *gStrModeHelpLong;
 extern const char *gStrModeLong;
 extern const char *gStrModeLongAll;
 extern const char *gStrModePrivate;
@@ -65,6 +64,7 @@ bool isArgDisable(const char *arg);
 bool isArgAll(const char *arg);
 bool isArgAllLong(const char *arg);
 bool isArgHelp(const char *arg);
+bool isArgYes(const char *arg);
 bool isArgLong(const char *arg);
 bool isArgPrivate(const char *arg);
 

@@ -14,6 +14,7 @@
                             respectively
     v. 1.0.5 (04/27/2022) - add plain help without a dash as a valid
                             help mode
+    v. 1.0.6 (04/30/2022) - add checking for yes as a mode / argument
 
     Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -50,6 +51,8 @@ const char *gStrOn      = "on";
 const char *gStrDisable = "disable";
 const char *gStrOff     = "off";
 const char *gStrAll     = "all";
+const char *gStrModeYesLong = "yes";
+const char *gStrModeYesShort = "y";
 const char *gStrModeAll       = "-a";
 const char *gStrModeAllLong   = "-al";
 const char *gStrModeHelpShort = "-h";
@@ -121,6 +124,12 @@ bool isArgAllLong(const char *arg)
     return isArg(arg, gStrModeAllLong, gStrModeLongAll);
 }
 
+/* isArgYes - check if the arg is yes */
+
+bool isArgYes(const char *arg)
+{
+    return isArg(arg, gStrModeYesLong, gStrModeYesShort);
+}
 
 /* isArgHelp - check if the arg is help mode */
 

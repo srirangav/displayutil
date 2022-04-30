@@ -1,7 +1,7 @@
 dnl -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([displayutil],[0.3.5],[ranga@calalum.org])
+AC_INIT([displayutil],[0.3.6],[ranga@calalum.org])
 
 AC_CANONICAL_BUILD
 
@@ -37,7 +37,8 @@ AC_C_CONST
 
 PGM_SRCS="displayutil_listDisplays.m displayutil_grayscale.m"
 PGM_SRCS="$PGM_SRCS displayutil_brightness.m displayutil_argutils.m"
-PGM_SRCS="$PGM_SRCS displayutil_display.m displayutil.m"
+PGM_SRCS="$PGM_SRCS displayutil_resolution.m displayutil_display.m"
+PGM_SRCS="$PGM_SRCS displayutil.m"
 
 # check for libm
 
