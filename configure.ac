@@ -1,7 +1,7 @@
 dnl -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([displayutil],[0.3.6],[ranga@calalum.org])
+AC_INIT([displayutil],[0.4.0],[ranga@calalum.org])
 
 AC_CANONICAL_BUILD
 

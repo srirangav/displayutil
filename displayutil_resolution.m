@@ -5,9 +5,9 @@
 
     History:
 
-    v. 1.0.0 (04/30/2022) - Initial working version
-    
-    Based on: 
+    v. 1.0.0 (05/06/2022) - Initial working version
+
+    Based on:
 
     Copyright (c) 2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -38,14 +38,18 @@
 /* strings to select the resolution mode */
 
 const char *gStrModeResolutionLong  = "resolution";
-const char *gStrModeResolutionShort = "res";
+const char *gStrModeResolutionShort = "rs";
 
 /* informational / error messages */
 
-static const char *gStrErrGetDisplayModes = 
+static const char *gStrErrGetDisplayModes =
     "cannot get display mode information";
-static const char *gStrErrGetResolutionUnavailable = 
+static const char *gStrErrGetResolutionUnavailable =
     "resolution not found/available";
+static const char *gStrErrCantConfigure =
+    "cannot configure display";
+static const char *gStrErrCantComplete =
+    "cannot complete display configuration";
 
 /* private functions */
 
@@ -66,22 +70,22 @@ void printResolutionUsage(void)
 
 /* setResolutionForDisplay - sets the resolution for the specified display */
 
-bool setResolutionForMainDisplay(size_t width, 
+bool setResolutionForMainDisplay(size_t width,
                                  size_t height,
                                  bool inPts,
                                  bool searchAll)
 {
-    return setResolutionForDisplay(CGMainDisplayID(), 
-                                    width, 
-                                    height, 
-                                    inPts, 
+    return setResolutionForDisplay(CGMainDisplayID(),
+                                    width,
+                                    height,
+                                    inPts,
                                     searchAll);
 }
 
 /* setResolutionForDisplay - sets the resolution for the specified display */
 
-bool setResolutionForDisplay(unsigned long display, 
-                             size_t width, 
+bool setResolutionForDisplay(unsigned long display,
+                             size_t width,
                              size_t height,
                              bool inPts,
                              bool searchAll)
@@ -90,26 +94,27 @@ bool setResolutionForDisplay(unsigned long display,
     CGDisplayCount onlineDisplayCnt, i;
     CGDirectDisplayID displays[MAXDISPLAYS];
     CGDisplayModeRef mode = NULL;
+    CGDisplayConfigRef config;
     CFArrayRef allModes = NULL;
     CFDictionaryRef options = NULL;
-    const CFStringRef dictkeys[] = 
+    const CFStringRef dictkeys[] =
         {kCGDisplayShowDuplicateLowResolutionModes};
-    const CFBooleanRef dictvalues[] = 
+    const CFBooleanRef dictvalues[] =
         {kCFBooleanTrue};
     long numModes = 0, j = 0;
     size_t modeWidth = 0, modeHeight = 0;
     bool foundDisplay = false, foundMode = false;
-    bool ret = false; 
+    bool ret = false;
 
     /* make sure a non-zero width and height are specified */
-    
+
     if (width <= 0 || height <= 0)
     {
         return ret;
     }
-    
+
     /* get a list of the available displays */
-    
+
     err = CGGetOnlineDisplayList(gMaxDisplays,
                                  displays,
                                  &onlineDisplayCnt);
@@ -123,20 +128,20 @@ bool setResolutionForDisplay(unsigned long display,
     }
 
     /* see if the specified display is available */
-    
+
     for (i = 0; i < onlineDisplayCnt; i++)
     {
         if (displays[i] != display)
         {
             continue;
-        }    
-        
+        }
+
         /* the specified display is available */
-        
+
         foundDisplay = true;
         break;
     }
-    
+
     if (foundDisplay == false)
     {
         fprintf(stderr,
@@ -146,15 +151,15 @@ bool setResolutionForDisplay(unsigned long display,
                 display);
         return ret;
     }
-    
+
     /* check if the requested resolution is available */
-    
-    /* 
+
+    /*
         if searchAll is true, then look through all available
-        resolutions, otherwise, just look at supported 
+        resolutions, otherwise, just look at supported
         resolutions
     */
-    
+
     if (searchAll == true)
     {
         options = CFDictionaryCreate(NULL,
@@ -164,10 +169,10 @@ bool setResolutionForDisplay(unsigned long display,
                                      &kCFCopyStringDictionaryKeyCallBacks,
                                      &kCFTypeDictionaryValueCallBacks);
     }
-    
+
     /* get the available display modes for this display */
-    
-    allModes = CGDisplayCopyAllDisplayModes((CGDirectDisplayID)display, 
+
+    allModes = CGDisplayCopyAllDisplayModes((CGDirectDisplayID)display,
                                             options);
     if (options != NULL)
     {
@@ -182,7 +187,7 @@ bool setResolutionForDisplay(unsigned long display,
                 gStrErrGetDisplayModes);
         return ret;
     }
-    
+
     /* get the number of available modes that were found */
 
     numModes = CFArrayGetCount(allModes);
@@ -206,13 +211,13 @@ bool setResolutionForDisplay(unsigned long display,
         {
             continue;
         }
-        
-        /* 
+
+        /*
             if the requested mode is a retina mode (i.e. inPts
-            is true), then look at the resolution in points, 
+            is true), then look at the resolution in points,
             otherwise, use the pixel resolution
         */
-            
+
         if (inPts)
         {
             modeWidth = CGDisplayModeGetWidth(mode);
@@ -223,18 +228,18 @@ bool setResolutionForDisplay(unsigned long display,
             modeWidth = CGDisplayModeGetPixelWidth(mode);
             modeHeight = CGDisplayModeGetPixelHeight(mode);
         }
-        
+
         /* we found a matching mode, break */
-        
+
         if (width == modeWidth && height == modeHeight)
         {
             foundMode = true;
             break;
         }
     }
-    
+
     /* the requested resolution isn't available */
-    
+
     if (foundMode != true)
     {
         CFRelease(allModes);
@@ -246,13 +251,47 @@ bool setResolutionForDisplay(unsigned long display,
                 height);
         return ret;
     }
-    
+
     /* a matching resolution is available */
 
-    fprintf(stderr,
-            "DEBUG: setting %lu to %lu x %lu\n",
-            display, modeWidth, modeHeight);
+    if (CGBeginDisplayConfiguration(&config) != kCGErrorSuccess)
+    {
+        CFRelease(allModes);
+        fprintf(stderr,
+                "error: %s: %s\n",
+                gStrModeResolutionLong,
+                gStrErrCantConfigure);
+        return ret;
+    }
 
-    return ret;
+    if (CGConfigureDisplayWithDisplayMode(config,
+                                          (CGDirectDisplayID)display,
+                                          mode,
+                                          NULL) != kCGErrorSuccess)
+    {
+        CFRelease(allModes);
+        fprintf(stderr,
+                "error: %s: %s %lu to %lu x %lu\n",
+                gStrModeResolutionLong,
+                gStrErrCantConfigure,
+                display,
+                modeWidth,
+                modeHeight);
+        return ret;
+    }
+
+    if (CGCompleteDisplayConfiguration(config,
+                                       kCGConfigurePermanently)
+                                       != kCGErrorSuccess)
+    {
+        CFRelease(allModes);
+        fprintf(stderr,
+                "error: %s: %s",
+                gStrModeResolutionLong,
+                gStrErrCantComplete);
+        return ret;
+    }
+
+    return true;
 }
 

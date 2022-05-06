@@ -7,8 +7,9 @@ displayutil [mode] [options]
 displayutil is a command line utility for retrieving information
 about, enabling, or disabling, darkmode, grayscale, nightshift,
 and truetone on MacOS X systems.  It can also retrieve and set
-the brightness level for some active displays along with listing
-information about active displays.
+the brightness level for some active displays, set the resolution
+for some active displays, and list information about active
+displays.
 .SH MODES & OPTIONS
 
 .TP
@@ -87,6 +88,14 @@ to the time specified by the second argument.
 If a value between 0.0 and 1.0 is specified instead of one of the above
 options, the nightshift strength is set to that value and, if nightshift was
 disabled, nightshift is enabled.
+.TP
+.B resolution|rs [main|display id] [width] [height] [yes]
+
+Sets the resolution of the specified display to the specified width and
+height, provided that the display supports a resolution of the specified
+width and height.  If 'yes' is specified after the width and height, the
+width and height are treated as the effective resolution for a retina
+display.
 .TP
 .B truetone|tt [enable|disable|on|off]
 
