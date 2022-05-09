@@ -121,6 +121,9 @@ int main (int argc, char** argv)
     trueToneStatus_t ttStatus;
 #endif /* NO_TT */
 
+@autoreleasepool
+    {
+
     /*
         print a usage message if help mode was specified or if no mode was
         specified
@@ -759,4 +762,6 @@ int main (int argc, char** argv)
             argv[1]);
     printUsage();
     return gDisplayUtilECErr;
+
+    } /* @autoreleasepool */
 }
