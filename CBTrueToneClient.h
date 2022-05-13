@@ -10,8 +10,6 @@
 #ifndef CBTrueToneClient_h
 #define CBTrueToneClient_h
 
-#import <Foundation/Foundation.h>
-
 @interface CBTrueToneClient : NSObject
 
     - (BOOL) enabled;

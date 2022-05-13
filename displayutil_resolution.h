@@ -29,8 +29,6 @@
 #ifndef displayutil_resolution_h
 #define displayutil_resolution_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 /* mode and option strings for list mode */
 
 extern const char *gStrModeResolutionLong;

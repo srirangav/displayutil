@@ -29,6 +29,8 @@
  */
 
 #import <stdio.h>
+#import <ApplicationServices/ApplicationServices.h>
+
 #import "displayutil_argutils.h"
 #import "displayutil_darkmode.h"
 

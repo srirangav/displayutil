@@ -29,8 +29,6 @@
 #ifndef displayutil_darkmode_h
 #define displayutil_darkmode_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 /* strings to select darkmode */
 
 extern const char *gStrModeDarkModeLong;

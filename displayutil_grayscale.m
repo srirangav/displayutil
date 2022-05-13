@@ -32,6 +32,9 @@
  */
 
 #import <stdio.h>
+#import <ApplicationServices/ApplicationServices.h>
+#import <IOKit/graphics/IOGraphicsLib.h>
+
 #import "displayutil_argutils.h"
 #import "displayutil_grayscale.h"
 

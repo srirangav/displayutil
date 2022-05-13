@@ -31,8 +31,6 @@
 #ifndef displayutil_brightness_h
 #define displayutil_brightness_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 /* mode and option strings for list mode */
 
 extern const char *gStrModeBrightnessLong;

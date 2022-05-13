@@ -29,9 +29,6 @@
 #ifndef displayutil_grayscale_h
 #define displayutil_grayscale_h
 
-#import <IOKit/graphics/IOGraphicsLib.h>
-#import <ApplicationServices/ApplicationServices.h>
-
 /* strings to select grayscale mode */
 
 extern const char *gStrModeGrayscaleLong;

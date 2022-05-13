@@ -44,11 +44,7 @@
 
 #import <stdio.h>
 #import <string.h>
-#import <strings.h>
-
-#import <ApplicationServices/ApplicationServices.h>
 #import <Foundation/Foundation.h>
-#import <objc/objc.h>
 
 #import "displayutil_display.h"
 #import "displayutil_argutils.h"

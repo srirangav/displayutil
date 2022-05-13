@@ -19,8 +19,6 @@
 #ifndef CBBlueLightClient_h
 #define CBBlueLightClient_h
 
-#import <Foundation/Foundation.h>
-
 enum
 {
     CBBlueLightClientModeNoSchedule     = 0,

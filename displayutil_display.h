@@ -29,10 +29,6 @@
 #ifndef displayutil_display_h
 #define displayutil_display_h
 
-#import <ApplicationServices/ApplicationServices.h>
-#import <IOKit/graphics/IOGraphicsLib.h>
-#import <IOKit/graphics/IOGraphicsTypes.h>
-
 /* maximum number of supported displays */
 
 #ifndef MAXDISPLAYS

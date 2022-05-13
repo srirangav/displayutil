@@ -38,6 +38,8 @@
  */
 
 #import <strings.h>
+#import <ApplicationServices/ApplicationServices.h>
+
 #import "displayutil_argutils.h"
 
 /* program name */

@@ -35,8 +35,6 @@
 #ifndef displayutil_argutils_h
 #define displayutil_argutils_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 /* program name */
 
 extern const char *gPgmName;

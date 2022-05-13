@@ -48,8 +48,9 @@
 #import <stdlib.h>
 #import <stdio.h>
 #import <math.h>
-#import <IOKit/graphics/IOGraphicsLib.h>
+#import <ApplicationServices/ApplicationServices.h>
 #import <IOKit/graphics/IOGraphicsTypes.h>
+
 #import "displayutil_display.h"
 #import "displayutil_argutils.h"
 #import "displayutil_listDisplays.h"

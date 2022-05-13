@@ -32,6 +32,8 @@
  */
 
 #import <stdio.h>
+#import <ApplicationServices/ApplicationServices.h>
+
 #import "displayutil_display.h"
 #import "displayutil_argutils.h"
 #import "displayutil_resolution.h"

@@ -115,6 +115,8 @@ Known Bugs and Issues:
 
 History:
 
+    v. 0.4.1 - try to adopt #include/#import discipline for .h files
+               (see https://doc.cat-v.org/bell_labs/pikestyle)
     v. 0.4.0 - add support for setting resolutions
     v. 0.3.5 - switch to autoconf for configuration / build
     v. 0.3.4 - change verbose and extended modes for display listing
@@ -132,3 +134,4 @@ History:
 License:
 
     See LICENSE.txt
+

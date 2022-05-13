@@ -30,8 +30,6 @@
 #ifndef displayutil_listDisplays_h
 #define displayutil_listDisplays_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 typedef enum
 {
     LIST_SHORT     = 0,

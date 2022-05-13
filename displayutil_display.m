@@ -26,6 +26,9 @@
     DEALINGS IN THE SOFTWARE.
  */
 
+#import <ApplicationServices/ApplicationServices.h>
+#import <IOKit/graphics/IOGraphicsTypes.h>
+
 #import "displayutil_display.h"
 
 const char *gStrDisp    = "display id";

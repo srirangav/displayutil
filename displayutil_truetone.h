@@ -29,8 +29,6 @@
 #ifndef displayutil_truetone_h
 #define displayutil_truetone_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 typedef enum
 {
     trueToneDisabled     = 0,

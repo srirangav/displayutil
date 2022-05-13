@@ -30,8 +30,6 @@
 #ifndef displayutil_nightshift_h
 #define displayutil_nightshift_h
 
-#import <ApplicationServices/ApplicationServices.h>
-
 /* modes for printing out nightshift information */
 
 typedef enum

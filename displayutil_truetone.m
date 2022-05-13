@@ -29,6 +29,8 @@
  */
 
 #import <stdio.h>
+#import <Foundation/Foundation.h>
+
 #import "CBTrueToneClient.h"
 #import "displayutil_argutils.h"
 #import "displayutil_truetone.h"
