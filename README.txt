@@ -2,7 +2,6 @@ README
 ------
 
 displayutil v0.4.2
-By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
 
