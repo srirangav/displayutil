@@ -1,7 +1,7 @@
 dnl -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([displayutil],[0.4.0],[ranga@calalum.org])
+AC_INIT([displayutil],[0.4.2],[ranga@calalum.org])
 
 AC_CANONICAL_BUILD
 
@@ -86,7 +86,8 @@ fi
 AC_MSG_CHECKING([for Night Shift support in CoreBrightness])
 SAVE_LIBS="$LIBS"
 LIBS="$LIBS -framework CoreBrightness"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([#import "CBBlueLightClient.h"], [
+AC_LINK_IFELSE([AC_LANG_PROGRAM([#import <Foundation/Foundation.h>
+                                 #import "./CBBlueLightClient.h"], [
                 CBBlueLightClient *blueLightClient = nil;])
                 ],[has_framework=1],[has_framework=0])
 if test $has_framework = 0; then
@@ -100,7 +101,8 @@ else
     # since CoreBrightness is available, check if it supports truetone 
     
     AC_MSG_CHECKING([for True Tone support in CoreBrightness])
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([#import "CBTrueToneClient.h"], [
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([#import <Foundation/Foundation.h>
+                                     #import "./CBTrueToneClient.h"], [
                     CBTrueToneClient *trueToneClient = nil;])
                     ],[has_framework=1],[has_framework=0])
     if test $has_framework = 0; then
@@ -238,6 +240,8 @@ TEST_AND_SET_CFLAG(-Wconversion)
 TEST_AND_SET_CFLAG(-Wtraditional-conversion)
 TEST_AND_SET_CFLAG(-Warith-conversion)
 TEST_AND_SET_CFLAG(-Wstack-protector)
+TEST_AND_SET_CFLAG(-Wstack-usage)
+TEST_AND_SET_CFLAG(-Winfinite-recursion)
 TEST_AND_SET_CFLAG(-Wnull-dereference)
 TEST_AND_SET_CFLAG(-Wvla)
 TEST_AND_SET_CFLAG(-Warray-bounds-pointer-arithmetic)
@@ -275,8 +279,11 @@ TEST_AND_SET_CFLAG(-Wlogical-op)
 TEST_AND_SET_CFLAG(-Wduplicated-cond)
 TEST_AND_SET_CFLAG(-Wduplicated-branches)
 TEST_AND_SET_CFLAG(-Wundef)
+TEST_AND_SET_CFLAG(-fstack-usage)
 TEST_AND_SET_CFLAG(-fstack-protector-all) 
 TEST_AND_SET_CFLAG(-fstack-protector-strong)
+TEST_AND_SET_CFLAG(-fstack-protector-explicit)
+TEST_AND_SET_CFLAG(-mshstk)
 TEST_AND_SET_CFLAG(-fsanitize=safe-stack)
 #TEST_AND_SET_CFLAG(-fsanitize=shadow-call-stack)
 TEST_AND_SET_CFLAG(-fsanitize=cfi)
@@ -298,6 +305,11 @@ TEST_AND_SET_CFLAG(-D_GLIBCXX_ASSERTIONS)
 TEST_AND_SET_CFLAG(-fasynchronous-unwind-tables)
 TEST_AND_SET_CFLAG(-fwrapv)
 TEST_AND_SET_CFLAG(-flto)
+TEST_AND_SET_CFLAG(-fsplit-stack)
+TEST_AND_SET_CFLAG(-fstack-limit-register)
+TEST_AND_SET_CFLAG(-fstack-limit-symbol)
+TEST_AND_SET_CFLAG(-fno-stack-array)
+TEST_AND_SET_CFLAG(-mbranch-protection=standard)
 
 OBJCFLAGS="$OBJCFLAGS $CFLAGS"
 

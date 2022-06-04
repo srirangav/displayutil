@@ -6,6 +6,7 @@
     History:
 
     v. 1.0.0 (05/06/2022) - Initial working version
+    v. 1.0.1 (06/03/2022) - clean up usage message
 
     Based on:
 
@@ -63,7 +64,7 @@ static const char *gStrErrCantComplete =
 void printResolutionUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s] [%s|%s] [width] [height] [pts]\n",
+            "%s [%s|%s] [[%s|%s] [width] [height]] [pts]\n",
             gPgmName,
             gStrModeResolutionLong,
             gStrModeResolutionShort,
@@ -71,7 +72,8 @@ void printResolutionUsage(void)
             gStrDisp);
 }
 
-/* setResolutionForDisplay - sets the resolution for the specified display */
+/* setResolutionForDisplay - sets the resolution for the specified 
+                             display */
 
 bool setResolutionForMainDisplay(size_t width,
                                  size_t height,

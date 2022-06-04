@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.4.0
+displayutil v0.4.2
 By Sriranga Veeraraghavan <ranga@calalum.org>
 
 Homepage:
@@ -21,7 +21,7 @@ Usage:
 
     Brightness:
 
-        displayutil [brightness|br [all|main|display id [0.0 - 1.0]]]
+        displayutil [brightness|br [[all|main|display id] [0.0 - 1.0]]]
 
     Darkmode:
 
@@ -52,7 +52,7 @@ Usage:
 
     Resolution:
 
-        displayutil [resolution|rs] [main|display id] [width] [height] [yes]
+        displayutil [resolution|rs] [[[main|display id] [width] [height]] [yes]]
 
     Truetone:
 
@@ -115,6 +115,8 @@ Known Bugs and Issues:
 
 History:
 
+    v. 0.4.2 - add extra security related compiler options, fix
+               detection of CoreBrightness framework
     v. 0.4.1 - try to adopt #include/#import discipline for .h files
                (see https://doc.cat-v.org/bell_labs/pikestyle)
     v. 0.4.0 - add support for setting resolutions
