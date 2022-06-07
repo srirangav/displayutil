@@ -2,6 +2,7 @@
 
 PREFIX = @prefix@
 PGM_SRCS = @PGM_SRCS@
+PGM_OBJS = $(PGM_SRCS:.m=.o)
 PGM = @PACKAGE_NAME@
 PGM_REL = @PACKAGE_VERSION@
 PGM_MAN = $(PGM).1
@@ -15,8 +16,11 @@ INSTALL=@INSTALL@
 
 # rules
 
-all:
-	$(OBJC) $(CFLAGS) -o $(PGM) $(PGM_SRCS) $(LIBS)
+.m.o:
+	$(OBJC) $(CFLAGS) -c $<
+
+all: $(PGM_OBJS)
+	$(OBJC) $(CFLAGS) -o $(PGM) $(PGM_OBJS) $(LIBS)
 
 man2txt:
 	nroff -Tascii -man $(PGM_MAN) | col -b -x > $(PGM_MAN).txt

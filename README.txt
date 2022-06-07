@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.4.2
+displayutil v0.4.3
 
 Homepage:
 
@@ -122,6 +122,8 @@ Known Bugs and Issues:
 
 History:
 
+    v. 0.4.3 - update Makefile to compile each source file
+               separately, minor input validation fixes
     v. 0.4.2 - add extra security related compiler options, fix
                detection of CoreBrightness framework
     v. 0.4.1 - try to adopt #include/#import discipline for 

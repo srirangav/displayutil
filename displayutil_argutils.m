@@ -80,6 +80,11 @@ bool isArg(const char *arg,
     if (longMode != NULL)
     {
         modeStrLen = strlen(longMode);
+        if (modeStrLen <= 1)
+        {
+            return false;
+        }
+
         if (strncasecmp(arg, longMode, modeStrLen) == 0)
         {
             return (strlen(arg) == modeStrLen ? true : false);
@@ -89,6 +94,11 @@ bool isArg(const char *arg,
     if (shortMode != NULL)
     {
         modeStrLen = strlen(shortMode);
+        if (modeStrLen <= 1)
+        {
+            return false;
+        }
+
         if (strncasecmp(arg, shortMode, modeStrLen) == 0)
         {
             return (strlen(arg) == modeStrLen ? true : false);

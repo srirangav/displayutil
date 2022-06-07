@@ -1,7 +1,7 @@
 dnl -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([displayutil],[0.4.2],[ranga@calalum.org])
+AC_INIT([displayutil],[0.4.3],[ranga@calalum.org])
 
 AC_CANONICAL_BUILD
 
@@ -309,7 +309,8 @@ TEST_AND_SET_CFLAG(-fsplit-stack)
 TEST_AND_SET_CFLAG(-fstack-limit-register)
 TEST_AND_SET_CFLAG(-fstack-limit-symbol)
 TEST_AND_SET_CFLAG(-fno-stack-array)
-TEST_AND_SET_CFLAG(-mbranch-protection=standard)
+# temporarily disable
+#TEST_AND_SET_CFLAG(-mbranch-protection=standard)
 
 OBJCFLAGS="$OBJCFLAGS $CFLAGS"
 
