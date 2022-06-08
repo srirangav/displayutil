@@ -1,6 +1,6 @@
 .TH displayutil 1
 .SH NAME
-displayutil - a MacOSX utility for manipulating display related settings.
+displayutil \- a MacOSX utility for manipulating display related settings.
 .SH SYNOPSIS
 displayutil [mode] [options]
 .SH DESCRIPTION
@@ -13,17 +13,17 @@ displays.
 .SH MODES & OPTIONS
 
 .TP
-.B brightness|br [all|main|display id [0.0 - 1.0]]
+.B brightness|br [all|main|display id [0.0 \- 1.0]]
 
-If the 'all' option is specified, lists the brightness setting of all
+If the "all" option is specified, lists the brightness setting of all
 active displays.
 
-If the 'main' option is specified, lists the brightness setting of the
+If the "main" option is specified, lists the brightness setting of the
 main display.  If a value between 0.0 and 1.0 is provided after specifying
 the main display, if possible, the brightness of the main display is set
 to the specified value.
 
-If a 'display id' is specified, the brightness setting of the specified
+If a "display id" is specified, the brightness setting of the specified
 display, if available, is listed. If a value between 0.0 and 1.0 is
 provided after a display id, if possible, the brightness of that display
 is set to the specified value.
@@ -32,56 +32,56 @@ is set to the specified value.
 
 Prints the current darkmode setting (on/off) if no options are specified.
 
-The 'enable' or 'on' options enable darkmode.
+The "enable" or "on" options enable darkmode.
 
-The 'disable' or 'off' options disable darkmode.
+The "disable" or "off" options disable darkmode.
 .TP
 .B grayscale|gs [enable|disable|on|off]
 
 Prints the current grayscale setting (on/off) if no options are specified.
 
-The 'enable' or 'on' options enable grayscale mode.
+The "enable" or "on" options enable grayscale mode.
 
-The 'disable' or 'off' options disable grayscale mode.
+The "disable" or "off" options disable grayscale mode.
 .TP
-.B ls|list [-l|-a] [all|main|display id]
+.B ls|list [\-l|\-a] [all|main|display id]
 
 Lists information about all active displays if no options are specified,
-or if the 'all' option is specified. If the 'main' option is specified,
-information about the main display is listed.  If a 'display id' is
+or if the "all" option is specified. If the "main" option is specified,
+information about the main display is listed.  If a "display id" is
 specified, information about the specified display, if available, is
 listed.
 
-Additional information is shown if the -l (long) or -a (all) options
-are specified.  The -l (long) option only shows information for
-supported display resolutions, whereas the -a (all) option shows
+Additional information is shown if the \-l (long) or \-a (all) options
+are specified.  The \-l (long) option only shows information for
+supported display resolutions, whereas the \-a (all) option shows
 information for all available display resolutions.
 .TP
 .B nightshift|ns [enable|disable|on|off]
        [schedule [disable|sunset|[h]h:mm [h]h:mm]]
-       [0.0 - 1.0]
+       [0.0 \- 1.0]
 
 Prints the current nightshift setting (on/off), its schedule and strength if
 no options are specified.
 
-The 'enable' or 'on' options enable nightshift mode.  If nightshift's
-strength is set to 0, these options will set nightshift's strength to 1.0
+The "enable" or "on" options enable nightshift mode.  If nightshift"s
+strength is set to 0, these options will set nightshift"s strength to 1.0
 (full strength).
 
-The 'off' option turns off nightshift mode.
+The "off" option turns off nightshift mode.
 
-The 'disable' option turns nightshift mode off and sets its strength to 0.0.
+The "disable" option turns nightshift mode off and sets its strength to 0.0.
 
-If the 'schedule' option is specified without any additional arguments, the
+If the "schedule" option is specified without any additional arguments, the
 current nightshift schedule (if any) is displayed.
 
-If the 'schedule' option is specified with the 'disable' argument, the
+If the "schedule" option is specified with the "disable" argument, the
 nightshift schedule (if any) is disabled.
 
-If the 'schedule' option is specified with the 'sunset' argument, nightshift
+If the "schedule" option is specified with the "sunset" argument, nightshift
 is enabled from sunet to sunrise.
 
-If the 'schedule' option is specified with two arguments of the form
+If the "schedule" option is specified with two arguments of the form
 "[hour]:[min]", nightshift is enabled from the time specified by first argument
 to the time specified by the second argument.
 
@@ -93,7 +93,7 @@ disabled, nightshift is enabled.
 
 Sets the resolution of the specified display to the specified width and
 height, provided that the display supports a resolution of the specified
-width and height.  If 'yes' is specified after the width and height, the
+width and height.  If "yes" is specified after the width and height, the
 width and height are treated as the effective resolution for a retina
 display.
 .TP
@@ -101,11 +101,11 @@ display.
 
 Prints the current truetone setting (on/off) if no options are specified.
 
-The 'enable' or 'on' options enable truetone.
+The "enable" or "on" options enable truetone.
 
-The 'disable' or 'off' options disable truetone.
+The "disable" or "off" options disable truetone.
 .TP
-.B \-h|help
+.B \\-h|help
 
 Displays a help message
 .SH PLATFORMS
@@ -126,7 +126,7 @@ tested on MacOSX 11 and newer (M1).
 Sometimes there is a delay in turning darkmode on or off and/or it takes
 a few tries.
 
-Enabling nightshift's sunset to sunrise schedule may required location
+Enabling nightshift\'s sunset to sunrise schedule may required location
 services to be enabled.
 .SH HISTORY
 The displayutil command was written by Sriranga Veeraraghavan <ranga@calalum.org>.
