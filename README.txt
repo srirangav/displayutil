@@ -122,7 +122,7 @@ Known Bugs and Issues:
 
 History:
 
-    v. 0.4.5 - list display resolution when no argument or
+    v. 0.4.5 - list display resolution when no arguments or
                just a display is specified to resolution mode
     v. 0.4.4 - fix manpage formatting
     v. 0.4.3 - update Makefile to compile each source file
