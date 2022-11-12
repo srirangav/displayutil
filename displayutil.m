@@ -5,21 +5,24 @@
 
     History:
 
-    v. 1.0.0 (04/01/2021) - Initial version
-    v. 1.0.1 (04/15/2021) - Add support for nightshift schedules
-    v. 1.0.2 (04/30/2021) - Add support for truetone
-    v. 1.0.3 (09/03/2021) - Add support for brightness
-    v. 1.0.4 (09/05/2021) - Add support for help mode for each sub mode
-    v. 1.0.5 (09/07/2021) - Add support for verbose listing of display
-                            information
-    v. 1.0.6 (09/12/2021) - Add support for verbose and extended mode
-                            listing of display information
-    v. 1.0.7 (09/17/2021) - change verbose, extended, and hidden modes
-                            to -l (long), -a (all), and -p (private),
-                            respectively
-    v. 1.0.8 (04/27/2022) - add support for setting the main display's
-                            brightness
-    v. 1.0.9 (04/30/2022) - add support for setting display resolutions
+    v. 1.0.0  (04/01/2021) - Initial version
+    v. 1.0.1  (04/15/2021) - Add support for nightshift schedules
+    v. 1.0.2  (04/30/2021) - Add support for truetone
+    v. 1.0.3  (09/03/2021) - Add support for brightness
+    v. 1.0.4  (09/05/2021) - Add support for help mode for each sub mode
+    v. 1.0.5  (09/07/2021) - Add support for verbose listing of display
+                             information
+    v. 1.0.6  (09/12/2021) - Add support for verbose and extended mode
+                             listing of display information
+    v. 1.0.7  (09/17/2021) - change verbose, extended, and hidden modes
+                             to -l (long), -a (all), and -p (private),
+                             respectively
+    v. 1.0.8  (04/27/2022) - add support for setting the main display's
+                             brightness
+    v. 1.0.9  (04/30/2022) - add support for setting display resolutions
+    v. 1.0.10 (11/12/2022) - list display resolution when no argument or
+                             just a display is specified for resolution
+                             mode
 
     Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -292,23 +295,23 @@ int main (int argc, char** argv)
         }
         else
         {
-                /* see if there is display id to list */
+            /* see if there is display id to list */
 
-                displayId = strtoul(argv[argIndex], &endptr, 0);
+            displayId = strtoul(argv[argIndex], &endptr, 0);
 
-                if (endptr != NULL && endptr[0] != '\0')
-                {
-                    fprintf(stderr,
-                            "%s: error: %s: invalid argument: '%s'\n",
-                             gPgmName,
-                             gStrModeListDisplaysLong,
-                             argv[argIndex]);
-                    printListDisplaysUsage();
-                    return gDisplayUtilECErr;
-                }
+            if (endptr != NULL && endptr[0] != '\0')
+            {
+                fprintf(stderr,
+                        "%s: error: %s: invalid argument: '%s'\n",
+                         gPgmName,
+                         gStrModeListDisplaysLong,
+                         argv[argIndex]);
+                printListDisplaysUsage();
+                return gDisplayUtilECErr;
+            }
 
-                return (listDisplay(displayId, verbose) == true ?
-                        gDisplayUtilECOkay : gDisplayUtilECErr);
+            return (listDisplay(displayId, verbose) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         if (listMainDisplayOnly == true)
@@ -634,28 +637,57 @@ int main (int argc, char** argv)
     }
 #endif /* NO_TT */
 
-    /* set resolution */
+    /* set or get resolution */
 
     if (isArg(argv[1], gStrModeResolutionLong, gStrModeResolutionShort))
     {
-        /* no options were specified, just list all the display */
+        /* no options specified, just list the main display's resolution */
 
         if (argc < 3)
         {
-            printResolutionUsage();
-            return (gDisplayUtilECErr);
+            return (listMainDisplay(LIST_SHORT) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
         }
 
         argIndex = 2;
 
         /* check if the help was requested */
 
-        if (argc == 3 && isArgHelp(argv[argIndex]) == true)
+        if (argc == 3)
         {
-            printResolutionUsage();
-            return gDisplayUtilECOkay;
-        } 
-        else if (argc < 5)
+
+            if (isArgHelp(argv[argIndex]) == true)
+            {
+                printResolutionUsage();
+                return gDisplayUtilECOkay;
+            }
+
+            if (isArg(argv[argIndex], gStrMain, NULL) == true)
+            {
+                return (listMainDisplay(LIST_SHORT) == true ?
+                        gDisplayUtilECOkay : gDisplayUtilECErr);
+            }
+
+            /* see if there is display id to list */
+
+            displayId = strtoul(argv[argIndex], &endptr, 0);
+
+            if (endptr != NULL && endptr[0] != '\0')
+            {
+                fprintf(stderr,
+                        "%s: error: %s: invalid argument: '%s'\n",
+                         gPgmName,
+                         gStrModeResolutionLong,
+                         argv[argIndex]);
+                printResolutionUsage();
+                return gDisplayUtilECErr;
+            }
+
+            return (listDisplay(displayId, verbose) == true ?
+                    gDisplayUtilECOkay : gDisplayUtilECErr);
+        }
+
+        if (argc < 5)
         {
             printResolutionUsage();
             return (gDisplayUtilECErr);
@@ -682,7 +714,7 @@ int main (int argc, char** argv)
                 return gDisplayUtilECErr;
             }
         }
-        
+
         argIndex++;
 
         /* see if we have a valid width */

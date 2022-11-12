@@ -7,8 +7,7 @@
 
     v. 1.0.0 (05/06/2022) - Initial working version
     v. 1.0.1 (06/03/2022) - clean up usage message
-
-    Based on:
+    v. 1.0.2 (11/12/2022) - update usage message
 
     Copyright (c) 2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
@@ -64,7 +63,7 @@ static const char *gStrErrCantComplete =
 void printResolutionUsage(void)
 {
     fprintf(stderr,
-            "%s [%s|%s] [[%s|%s] [width] [height]] [pts]\n",
+            "%s [%s|%s] [%s|%s] [[width] [height] [pts]]\n",
             gPgmName,
             gStrModeResolutionLong,
             gStrModeResolutionShort,

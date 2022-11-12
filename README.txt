@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.4.4
+displayutil v0.4.5
 
 Homepage:
 
@@ -52,8 +52,8 @@ Usage:
 
     Resolution:
 
-        displayutil [resolution|rs] [[[main|display id]
-                    [width] [height]] [yes]]
+        displayutil [resolution|rs] [main|display id]
+                    [[width] [height] [yes]]
 
     Truetone:
 
@@ -122,6 +122,8 @@ Known Bugs and Issues:
 
 History:
 
+    v. 0.4.5 - list display resolution when no argument or
+               just a display is specified to resolution mode
     v. 0.4.4 - fix manpage formatting
     v. 0.4.3 - update Makefile to compile each source file
                separately, minor input validation fixes
