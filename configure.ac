@@ -311,6 +311,11 @@ TEST_AND_SET_CFLAG(-fstack-limit-symbol)
 TEST_AND_SET_CFLAG(-fno-stack-array)
 # temporarily disable
 #TEST_AND_SET_CFLAG(-mbranch-protection=standard)
+# optimize the size of the executable
+# based on: https://serge-sans-paille.github.io/pythran-stories/shrinking-a-shared-library.html
+TEST_AND_SET_CFLAG(-Oz)
+TEST_AND_SET_CFLAG(-flto=full)
+TEST_AND_SET_CFLAG(-gline-tables-only)
 
 OBJCFLAGS="$OBJCFLAGS $CFLAGS"
 

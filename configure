@@ -6475,6 +6475,126 @@ printf "%s\n" "no" >&6; }
 # temporarily disable
 #TEST_AND_SET_CFLAG(-mbranch-protection=standard)
 
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Oz works" >&5
+printf %s "checking if compiler flag -Oz works... " >&6; }
+
+        save_CFLAGS="$OBJCFLAGS"
+
+
+    OBJCFLAGS="$OBJCFLAGS -Oz"
+
+
+
+
+    flag_test=0
+
+
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+int main(){}
+_ACEOF
+if ac_fn_objc_try_compile "$LINENO"
+then :
+  flag_test=1
+else $as_nop
+  flag_test=0
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+
+
+
+
+    if test $flag_test = 1
+    then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+    else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+                OBJCFLAGS="$save_CFLAGS"
+    fi
+
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -flto=full works" >&5
+printf %s "checking if compiler flag -flto=full works... " >&6; }
+
+        save_CFLAGS="$OBJCFLAGS"
+
+
+    OBJCFLAGS="$OBJCFLAGS -flto=full"
+
+
+
+
+    flag_test=0
+
+
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+int main(){}
+_ACEOF
+if ac_fn_objc_try_compile "$LINENO"
+then :
+  flag_test=1
+else $as_nop
+  flag_test=0
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+
+
+
+
+    if test $flag_test = 1
+    then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+    else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+                OBJCFLAGS="$save_CFLAGS"
+    fi
+
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -gline-tables-only works" >&5
+printf %s "checking if compiler flag -gline-tables-only works... " >&6; }
+
+        save_CFLAGS="$OBJCFLAGS"
+
+
+    OBJCFLAGS="$OBJCFLAGS -gline-tables-only"
+
+
+
+
+    flag_test=0
+
+
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+int main(){}
+_ACEOF
+if ac_fn_objc_try_compile "$LINENO"
+then :
+  flag_test=1
+else $as_nop
+  flag_test=0
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+
+
+
+
+    if test $flag_test = 1
+    then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+    else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+                OBJCFLAGS="$save_CFLAGS"
+    fi
+
+
 OBJCFLAGS="$OBJCFLAGS $CFLAGS"
 
 ac_config_files="$ac_config_files Makefile"
