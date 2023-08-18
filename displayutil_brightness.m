@@ -52,10 +52,12 @@ const char *gStrModeBrightnessShort             = "br";
 static const char *gStrModeBrightnessRange      = "0.0 - 1.0";
 static const char *gStrErrBrightnessUnsupported = 
     "changing brightness unsupported";
+#ifdef USE_DS
 static const char *gStrErrBrightnessSetFailed   = 
     "changing brightness failed";
 static const char *gStrErrBrightnessGetFailed   = 
     "cannot get brightness setting";
+#endif /* USE_DS */
 
 /* prototypes */
 

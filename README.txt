@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.4.5
+displayutil v0.4.6
 
 Homepage:
 
@@ -9,8 +9,8 @@ Homepage:
 
 About:
 
-    displayutil is a command line utility for retrieving 
-    information about, enabling, or disabling, darkmode, 
+    displayutil is a command line utility for retrieving
+    information about, enabling, or disabling, darkmode,
     grayscale, nightshift, and truetone on MacOS X systems.
     It can also retrieve and set the brightness level and
     resolution for some active displays, along with listing
@@ -71,9 +71,9 @@ Install:
     $ make install
 
     By default, displayutil is installed in /usr/local/bin.
-    
+
     To install it in a different location, the alternate
-    installation prefix can be supplied to configure as 
+    installation prefix can be supplied to configure as
     follows:
 
         $ ./configure --prefix="<prefix>"
@@ -107,7 +107,8 @@ Notes:
     newer on M1-based macs.
 
     Accessing / setting the current brightness setting has only
-    been tested on MacOSX 11.x and newer on M1-based macs.
+    been tested on MacOSX 11.x and newer on M1-based macs and
+    on MacOSX 12.x on x86_64/intel.
 
     displayutil can only set the display to a resolution that
     the system reports as "supported".
@@ -122,6 +123,8 @@ Known Bugs and Issues:
 
 History:
 
+    v. 0.4.6 - add support for brightness on x86_64/intel on
+               MacOSX 12.x (Monterey)
     v. 0.4.5 - list display resolution when no arguments or
                just a display is specified to resolution mode
     v. 0.4.4 - fix manpage formatting
@@ -129,12 +132,12 @@ History:
                separately, minor input validation fixes
     v. 0.4.2 - add extra security related compiler options, fix
                detection of CoreBrightness framework
-    v. 0.4.1 - try to adopt #include/#import discipline for 
-               header files 
+    v. 0.4.1 - try to adopt #include/#import discipline for
+               header files
                (see https://doc.cat-v.org/bell_labs/pikestyle)
     v. 0.4.0 - add support for setting resolutions
     v. 0.3.5 - switch to autoconf for configuration / build
-    v. 0.3.4 - change verbose and extended modes for display 
+    v. 0.3.4 - change verbose and extended modes for display
                listing to -l (long) and -a (all), respectively
     v. 0.3.3 - default verbose listing to show only supported
                resolutions for a display and add an extended mode

@@ -1,7 +1,7 @@
 dnl -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([displayutil],[0.4.4],[ranga@calalum.org])
+AC_INIT([displayutil],[0.4.6],[ranga@calalum.org])
 
 AC_CANONICAL_BUILD
 
@@ -284,16 +284,6 @@ TEST_AND_SET_CFLAG(-fstack-protector-all)
 TEST_AND_SET_CFLAG(-fstack-protector-strong)
 TEST_AND_SET_CFLAG(-fstack-protector-explicit)
 TEST_AND_SET_CFLAG(-mshstk)
-TEST_AND_SET_CFLAG(-fsanitize=safe-stack)
-#TEST_AND_SET_CFLAG(-fsanitize=shadow-call-stack)
-TEST_AND_SET_CFLAG(-fsanitize=cfi)
-TEST_AND_SET_CFLAG(-fsanitize=memory)
-TEST_AND_SET_CFLAG(-fsanitize=integer)
-TEST_AND_SET_CFLAG(-fsanitize=address)
-TEST_AND_SET_CFLAG(-fsanitize=thread)
-TEST_AND_SET_CFLAG(-fsanitize=leak)
-TEST_AND_SET_CFLAG(-fsanitize=undefined)
-TEST_AND_SET_CFLAG(-fno-sanitize-recover=all)
 TEST_AND_SET_CFLAG(-fcf-protection=full)
 TEST_AND_SET_CFLAG(-fpic)
 TEST_AND_SET_CFLAG(-fPIE)
@@ -305,7 +295,6 @@ TEST_AND_SET_CFLAG(-D_GLIBCXX_ASSERTIONS)
 TEST_AND_SET_CFLAG(-fasynchronous-unwind-tables)
 TEST_AND_SET_CFLAG(-fwrapv)
 TEST_AND_SET_CFLAG(-flto)
-TEST_AND_SET_CFLAG(-fsplit-stack)
 TEST_AND_SET_CFLAG(-fstack-limit-register)
 TEST_AND_SET_CFLAG(-fstack-limit-symbol)
 TEST_AND_SET_CFLAG(-fno-stack-array)
@@ -316,6 +305,23 @@ TEST_AND_SET_CFLAG(-fno-stack-array)
 TEST_AND_SET_CFLAG(-Oz)
 TEST_AND_SET_CFLAG(-flto=full)
 TEST_AND_SET_CFLAG(-gline-tables-only)
+
+# test and set these options on arm only
+# see: https://stackoverflow.com/questions/64126942/
+case "$build_cpu" in
+    aarch64)
+        TEST_AND_SET_CFLAG(-fsanitize=safe-stack)
+        #TEST_AND_SET_CFLAG(-fsanitize=shadow-call-stack)
+        TEST_AND_SET_CFLAG(-fsanitize=cfi)
+        TEST_AND_SET_CFLAG(-fsanitize=memory)
+        TEST_AND_SET_CFLAG(-fsanitize=integer)
+        TEST_AND_SET_CFLAG(-fsanitize=address)
+        TEST_AND_SET_CFLAG(-fsanitize=thread)
+        TEST_AND_SET_CFLAG(-fsanitize=leak)
+        TEST_AND_SET_CFLAG(-fsanitize=undefined)
+        TEST_AND_SET_CFLAG(-fno-sanitize-recover=all)
+        ;;
+esac
 
 OBJCFLAGS="$OBJCFLAGS $CFLAGS"
 
