@@ -2941,27 +2941,24 @@ printf "%s\n" "yes" >&6; }
     PGM_SRCS="$PGM_SRCS displayutil_darkmode.m"
 fi
 
-case "$build_cpu" in
-    aarch64)
+# check for DisplayServices (for brightness)
 
-        # check for DisplayServices (for brightness)
-
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for DisplayServices" >&5
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for DisplayServices" >&5
 printf %s "checking for DisplayServices... " >&6; }
-        SAVE_LIBS="$LIBS"
-        LIBS="$LIBS -framework DisplayServices"
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+SAVE_LIBS="$LIBS"
+LIBS="$LIBS -framework DisplayServices"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-                        #import <ApplicationServices/ApplicationServices.h>
+                #import <ApplicationServices/ApplicationServices.h>
 
 int
 main (void)
 {
 
-                        extern int DisplayServicesGetBrightness(CGDirectDisplayID id,
-                            float *brightness)
-                            __attribute__((weak_import));
+                extern int DisplayServicesGetBrightness(CGDirectDisplayID id,
+                    float *brightness)
+                    __attribute__((weak_import));
   ;
   return 0;
 }
@@ -2975,30 +2972,30 @@ else $as_nop
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
-        if test $has_framework = 0; then
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+if test $has_framework = 0; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-            LIBS="$SAVE_LIBS"
-        else
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+    LIBS="$SAVE_LIBS"
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
-            CFLAGS="$CFLAGS -DUSE_DS"
-        fi
+    CFLAGS="$CFLAGS -DUSE_DS"
+fi
 
-        # check for UniversalAccess (for grayscale)
+# check for UniversalAccess (for grayscale)
 
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for UniversalAccess" >&5
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for UniversalAccess" >&5
 printf %s "checking for UniversalAccess... " >&6; }
-        SAVE_LIBS="$LIBS"
-        LIBS="$LIBS -framework UniversalAccess -lUniversalAccess"
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+SAVE_LIBS="$LIBS"
+LIBS="$LIBS -framework UniversalAccess -lUniversalAccess"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 int
 main (void)
 {
 
-                        extern void UAGrayscaleSetEnabled(int enabled);
+                extern void UAGrayscaleSetEnabled(int enabled);
   ;
   return 0;
 }
@@ -3012,18 +3009,15 @@ else $as_nop
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
-        if test $has_framework = 0; then
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+if test $has_framework = 0; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-            LIBS="$SAVE_LIBS"
-        else
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+    LIBS="$SAVE_LIBS"
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
-            CFLAGS="$CFLAGS -DUSE_UA"
-        fi
-
-        ;;
-esac
+    CFLAGS="$CFLAGS -DUSE_UA"
+fi
 
 
 

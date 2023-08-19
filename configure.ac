@@ -131,47 +131,41 @@ else
     PGM_SRCS="$PGM_SRCS displayutil_darkmode.m"
 fi
 
-case "$build_cpu" in
-    aarch64)
+# check for DisplayServices (for brightness)
 
-        # check for DisplayServices (for brightness)
+AC_MSG_CHECKING([for DisplayServices])
+SAVE_LIBS="$LIBS"
+LIBS="$LIBS -framework DisplayServices"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([
+                #import <ApplicationServices/ApplicationServices.h>
+                ], [
+                extern int DisplayServicesGetBrightness(CGDirectDisplayID id,
+                    float *brightness)
+                    __attribute__((weak_import));])
+                ],[has_framework=1],[has_framework=0])
+if test $has_framework = 0; then
+    AC_MSG_RESULT([no])
+    LIBS="$SAVE_LIBS"
+else
+    AC_MSG_RESULT([yes])
+    CFLAGS="$CFLAGS -DUSE_DS"
+fi
 
-        AC_MSG_CHECKING([for DisplayServices])
-        SAVE_LIBS="$LIBS"
-        LIBS="$LIBS -framework DisplayServices"
-        AC_LINK_IFELSE([AC_LANG_PROGRAM([
-                        #import <ApplicationServices/ApplicationServices.h>
-                        ], [
-                        extern int DisplayServicesGetBrightness(CGDirectDisplayID id,
-                            float *brightness)
-                            __attribute__((weak_import));])
-                        ],[has_framework=1],[has_framework=0])
-        if test $has_framework = 0; then
-            AC_MSG_RESULT([no])
-            LIBS="$SAVE_LIBS"
-        else
-            AC_MSG_RESULT([yes])
-            CFLAGS="$CFLAGS -DUSE_DS"
-        fi
+# check for UniversalAccess (for grayscale)
 
-        # check for UniversalAccess (for grayscale)
-
-        AC_MSG_CHECKING([for UniversalAccess])
-        SAVE_LIBS="$LIBS"
-        LIBS="$LIBS -framework UniversalAccess -lUniversalAccess"
-        AC_LINK_IFELSE([AC_LANG_PROGRAM([], [
-                        extern void UAGrayscaleSetEnabled(int enabled);])
-                        ],[has_framework=1],[has_framework=0])
-        if test $has_framework = 0; then
-            AC_MSG_RESULT([no])
-            LIBS="$SAVE_LIBS"
-        else
-            AC_MSG_RESULT([yes])
-            CFLAGS="$CFLAGS -DUSE_UA"
-        fi
-
-        ;;
-esac
+AC_MSG_CHECKING([for UniversalAccess])
+SAVE_LIBS="$LIBS"
+LIBS="$LIBS -framework UniversalAccess -lUniversalAccess"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([], [
+                extern void UAGrayscaleSetEnabled(int enabled);])
+                ],[has_framework=1],[has_framework=0])
+if test $has_framework = 0; then
+    AC_MSG_RESULT([no])
+    LIBS="$SAVE_LIBS"
+else
+    AC_MSG_RESULT([yes])
+    CFLAGS="$CFLAGS -DUSE_UA"
+fi
 
 dnl TEST_AND_SET_CFLAG(flag, [program])
 dnl
