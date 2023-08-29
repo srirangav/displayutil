@@ -147,8 +147,8 @@ void printNightShiftUsage(void)
     fprintf(stderr,
             "%s [%s|%s] [%s|%s|%s|%s]\n",
             gPgmName,
-            gStrModeNightShiftLong,
             gStrModeNightShiftShort,
+            gStrModeNightShiftLong,
             gStrOn,
             gStrEnable,
             gStrOff,
@@ -159,8 +159,8 @@ void printNightShiftUsage(void)
     fprintf(stderr,
             "%s [%s|%s] [%s]\n",
             gPgmName,
-            gStrModeNightShiftLong,
             gStrModeNightShiftShort,
+            gStrModeNightShiftLong,
             gStrNightShiftRange);
 
     /* schedule */
@@ -168,8 +168,8 @@ void printNightShiftUsage(void)
     fprintf(stderr,
             "%s [%s|%s] [%s [%s|%s|%s]]\n",
             gPgmName,
-            gStrModeNightShiftLong,
             gStrModeNightShiftShort,
+            gStrModeNightShiftLong,
             gStrModeNightShiftSchedule,
             gStrDisable,
             gStrModeNightShiftScheduleSunset,

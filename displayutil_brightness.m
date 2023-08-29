@@ -96,8 +96,8 @@ void printBrightnessUsage(void)
     fprintf(stderr,
             "%s [%s|%s] [%s|%s|%s]\n",
             gPgmName,
-            gStrModeBrightnessLong,
             gStrModeBrightnessShort,
+            gStrModeBrightnessLong,
             gStrAll,
             gStrMain,
             gStrDisp);
@@ -105,8 +105,8 @@ void printBrightnessUsage(void)
     fprintf(stderr,
             "%s [%s|%s] [[%s|%s] [%s]]\n",
             gPgmName,
-            gStrModeBrightnessLong,
             gStrModeBrightnessShort,
+            gStrModeBrightnessLong,
             gStrMain,
             gStrDisp,
             gStrModeBrightnessRange);

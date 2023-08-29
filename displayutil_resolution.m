@@ -65,8 +65,8 @@ void printResolutionUsage(void)
     fprintf(stderr,
             "%s [%s|%s] [%s|%s] [[width] [height] [pts]]\n",
             gPgmName,
-            gStrModeResolutionLong,
             gStrModeResolutionShort,
+            gStrModeResolutionLong,
             gStrMain,
             gStrDisp);
 }
