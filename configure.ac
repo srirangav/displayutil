@@ -5,7 +5,7 @@ AC_INIT([displayutil],[0.4.6],[ranga@calalum.org])
 
 AC_CANONICAL_BUILD
 
-# We want to turn on warnings if we are using gcc and the user did 
+# We want to turn on warnings if we are using gcc and the user did
 # not specify CFLAGS. The autoconf check for the C compiler sets the
 # CFLAGS if gcc is used, so we will save it before we run that check.
 #
@@ -98,8 +98,8 @@ else
     AC_MSG_RESULT([yes])
     PGM_SRCS="$PGM_SRCS displayutil_nightshift.m"
 
-    # since CoreBrightness is available, check if it supports truetone 
-    
+    # since CoreBrightness is available, check if it supports truetone
+
     AC_MSG_CHECKING([for True Tone support in CoreBrightness])
     AC_LINK_IFELSE([AC_LANG_PROGRAM([#import <Foundation/Foundation.h>
                                      #import "./CBTrueToneClient.h"], [
@@ -170,21 +170,21 @@ fi
 dnl TEST_AND_SET_CFLAG(flag, [program])
 dnl
 dnl This attempts to compile a program with a certain compiler flag.
-dnl If no program is given, then the minimal program is compiled, and 
-dnl this tests just the validity of the compiler flag. 
+dnl If no program is given, then the minimal program is compiled, and
+dnl this tests just the validity of the compiler flag.
 dnl
 dnl based on: https://github.com/edrosten/autoconf_tutorial
 
 define([TEST_AND_SET_CFLAG],[
-    AC_MSG_CHECKING([if compiler flag $1 works])    
-    
+    AC_MSG_CHECKING([if compiler flag $1 works])
+
     dnl Store the current CXXFLAGS
     save_CFLAGS="$OBJCFLAGS"
 
     dnl Append the flag of interest
 
     OBJCFLAGS="$OBJCFLAGS $1"
-    
+
     dnl Create an M4 macro, "prog", which expands to a C program.
     dnl This should either be a default one or the one specified.
     dnl Note that macros are not local, but there is a stack so push
@@ -192,15 +192,15 @@ define([TEST_AND_SET_CFLAG],[
     dnl that might already exist.
 
     m4_if([$2],[],[pushdef(prog, [int main(){}])], [pushdef(prog, [$2])])
-    
+
     flag_test=0
-    
+
     dnl See if the compiler runs
-    
+
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([prog])], [flag_test=1],[flag_test=0])
-    
+
     dnl De-clobber the "prog" macro
-    
+
     popdef([prog])
 
     if test $flag_test = 1
@@ -218,34 +218,36 @@ define([TEST_AND_SET_CFLAG],[
 TEST_AND_SET_CFLAG(-W)
 TEST_AND_SET_CFLAG(-Wall)
 TEST_AND_SET_CFLAG(-Wextra)
-TEST_AND_SET_CFLAG(-Wpedantic) 
-TEST_AND_SET_CFLAG(-Werror) 
-TEST_AND_SET_CFLAG(-Wformat=2) 
+TEST_AND_SET_CFLAG(-Wpedantic)
+TEST_AND_SET_CFLAG(-Werror)
+TEST_AND_SET_CFLAG(-Wformat=2)
 TEST_AND_SET_CFLAG(-Wformat-nonliteral)
-TEST_AND_SET_CFLAG(-Wformat-overflow=2)
-TEST_AND_SET_CFLAG(-Wformat-truncation=2)
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-Wformat-overflow=2)
+#TEST_AND_SET_CFLAG(-Wformat-truncation=2)
+#TEST_AND_SET_CFLAG(-Wformat-signedness)
+#TEST_AND_SET_CFLAG(-Wtraditional-conversion)
+#TEST_AND_SET_CFLAG(-Warith-conversion)
+#TEST_AND_SET_CFLAG(-Wstack-usage)
+#TEST_AND_SET_CFLAG(-Wstringop-overflow=4)
+#TEST_AND_SET_CFLAG(-Wjump-misses-init)
+#TEST_AND_SET_CFLAG(-Wtrampolines)
 TEST_AND_SET_CFLAG(-Wformat-security)
 TEST_AND_SET_CFLAG(-Wformat-y2k)
-TEST_AND_SET_CFLAG(-Wformat-signedness)
-TEST_AND_SET_CFLAG(-Wtrampolines)
 TEST_AND_SET_CFLAG(-Walloca)
 #TEST_AND_SET_CFLAG(-Wcast-qual)
-TEST_AND_SET_CFLAG(-Wconversion) 
-TEST_AND_SET_CFLAG(-Wtraditional-conversion)
-TEST_AND_SET_CFLAG(-Warith-conversion)
+TEST_AND_SET_CFLAG(-Wconversion)
 TEST_AND_SET_CFLAG(-Wstack-protector)
-TEST_AND_SET_CFLAG(-Wstack-usage)
 TEST_AND_SET_CFLAG(-Winfinite-recursion)
 TEST_AND_SET_CFLAG(-Wnull-dereference)
 TEST_AND_SET_CFLAG(-Wvla)
 TEST_AND_SET_CFLAG(-Warray-bounds-pointer-arithmetic)
-TEST_AND_SET_CFLAG(-Warray-bounds=2)
+TEST_AND_SET_CFLAG(-Warray-bounds)
 TEST_AND_SET_CFLAG(-Wimplicit-fallthrough)
 TEST_AND_SET_CFLAG(-Wconditional-uninitialized)
 TEST_AND_SET_CFLAG(-Wloop-analysis)
 TEST_AND_SET_CFLAG(-Wshift-sign-overflow)
-TEST_AND_SET_CFLAG(-Wshift-overflow=2)
-TEST_AND_SET_CFLAG(-Wstringop-overflow=4)
+TEST_AND_SET_CFLAG(-Wshift-overflow)
 TEST_AND_SET_CFLAG(-Wswitch-default)
 TEST_AND_SET_CFLAG(-Wswitch-enum)
 TEST_AND_SET_CFLAG(-Wtautological-constant-in-range-compare)
@@ -264,24 +266,26 @@ TEST_AND_SET_CFLAG(-Wmissing-declarations)
 TEST_AND_SET_CFLAG(-Wmissing-prototypes)
 TEST_AND_SET_CFLAG(-Wshadow)
 TEST_AND_SET_CFLAG(-Wcast-align)
-TEST_AND_SET_CFLAG(-Wjump-misses-init)
 TEST_AND_SET_CFLAG(-Wunused)
 TEST_AND_SET_CFLAG(-Wno-missing-braces)
 TEST_AND_SET_CFLAG(-Werror=implicit-function-declaration)
 TEST_AND_SET_CFLAG(-Wold-style-cast)
-TEST_AND_SET_CFLAG(-Wlogical-op)
-TEST_AND_SET_CFLAG(-Wduplicated-cond)
-TEST_AND_SET_CFLAG(-Wduplicated-branches)
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-Wlogical-op)
+#TEST_AND_SET_CFLAG(-Wduplicated-cond)
+#TEST_AND_SET_CFLAG(-Wduplicated-branches)
 TEST_AND_SET_CFLAG(-Wundef)
 TEST_AND_SET_CFLAG(-fstack-usage)
-TEST_AND_SET_CFLAG(-fstack-protector-all) 
+TEST_AND_SET_CFLAG(-fstack-protector-all)
 TEST_AND_SET_CFLAG(-fstack-protector-strong)
 TEST_AND_SET_CFLAG(-fstack-protector-explicit)
-TEST_AND_SET_CFLAG(-mshstk)
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-mshstk)
 TEST_AND_SET_CFLAG(-fcf-protection=full)
 TEST_AND_SET_CFLAG(-fpic)
 TEST_AND_SET_CFLAG(-fPIE)
-TEST_AND_SET_CFLAG(-fstack-clash-protection)
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-fstack-clash-protection)
 TEST_AND_SET_CFLAG(-pedantic)
 TEST_AND_SET_CFLAG(-pedantic-errors)
 TEST_AND_SET_CFLAG(-D_FORTIFY_SOURCE=2)
@@ -310,7 +314,10 @@ case "$build_cpu" in
         TEST_AND_SET_CFLAG(-fsanitize=memory)
         TEST_AND_SET_CFLAG(-fsanitize=integer)
         TEST_AND_SET_CFLAG(-fsanitize=address)
-        TEST_AND_SET_CFLAG(-fsanitize=thread)
+        # disable due to runtime warnings from libmalloc
+        # on Ventura, see:
+        # https://stackoverflow.com/questions/64126942
+        #TEST_AND_SET_CFLAG(-fsanitize=thread)
         TEST_AND_SET_CFLAG(-fsanitize=leak)
         TEST_AND_SET_CFLAG(-fsanitize=undefined)
         TEST_AND_SET_CFLAG(-fno-sanitize-recover=all)

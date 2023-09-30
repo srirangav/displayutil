@@ -3304,86 +3304,16 @@ printf "%s\n" "no" >&6; }
                 OBJCFLAGS="$save_CFLAGS"
     fi
 
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wformat-overflow=2 works" >&5
-printf %s "checking if compiler flag -Wformat-overflow=2 works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wformat-overflow=2"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wformat-truncation=2 works" >&5
-printf %s "checking if compiler flag -Wformat-truncation=2 works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wformat-truncation=2"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-Wformat-overflow=2)
+#TEST_AND_SET_CFLAG(-Wformat-truncation=2)
+#TEST_AND_SET_CFLAG(-Wformat-signedness)
+#TEST_AND_SET_CFLAG(-Wtraditional-conversion)
+#TEST_AND_SET_CFLAG(-Warith-conversion)
+#TEST_AND_SET_CFLAG(-Wstack-usage)
+#TEST_AND_SET_CFLAG(-Wstringop-overflow=4)
+#TEST_AND_SET_CFLAG(-Wjump-misses-init)
+#TEST_AND_SET_CFLAG(-Wtrampolines)
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wformat-security works" >&5
 printf %s "checking if compiler flag -Wformat-security works... " >&6; }
@@ -3432,86 +3362,6 @@ printf %s "checking if compiler flag -Wformat-y2k works... " >&6; }
 
 
     OBJCFLAGS="$OBJCFLAGS -Wformat-y2k"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wformat-signedness works" >&5
-printf %s "checking if compiler flag -Wformat-signedness works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wformat-signedness"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wtrampolines works" >&5
-printf %s "checking if compiler flag -Wtrampolines works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wtrampolines"
 
 
 
@@ -3626,86 +3476,6 @@ printf "%s\n" "no" >&6; }
     fi
 
 
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wtraditional-conversion works" >&5
-printf %s "checking if compiler flag -Wtraditional-conversion works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wtraditional-conversion"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Warith-conversion works" >&5
-printf %s "checking if compiler flag -Warith-conversion works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Warith-conversion"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wstack-protector works" >&5
 printf %s "checking if compiler flag -Wstack-protector works... " >&6; }
 
@@ -3713,46 +3483,6 @@ printf %s "checking if compiler flag -Wstack-protector works... " >&6; }
 
 
     OBJCFLAGS="$OBJCFLAGS -Wstack-protector"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wstack-usage works" >&5
-printf %s "checking if compiler flag -Wstack-usage works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wstack-usage"
 
 
 
@@ -3946,13 +3676,13 @@ printf "%s\n" "no" >&6; }
     fi
 
 
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Warray-bounds=2 works" >&5
-printf %s "checking if compiler flag -Warray-bounds=2 works... " >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Warray-bounds works" >&5
+printf %s "checking if compiler flag -Warray-bounds works... " >&6; }
 
         save_CFLAGS="$OBJCFLAGS"
 
 
-    OBJCFLAGS="$OBJCFLAGS -Warray-bounds=2"
+    OBJCFLAGS="$OBJCFLAGS -Warray-bounds"
 
 
 
@@ -4146,53 +3876,13 @@ printf "%s\n" "no" >&6; }
     fi
 
 
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wshift-overflow=2 works" >&5
-printf %s "checking if compiler flag -Wshift-overflow=2 works... " >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wshift-overflow works" >&5
+printf %s "checking if compiler flag -Wshift-overflow works... " >&6; }
 
         save_CFLAGS="$OBJCFLAGS"
 
 
-    OBJCFLAGS="$OBJCFLAGS -Wshift-overflow=2"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wstringop-overflow=4 works" >&5
-printf %s "checking if compiler flag -Wstringop-overflow=4 works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wstringop-overflow=4"
+    OBJCFLAGS="$OBJCFLAGS -Wshift-overflow"
 
 
 
@@ -4946,46 +4636,6 @@ printf "%s\n" "no" >&6; }
     fi
 
 
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wjump-misses-init works" >&5
-printf %s "checking if compiler flag -Wjump-misses-init works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wjump-misses-init"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wunused works" >&5
 printf %s "checking if compiler flag -Wunused works... " >&6; }
 
@@ -5145,126 +4795,10 @@ printf "%s\n" "no" >&6; }
                 OBJCFLAGS="$save_CFLAGS"
     fi
 
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wlogical-op works" >&5
-printf %s "checking if compiler flag -Wlogical-op works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wlogical-op"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wduplicated-cond works" >&5
-printf %s "checking if compiler flag -Wduplicated-cond works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wduplicated-cond"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wduplicated-branches works" >&5
-printf %s "checking if compiler flag -Wduplicated-branches works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -Wduplicated-branches"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-Wlogical-op)
+#TEST_AND_SET_CFLAG(-Wduplicated-cond)
+#TEST_AND_SET_CFLAG(-Wduplicated-branches)
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -Wundef works" >&5
 printf %s "checking if compiler flag -Wundef works... " >&6; }
@@ -5465,46 +4999,8 @@ printf "%s\n" "no" >&6; }
                 OBJCFLAGS="$save_CFLAGS"
     fi
 
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -mshstk works" >&5
-printf %s "checking if compiler flag -mshstk works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -mshstk"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-mshstk)
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -fcf-protection=full works" >&5
 printf %s "checking if compiler flag -fcf-protection=full works... " >&6; }
@@ -5625,46 +5121,8 @@ printf "%s\n" "no" >&6; }
                 OBJCFLAGS="$save_CFLAGS"
     fi
 
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -fstack-clash-protection works" >&5
-printf %s "checking if compiler flag -fstack-clash-protection works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -fstack-clash-protection"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
+# disable due to warnings on Ventura
+#TEST_AND_SET_CFLAG(-fstack-clash-protection)
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -pedantic works" >&5
 printf %s "checking if compiler flag -pedantic works... " >&6; }
@@ -6395,46 +5853,10 @@ printf "%s\n" "no" >&6; }
                 OBJCFLAGS="$save_CFLAGS"
     fi
 
-
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -fsanitize=thread works" >&5
-printf %s "checking if compiler flag -fsanitize=thread works... " >&6; }
-
-        save_CFLAGS="$OBJCFLAGS"
-
-
-    OBJCFLAGS="$OBJCFLAGS -fsanitize=thread"
-
-
-
-
-    flag_test=0
-
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-int main(){}
-_ACEOF
-if ac_fn_objc_try_compile "$LINENO"
-then :
-  flag_test=1
-else $as_nop
-  flag_test=0
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-
-
-
-    if test $flag_test = 1
-    then
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-                OBJCFLAGS="$save_CFLAGS"
-    fi
-
+        # disable due to runtime warnings from libmalloc
+        # on Ventura, see:
+        # https://stackoverflow.com/questions/64126942
+        #TEST_AND_SET_CFLAG(-fsanitize=thread)
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if compiler flag -fsanitize=leak works" >&5
 printf %s "checking if compiler flag -fsanitize=leak works... " >&6; }
