@@ -15,22 +15,22 @@
     Copyright (c) 2021-2022 Sriranga R. Veeraraghavan <ranga@calalum.org>
 
     Permission is hereby granted, free of charge, to any person obtaining
-    a copy of this software and associated documentation files (the 
-    "Software"), to deal in the Software without restriction, including 
-    without limitation the rights to use, copy, modify, merge, publish, 
-    distribute, sublicense, and/or sell copies of the Software, and to 
-    permit persons to whom the Software is furnished to do so, subject to 
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
     the following conditions:
 
     The above copyright notice and this permission notice shall be included
     in all copies or substantial portions of the Software.
 
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
-    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
-    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
@@ -50,12 +50,12 @@ const char *gStrModeBrightnessShort             = "br";
 /* informational / error messages */
 
 static const char *gStrModeBrightnessRange      = "0.0 - 1.0";
-static const char *gStrErrBrightnessUnsupported = 
+static const char *gStrErrBrightnessUnsupported =
     "changing brightness unsupported";
 #ifdef USE_DS
-static const char *gStrErrBrightnessSetFailed   = 
+static const char *gStrErrBrightnessSetFailed   =
     "changing brightness failed";
-static const char *gStrErrBrightnessGetFailed   = 
+static const char *gStrErrBrightnessGetFailed   =
     "cannot get brightness setting";
 #endif /* USE_DS */
 
@@ -179,8 +179,15 @@ bool setBrightnessForDisplay(unsigned long display, float brightness)
                                               (double)brightness);
 #endif /* USE_DS */
 
-        DisplayServicesBrightnessChanged((CGDirectDisplayID)display,
-                                         (double)brightness);
+        if (@available(macos 14, *))
+        {
+            /* do nothing for MacOSX 14.x and newer */
+        }
+        else
+        {
+            DisplayServicesBrightnessChanged((CGDirectDisplayID)display,
+                                             (double)brightness);
+        }
         ret = true;
         break;
     }

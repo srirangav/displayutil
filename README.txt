@@ -1,7 +1,7 @@
 README
 ------
 
-displayutil v0.4.6
+displayutil v0.4.7
 
 Homepage:
 
@@ -20,7 +20,7 @@ Usage:
 
     Brightness:
 
-        displayutil [brightness|br [[all|main|dispaly id]
+        displayutil [brightness|br [[all|main|display id]
                     [0.0 - 1.0]]]
 
     Darkmode:
@@ -104,10 +104,10 @@ Notes:
 
     Accessing the current truetone setting and/or enabling or
     disabling truetone has only been tested on MacOSX 11.x and
-    newer on M1-based macs.
+    newer on M-series macs.
 
     Accessing / setting the current brightness setting has only
-    been tested on MacOSX 11.x and newer on M1-based macs and
+    been tested on MacOSX 11.x and newer on M-series macs and
     on MacOSX 12.x on x86_64/intel.
 
     displayutil can only set the display to a resolution that
@@ -123,6 +123,7 @@ Known Bugs and Issues:
 
 History:
 
+    v. 0.4.7 - minor fixes for brightness on MacOSX 14.x (Sonoma)
     v. 0.4.6 - add support for brightness on x86_64/intel on
                MacOSX 12.x (Monterey)
     v. 0.4.5 - list display resolution when no arguments or
@@ -152,4 +153,3 @@ History:
 License:
 
     See LICENSE.txt
-
